@@ -1,0 +1,1229 @@
+openapi: 3.0.1
+info:
+    title: REST API for the website of "Academia Fabiana Perez"
+    description: REST API for the website of "Academia Fabiana Perez"
+    version: 1.0.0
+
+servers:
+    - url: http://localhost:8080/api/v1
+
+paths:
+    /user:
+        get:
+            summary: Get all users
+            operationId: getAllUsers
+            tags:
+                - Users
+            responses:
+                200:
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: "#/components/schemas/User"
+                                example:
+                                    [
+                                        {
+                                            id: 1,
+                                            username: "admin",
+                                            firstName: "Admin",
+                                            lastName: "Admin",
+                                            email: "admin@admin.com",
+                                            password: "admin",
+                                            createdAt: "2021-01-01T00:00:00.000Z",
+                                            updatedAt: "2021-01-01T00:00:00.000Z",
+                                            role: "ADMIN",
+                                        },
+                                        {
+                                            id: 2,
+                                            username: "user",
+                                            firstName: "User",
+                                            lastName: "User",
+                                            email: "user@user.com",
+                                            password: "user",
+                                            createdAt: "2021-01-01T00:00:00.000Z",
+                                            updatedAt: "2021-01-01T00:00:00.000Z",
+                                            role: "USER",
+                                        },
+                                    ]
+        post:
+            summary: Add a new user
+            operationId: addUser
+            tags:
+                - Users
+            requestBody:
+                description: User to add
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/AddUserRequest"
+            responses:
+                201:
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/User"
+                400:
+                    description: Bad request
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ValidationErrorMessage"
+                401:
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                403:
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                409:
+                    description: User already exists
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+    /user/{id}:
+        get:
+            summary: Get a user by id
+            operationId: getUserById
+            tags:
+                - Users
+            parameters:
+                - name: id
+                  in: path
+                  description: User id
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            responses:
+                200:
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/User"
+                400:
+                    description: Bad request
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                401:
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                403:
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                404:
+                    description: User not found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+        put:
+            summary: Update a user
+            operationId: updateUser
+            tags:
+                - Users
+            parameters:
+                - name: id
+                  in: path
+                  description: User id
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            requestBody:
+                description: User to update
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/UpdateUserRequest"
+            responses:
+                200:
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/User"
+                400:
+                    description: Bad request
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ValidationErrorMessage"
+                401:
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                403:
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                404:
+                    description: User not found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                409:
+                    description: User already exists
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+        delete:
+            summary: Delete a user
+            operationId: deleteUser
+            tags:
+                - Users
+            parameters:
+                - name: id
+                  in: path
+                  description: User id
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            responses:
+                200:
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/User"
+                400:
+                    description: Bad request
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                401:
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                403:
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                404:
+                    description: User not found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+
+    /address:
+        get:
+            summary: Get all addresses
+            operationId: getAllAddresses
+            tags:
+                - Addresses
+            responses:
+                200:
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: "#/components/schemas/Address"
+                                example:
+                                    [
+                                        {
+                                            id: 1,
+                                            street: "Av. Paulista",
+                                            city: "São Paulo",
+                                            state: "SP",
+                                            zipCode: "01310-000",
+                                            country: "Brazil",
+                                            addressType: "PRIMARY",
+                                            userId: 1,
+                                            createdAt: "2021-01-01T00:00:00.000Z",
+                                            updatedAt: "2021-01-01T00:00:00.000Z",
+                                        },
+                                        {
+                                            id: 2,
+                                            street: "Rua do Rio",
+                                            city: "São Paulo",
+                                            state: "SP",
+                                            zipCode: "01310-000",
+                                            country: "Brazil",
+                                            addressType: "SECONDARY",
+                                            userId: 1,
+                                            createdAt: "2021-01-01T00:00:00.000Z",
+                                            updatedAt: "2021-01-01T00:00:00.000Z",
+                                        },
+                                    ]
+        post:
+            summary: Add a new address
+            operationId: addAddress
+            tags:
+                - Addresses
+            requestBody:
+                description: Address to add
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/AddAddressRequest"
+            responses:
+                201:
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Address"
+                400:
+                    description: Bad request
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ValidationErrorMessage"
+                401:
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                403:
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                409:
+                    description: Address already exists
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+
+    /address/{id}:
+        get:
+            summary: Get an address by id
+            operationId: getAddressById
+            tags:
+                - Addresses
+            parameters:
+                - name: id
+                  in: path
+                  description: Address id
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            responses:
+                200:
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Address"
+                400:
+                    description: Bad request
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                401:
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                403:
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                404:
+                    description: Address not found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+        put:
+            summary: Update an address
+            operationId: updateAddress
+            tags:
+                - Addresses
+            parameters:
+                - name: id
+                  in: path
+                  description: Address id
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            requestBody:
+                description: Address to update
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/UpdateAddressRequest"
+            responses:
+                200:
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Address"
+                400:
+                    description: Bad request
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ValidationErrorMessage"
+                401:
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                403:
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                404:
+                    description: Address not found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+        delete:
+            summary: Delete an address
+            operationId: deleteAddress
+            tags:
+                - Addresses
+            parameters:
+                - name: id
+                  in: path
+                  description: Address id
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            responses:
+                200:
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Address"
+                400:
+                    description: Bad request
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                401:
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                403:
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                404:
+                    description: Address not found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+
+    /appointment:
+        get:
+            summary: Get all appointments
+            operationId: getAllAppointments
+            tags:
+                - Appointments
+            responses:
+                200:
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: "#/components/schemas/Appointment"
+                                    example:
+                                        [
+                                            {
+                                                id: 1,
+                                                date: "2021-01-01T00:00:00.000Z",
+                                                duration: 1,
+                                                status: "WAITING",
+                                                description: "Appointment description",
+                                                category:
+                                                    {
+                                                        id: 1,
+                                                        name: "Category name",
+                                                        quotePerHour: 1,
+                                                    },
+                                                price: 1,
+                                                createdAt: "2021-01-01T00:00:00.000Z",
+                                                updatedAt: "2021-01-01T00:00:00.000Z",
+                                            },
+                                            {
+                                                id: 2,
+                                                date: "2021-01-01T00:00:00.000Z",
+                                                duration: 1,
+                                                status: "ACCEPTED",
+                                                description: "Appointment description",
+                                                category:
+                                                    {
+                                                        id: 1,
+                                                        name: "Category name",
+                                                        quotePerHour: 1,
+                                                    },
+                                                price: 1,
+                                                createdAt: "2021-01-01T00:00:00.000",
+                                                updatedAt: "2021-01-01T00:00:00.000Z",
+                                            },
+                                        ]
+        post:
+            summary: Add a new appointment
+            operationId: addAppointment
+            tags:
+                - Appointments
+            requestBody:
+                description: Appointment to add
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/AddAppointmentRequest"
+            responses:
+                201:
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Appointment"
+                400:
+                    description: Bad request
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ValidationErrorMessage"
+                401:
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                403:
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                409:
+                    description: Appointment already exists
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+
+    /appointment/{id}:
+        get:
+            summary: Get an appointment by id
+            operationId: getAppointmentById
+            tags:
+                - Appointments
+            parameters:
+                - name: id
+                  in: path
+                  description: Appointment id
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            responses:
+                200:
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Appointment"
+                400:
+                    description: Bad request
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                401:
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                403:
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                404:
+                    description: Appointment not found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+        put:
+            summary: Update an appointment
+            operationId: updateAppointment
+            tags:
+                - Appointments
+            parameters:
+                - name: id
+                  in: path
+                  description: Appointment id
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            requestBody:
+                description: Appointment to update
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/UpdateAppointmentRequest"
+            responses:
+                200:
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Appointment"
+                400:
+                    description: Bad request
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ValidationErrorMessage"
+                401:
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                403:
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                404:
+                    description: Appointment not found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+        delete:
+            summary: Delete an appointment
+            operationId: deleteAppointment
+            tags:
+                - Appointments
+            parameters:
+                - name: id
+                  in: path
+                  description: Appointment id
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            responses:
+                200:
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Appointment"
+                400:
+                    description: Bad request
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                401:
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                403:
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                404:
+                    description: Appointment not found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+        patch:
+            summary: Update an appointments status
+            operationId: updateAppointmentStatus
+            tags:
+                - Appointments
+            parameters:
+                - name: id
+                  in: path
+                  description: Appointment id
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            requestBody:
+                description: Appointment status
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/AppointmentStatusEnum"
+            responses:
+                200:
+                    description: Appointment updated
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Appointment"
+                400:
+                    description: Bad request
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                401:
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                403:
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                404:
+                    description: Appointment not found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+
+components:
+    schemas:
+        # ---- Enums ----
+        RoleEnum:
+            type: string
+            enum: [ADMIN, USER]
+            x-field-extra-annotation: "@ValidEnum(RoleEnum.class)"
+        AddressTypeEnum:
+            type: string
+            enum: [PRIMARY, SECONDARY]
+            x-field-extra-annotation: "@ValidEnum(AddressTypeEnum.class)"
+        AppointmentStatusEnum:
+            type: string
+            enum: [WAITING, ACCEPTED, DECLINED]
+            x-field-extra-annotation: "@ValidEnum(AppointmentStatusEnum.class)"
+        InvoiceStatusEnum:
+            type: string
+            enum: [WAITING, PAID, DECLINED]
+            x-field-extra-annotation: "@ValidEnum(InvoiceStatusEnum.class)"
+
+        # ---- Objects ----
+        User:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: int64
+                username:
+                    type: string
+                firstName:
+                    type: string
+                lastName:
+                    type: string
+                email:
+                    type: string
+                    format: email
+                password:
+                    type: string
+                    format: password
+                    x-field-extra-annotation: >-
+                        @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+                role:
+                    $ref: "#/components/schemas/RoleEnum"
+                createdAt:
+                    type: string
+                    format: date-time
+                updatedAt:
+                    type: string
+                    format: date-time
+            required:
+                [
+                    id,
+                    username,
+                    firstName,
+                    lastName,
+                    email,
+                    password,
+                    createdAt,
+                    updatedAt,
+                    role,
+                ]
+        Address:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: int64
+                street:
+                    type: string
+                city:
+                    type: string
+                state:
+                    type: string
+                zipCode:
+                    type: string
+                country:
+                    type: string
+                addressType:
+                    $ref: "#/components/schemas/AddressTypeEnum"
+                userId:
+                    type: integer
+                    format: int64
+                createdAt:
+                    type: string
+                    format: date-time
+                updatedAt:
+                    type: string
+                    format: date-time
+            required:
+                [
+                    id,
+                    street,
+                    city,
+                    state,
+                    zipCode,
+                    country,
+                    createdAt,
+                    updatedAt,
+                    addressType,
+                    userId,
+                ]
+        Appointment:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: int64
+                date:
+                    type: string
+                    format: date-time
+                duration:
+                    type: integer
+                    format: int32
+                status:
+                    $ref: "#/components/schemas/AppointmentStatusEnum"
+                description:
+                    type: string
+                price:
+                    type: number
+                    format: double
+                userId:
+                    type: integer
+                    format: int64
+                categoryId:
+                    type: integer
+                    format: int64
+                createdAt:
+                    type: string
+                    format: date-time
+                updatedAt:
+                    type: string
+                    format: date-time
+            required:
+                [
+                    id,
+                    date,
+                    duration,
+                    status,
+                    description,
+                    categoryId,
+                    price,
+                    userId,
+                    createdAt,
+                ]
+
+        AppointmentCategory:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: int64
+                name:
+                    type: string
+                quotePerHour:
+                    type: number
+                    format: double
+            required: [id, name, quotePerHour]
+        Invoice:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: int64
+                status:
+                    $ref: "#/components/schemas/InvoiceStatusEnum"
+                description:
+                    type: string
+                paymentMethod:
+                    type: string
+                notes:
+                    type: string
+                totalPrice:
+                    type: number
+                    format: double
+                user:
+                    $ref: "#/components/schemas/User"
+                createdAt:
+                    type: string
+                    format: date-time
+                updatedAt:
+                    type: string
+                    format: date-time
+            required:
+                [
+                    id,
+                    status,
+                    description,
+                    createdAt,
+                    updatedAt,
+                    paymentMethod,
+                    notes,
+                    totalPrice,
+                    user,
+                ]
+        LineItem:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: int64
+                subtotal:
+                    type: number
+                    format: double
+                quantity:
+                    type: integer
+                    format: int32
+                appointment:
+                    $ref: "#/components/schemas/Appointment"
+                    nullable: true
+                invoiceId:
+                    type: integer
+                    format: int64
+                createdAt:
+                    type: string
+                    format: date-time
+            required: [id, subtotal, quantity, createdAt, invoice]
+
+        # ---- Requests ----
+        ## ----- User ------
+        AddUserRequest:
+            type: object
+            properties:
+                username:
+                    type: string
+                    x-field-extra-annotation: '@NotBlank(message = "Username field cannot be blank")'
+                firstName:
+                    type: string
+                    x-field-extra-annotation: '@NotBlank(message = "First name field cannot be blank")'
+                lastName:
+                    type: string
+                    x-field-extra-annotation: '@NotBlank(message = "Last name field cannot be blank")'
+                email:
+                    type: string
+                    format: email
+                    x-field-extra-annotation: >-
+                        @NotBlank(message = "Email name field cannot be blank")
+                        @Email(message = "Email format is not valid")
+                password:
+                    type: string
+                    format: password
+                    x-field-extra-annotation: >-
+                        @NotBlank(message = "Password field cannot be blank")
+                        @Password
+                role:
+                    $ref: "#/components/schemas/RoleEnum"
+            required: [username, firstName, lastName, email, password, role]
+        UpdateUserRequest:
+            type: object
+            properties:
+                username:
+                    type: string
+                firstName:
+                    type: string
+                lastName:
+                    type: string
+                email:
+                    type: string
+                    format: email
+                    x-field-extra-annotation: '@Email(message = "Email format is not valid")'
+                role:
+                    $ref: "#/components/schemas/RoleEnum"
+        ## ---- Address ----
+        AddAddressRequest:
+            type: object
+            properties:
+                street:
+                    type: string
+                    x-field-extra-annotation: '@NotBlank(message = "Street field cannot be blank")'
+                city:
+                    type: string
+                    x-field-extra-annotation: '@NotBlank(message = "City field cannot be blank")'
+                state:
+                    type: string
+                    x-field-extra-annotation: '@NotBlank(message = "State field cannot be blank")'
+                zipCode:
+                    type: string
+                    pattern: "^[A-Za-z0-9\\-\\s]{3,12}$"
+                    x-field-extra-annotation: >-
+                        @NotBlank(message = "State field cannot be blank")
+                        @Pattern(regexp = "^[A-Za-z0-9\\-\\s]{3,12}$", message = "Zip code must be valid")
+                country:
+                    type: string
+                    x-field-extra-annotation: '@NotBlank(message = "Country field cannot be blank")'
+                addressType:
+                    $ref: "#/components/schemas/AddressTypeEnum"
+                userId:
+                    type: integer
+                    format: int64
+            required:
+                [street, city, state, zipCode, country, addressType, userId]
+        UpdateAddressRequest:
+            type: object
+            properties:
+                street:
+                    type: string
+                city:
+                    type: string
+                state:
+                    type: string
+                zipCode:
+                    type: string
+                country:
+                    type: string
+                addressType:
+                    $ref: "#/components/schemas/AddressTypeEnum"
+                userId:
+                    type: integer
+                    format: int64
+        ## ---- Appointment ----
+        AddAppointmentRequest:
+            type: object
+            properties:
+                name:
+                    type: string
+                    x-field-extra-annotation: '@NotBlank(message = "Name field cannot be blank")'
+                description:
+                    type: string
+                    x-field-extra-annotation: '@NotBlank(message = "Description field cannot be blank")'
+                date:
+                    type: string
+                    format: date-time
+                    x-field-extra-annotation: >-
+                        @Future(message = "Date must be in the future")
+                        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                duration:
+                    type: integer
+                    format: int32
+                    x-field-extra-annotation: >-
+                        @Min(value = 1, message = "Duration must be greater than 0")
+                        @Max(value = 7, message = "Duration must be less than 7")
+                userId:
+                    type: integer
+                    format: int64
+                categoryId:
+                    type: integer
+                    format: int64
+            required: [name, description, categoryId, date, userId]
+        UpdateAppointmentRequest:
+            type: object
+            properties:
+                name:
+                    type: string
+                description:
+                    type: string
+                duration:
+                    type: integer
+                    format: int32
+                    x-field-extra-annotation: >-
+                        @Min(value = 1, message = "Duration must be greater than 0")
+                        @Max(value = 7, message = "Duration must be less than 7")
+                date:
+                    type: string
+                    format: date-time
+                    x-field-extra-annotation: >-
+                        @Future(message = "Date must be in the future")
+                        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                categoryId:
+                    type: integer
+                    format: int64
+
+        ## ---- Invoice ----
+
+        ## ---- Security ----
+        RegisterRequest:
+            type: object
+            properties:
+                username:
+                    type: string
+                    x-field-extra-annotation: >-
+                        @NotBlank(message = "Username field cannot be blank")
+                password:
+                    type: string
+                    x-field-extra-annotation: >-
+                        @Password
+                        @NotBlank(message = "Password field cannot be blank")
+                firstName:
+                    type: string
+                    x-field-extra-annotation: >-
+                        @NotBlank(message = "First name field cannot be blank")
+                lastName:
+                    type: string
+                    x-field-extra-annotation: >-
+                        @NotBlank(message = "Last name field cannot be blank")
+                email:
+                    type: string
+                    x-field-extra-annotation: >-
+                        @NotBlank(message = "Email field cannot be blank")
+                        @Email(message = "Email field is not valid")
+            required: [username, password, firstName, lastName, email]
+        RegisterResponse:
+            type: object
+            properties:
+                userId:
+                    type: integer
+                    format: int64
+                response:
+                    type: string
+        LoginRequest:
+            type: object
+            properties:
+                username:
+                    type: string
+                    x-field-extra-annotation: >-
+                        @NotBlank(message = "Username field cannot be blank")
+                password:
+                    type: string
+                    x-field-extra-annotation: >-
+                        @NotBlank(message = "Password field cannot be blank")
+            required: [username, password]
+        LoginResponse:
+            type: object
+            properties:
+                jwt:
+                    type: string
+                refreshToken:
+                    type: string
+                userId:
+                    type: integer
+                    format: int64
+                role:
+                    $ref: "#/components/schemas/RoleEnum"
+        RefreshTokenRequest:
+            type: object
+            properties:
+                refreshToken:
+                    type: string
+                    x-field-extra-annotation: >-
+                        @NotBlank(message = "Refresh token is required")
+            required: [refreshToken]
+        ChangePasswordRequest:
+            type: object
+            properties:
+                oldPassword:
+                    type: string
+                    x-field-extra-annotation: >-
+                        @Password
+                        @NotBlank(message = "Password field cannot be blank")
+                newPassword:
+                    type: string
+                    x-field-extra-annotation: >-
+                        @Password
+                        @NotBlank(message = "Password field cannot be blank")
+            required: [oldPassword, newPassword]
+
+        # ---- Error messages ----
+        ErrorMessage:
+            type: object
+            properties:
+                timestamp:
+                    type: string
+                    format: date-time
+                status:
+                    type: integer
+                    format: int32
+                error:
+                    type: string
+                message:
+                    type: string
+                path:
+                    type: string
+        ValidationErrorMessage:
+            properties:
+                timestamp:
+                    type: string
+                    format: date-time
+                status:
+                    type: integer
+                    format: int32
+                error:
+                    type: string
+                messages:
+                    type: object
+                    additionalProperties:
+                        type: string
+                path:
+                    type: string
