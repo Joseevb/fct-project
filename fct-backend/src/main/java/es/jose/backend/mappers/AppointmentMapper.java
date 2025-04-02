@@ -9,10 +9,11 @@ import org.openapitools.model.AddAppointmentRequest;
 import org.openapitools.model.Appointment;
 import org.openapitools.model.UpdateAppointmentRequest;
 
+import es.jose.backend.mappers.util.MapperUtils;
 import es.jose.backend.persistence.entities.AppointmentEntity;
 
 @Mapper(componentModel = "spring")
-public interface AppointmentMapper {
+public interface AppointmentMapper extends MapperUtils {
 
     @Mapping(target = "userId", source = "user.id")
     @Mapping(target = "categoryId", source = "category.id")

@@ -2,11 +2,16 @@ package es.jose.backend.persistence.entities;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 import java.util.Objects;
 import java.util.stream.Stream;
 
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -29,23 +34,15 @@ import lombok.ToString;
 @Getter
 @Setter
 @Builder
-@ToString(exclude = { "invoice", "appointment" /* , "product", "course" */ })
+@ToString(exclude = { "invoice", /* "appointment" , "product", "course" */ })
 @NoArgsConstructor
 @AllArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 public class LineItemEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(name = "name", nullable = false, length = 50)
-    private String name;
-
-    @Column(name = "description", nullable = false, length = 500)
-    private String description;
-
-    @Column(name = "total_price", nullable = false, precision = 10, scale = 2)
-    private BigDecimal totalPrice;
 
     @Column(name = "subtotal", nullable = false, precision = 10, scale = 2)
     private BigDecimal subtotal;
@@ -72,6 +69,11 @@ public class LineItemEntity implements Serializable {
     // @ManyToOne(optional = true, fetch = FetchType.LAZY)
     // @JoinColumn(name = "course_id", nullable = true)
     // private CourseEntity course;
+
+    @Column(name = "created_at", nullable = false, updatable = false)
+    @Builder.Default
+    @CreatedDate
+    private OffsetDateTime createdAt = OffsetDateTime.now();
 
     @PrePersist
     @PreUpdate

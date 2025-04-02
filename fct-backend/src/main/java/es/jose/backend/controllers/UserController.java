@@ -38,15 +38,14 @@ public class UserController implements UserApi {
     }
 
     @Override
-    public ResponseEntity<User> deleteUser(Long id) {
-        // TODO Auto-generated method stub
-        return UserApi.super.deleteUser(id);
+    public ResponseEntity<Void> deleteUser(Long id) {
+        userService.deleteUser(id);
+        return ResponseEntity.noContent().build();
     }
 
     @Override
     public ResponseEntity<User> updateUser(Long id, @Valid UpdateUserRequest updateUserRequest) {
-        // TODO Auto-generated method stub
-        return UserApi.super.updateUser(id, updateUserRequest);
+        return ResponseEntity.ok(userService.updateUser(id, updateUserRequest));
     }
 
 }

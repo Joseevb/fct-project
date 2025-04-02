@@ -9,10 +9,11 @@ import org.openapitools.model.AddUserRequest;
 import org.openapitools.model.UpdateUserRequest;
 import org.openapitools.model.User;
 
+import es.jose.backend.mappers.util.MapperUtils;
 import es.jose.backend.persistence.entities.UserEntity;
 
 @Mapper(componentModel = "spring")
-public interface UserMapper {
+public interface UserMapper extends MapperUtils {
 
     User toDto(UserEntity user);
 

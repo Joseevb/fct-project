@@ -2,13 +2,16 @@ package es.jose.backend.persistence.entities;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 import org.openapitools.model.InvoiceStatusEnum;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -20,6 +23,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,7 +36,7 @@ import lombok.ToString;
 @Table(name = "invoices")
 @Getter
 @Setter
-@ToString
+@ToString(exclude = { "lineItems" })
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -49,25 +53,32 @@ public class InvoiceEntity {
     @Column(name = "notes", nullable = false, length = 500)
     private String notes;
 
-    @Column(name = "total_price", nullable = false, precision = 10, scale = 2)
-    private BigDecimal totalPrice;
-
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private UserEntity user;
 
     @Column(name = "status", nullable = false)
+    @Builder.Default
     @Enumerated(EnumType.STRING)
-    private InvoiceStatusEnum status;
+    private InvoiceStatusEnum status = InvoiceStatusEnum.WAITING;
+
+    @Builder.Default
+    @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private Set<LineItemEntity> lineItems = new HashSet<>();
+
+    @Column(name = "total_price", nullable = false, precision = 10, scale = 2)
+    @Builder.Default
+    private BigDecimal totalPrice = BigDecimal.ZERO;
 
     // --- Auditing Fields managed by Spring Data JPA ---
 
-    @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
-    private OffsetDateTime createdAt;
+    @Builder.Default
+    @CreatedDate
+    private OffsetDateTime createdAt = OffsetDateTime.now();
 
-    @LastModifiedDate
     @Column(name = "updated_at", nullable = true)
+    @LastModifiedDate
     private OffsetDateTime updatedAt;
 
     // --- Manually Implemented equals() and hashCode() for robustness ---

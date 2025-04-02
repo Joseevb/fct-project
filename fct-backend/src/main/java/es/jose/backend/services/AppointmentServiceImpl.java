@@ -6,9 +6,12 @@ import java.util.List;
 import org.openapitools.model.AddAppointmentRequest;
 import org.openapitools.model.Appointment;
 import org.openapitools.model.UpdateAppointmentRequest;
+import org.openapitools.model.UpdateAppointmentStatusRequest;
 import org.springframework.stereotype.Service;
 
+import es.jose.backend.exceptions.appointment.AppointmentNotFoundException;
 import es.jose.backend.mappers.AppointmentMapper;
+import es.jose.backend.persistence.entities.AppointmentEntity;
 import es.jose.backend.persistence.repositories.AppointmentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +38,13 @@ public class AppointmentServiceImpl implements AppointmentService {
     public Appointment getAppointmentById(Long id) {
         return appointmentRepository.findById(id)
                 .map(appointmentMapper::toDto)
-                .orElseThrow(() -> new IllegalArgumentException("Appointment not found"));
+                .orElseThrow(() -> new AppointmentNotFoundException("id", id.toString()));
+    }
+
+    @Override
+    public AppointmentEntity getAppointmentEntityById(Long id) {
+        return appointmentRepository.findById(id)
+                .orElseThrow(() -> new AppointmentNotFoundException("id", id.toString()));
     }
 
     @Override
@@ -43,7 +52,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         var entity = appointmentMapper.toEntity(appointment);
 
         var user = userService.getUserEntityById(appointment.userId());
-        var category = appointmentCategoryService.getAppointmentCategoryById(appointment.categoryId());
+        var category = appointmentCategoryService.getAppointmentCategoryEntityById(appointment.categoryId());
 
         var price = category.getQuotePerHour() * appointment.duration();
 
@@ -56,14 +65,25 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Override
     public Appointment updateAppointment(Long id, UpdateAppointmentRequest data) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'updateAppointment'");
+        return appointmentRepository.findById(id)
+                .map(a -> {
+                    appointmentMapper.updateEntity(data, a);
+                    return appointmentRepository.save(a);
+                })
+                .map(appointmentMapper::toDto)
+                .orElseThrow(() -> new AppointmentNotFoundException("id", id.toString()));
     }
 
     @Override
-    public Appointment changeAppointmentStatus(Long id, String status) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'changeAppointmentStatus'");
+    public Appointment changeAppointmentStatus(Long id, UpdateAppointmentStatusRequest data) {
+        return appointmentRepository.findById(id)
+                .map(appointment -> {
+                    appointment.setStatus(data.status());
+                    return appointment;
+                })
+                .map(appointmentRepository::save)
+                .map(appointmentMapper::toDto)
+                .orElseThrow(() -> new AppointmentNotFoundException("id", id.toString()));
     }
 
     @Override
@@ -72,7 +92,7 @@ public class AppointmentServiceImpl implements AppointmentService {
             appointmentRepository.deleteById(id);
             return;
         }
-        throw new IllegalArgumentException("Appointment not found");
+        throw new AppointmentNotFoundException("id", id.toString());
     }
 
 }

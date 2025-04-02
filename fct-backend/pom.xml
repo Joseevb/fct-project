@@ -207,7 +207,8 @@
                                 <delegatePattern>false</delegatePattern>
                                 <basePath>/api/v1</basePath>
                                 <requestMappingMode>api_interface</requestMappingMode>
-                                <immutable>true</immutable>
+                                <!-- NOTE Sadly this could not work as non-required fields in the models are also wrapped in an Optional<> -->
+                                <!-- <useOptional>true</useOptional> -->
                                 <additionalModelTypeAnnotations>
                                     <!-- @lombok.Data -->
                                     @lombok.Builder;

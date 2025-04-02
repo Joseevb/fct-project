@@ -4,8 +4,10 @@ import java.util.List;
 
 import org.openapitools.model.AddAppointmentRequest;
 import org.openapitools.model.Appointment;
-import org.openapitools.model.AppointmentStatusEnum;
 import org.openapitools.model.UpdateAppointmentRequest;
+import org.openapitools.model.UpdateAppointmentStatusRequest;
+
+import es.jose.backend.persistence.entities.AppointmentEntity;
 
 public interface AppointmentService {
 
@@ -13,11 +15,13 @@ public interface AppointmentService {
 
     Appointment getAppointmentById(Long id);
 
+    AppointmentEntity getAppointmentEntityById(Long id);
+
     Appointment createAppointment(AddAppointmentRequest appointment);
 
     Appointment updateAppointment(Long id, UpdateAppointmentRequest data);
 
-    Appointment changeAppointmentStatus(Long id, String status);
+    Appointment changeAppointmentStatus(Long id, UpdateAppointmentStatusRequest data);
 
     void deleteAppointment(Long id);
 
