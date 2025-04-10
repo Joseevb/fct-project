@@ -1,4 +1,4 @@
-openapi: 3.0.1
+openapi: 3.1.1
 info:
     title: REST API for the website of "Academia Fabiana Perez"
     description: REST API for the website of "Academia Fabiana Perez"
@@ -14,6 +14,14 @@ paths:
             operationId: getAllUsers
             tags:
                 - Users
+            parameters:
+                - name: usernameOrEmail
+                  in: query
+                  description: The username or email address to filter by.
+                  required: false
+                  schema:
+                      type: string
+                  example: "testuser@example.com"
             responses:
                 200:
                     description: Successful operation
@@ -23,31 +31,6 @@ paths:
                                 type: array
                                 items:
                                     $ref: "#/components/schemas/User"
-                                example:
-                                    [
-                                        {
-                                            id: 1,
-                                            username: "admin",
-                                            firstName: "Admin",
-                                            lastName: "Admin",
-                                            email: "admin@admin.com",
-                                            password: "admin",
-                                            createdAt: "2021-01-01T00:00:00.000Z",
-                                            updatedAt: "2021-01-01T00:00:00.000Z",
-                                            role: "ADMIN",
-                                        },
-                                        {
-                                            id: 2,
-                                            username: "user",
-                                            firstName: "User",
-                                            lastName: "User",
-                                            email: "user@user.com",
-                                            password: "user",
-                                            createdAt: "2021-01-01T00:00:00.000Z",
-                                            updatedAt: "2021-01-01T00:00:00.000Z",
-                                            role: "USER",
-                                        },
-                                    ]
         post:
             summary: Add a new user
             operationId: addUser
@@ -251,33 +234,6 @@ paths:
                                 type: array
                                 items:
                                     $ref: "#/components/schemas/Address"
-                                example:
-                                    [
-                                        {
-                                            id: 1,
-                                            street: "Av. Paulista",
-                                            city: "São Paulo",
-                                            state: "SP",
-                                            zipCode: "01310-000",
-                                            country: "Brazil",
-                                            addressType: "PRIMARY",
-                                            userId: 1,
-                                            createdAt: "2021-01-01T00:00:00.000Z",
-                                            updatedAt: "2021-01-01T00:00:00.000Z",
-                                        },
-                                        {
-                                            id: 2,
-                                            street: "Rua do Rio",
-                                            city: "São Paulo",
-                                            state: "SP",
-                                            zipCode: "01310-000",
-                                            country: "Brazil",
-                                            addressType: "SECONDARY",
-                                            userId: 1,
-                                            createdAt: "2021-01-01T00:00:00.000Z",
-                                            updatedAt: "2021-01-01T00:00:00.000Z",
-                                        },
-                                    ]
         post:
             summary: Add a new address
             operationId: addAddress
@@ -486,41 +442,6 @@ paths:
                                 type: array
                                 items:
                                     $ref: "#/components/schemas/Appointment"
-                                    example:
-                                        [
-                                            {
-                                                id: 1,
-                                                date: "2021-01-01T00:00:00.000Z",
-                                                duration: 1,
-                                                status: "WAITING",
-                                                description: "Appointment description",
-                                                category:
-                                                    {
-                                                        id: 1,
-                                                        name: "Category name",
-                                                        quotePerHour: 1,
-                                                    },
-                                                price: 1,
-                                                createdAt: "2021-01-01T00:00:00.000Z",
-                                                updatedAt: "2021-01-01T00:00:00.000Z",
-                                            },
-                                            {
-                                                id: 2,
-                                                date: "2021-01-01T00:00:00.000Z",
-                                                duration: 1,
-                                                status: "ACCEPTED",
-                                                description: "Appointment description",
-                                                category:
-                                                    {
-                                                        id: 1,
-                                                        name: "Category name",
-                                                        quotePerHour: 1,
-                                                    },
-                                                price: 1,
-                                                createdAt: "2021-01-01T00:00:00.000",
-                                                updatedAt: "2021-01-01T00:00:00.000Z",
-                                            },
-                                        ]
         post:
             summary: Add a new appointment
             operationId: addAppointment
@@ -751,6 +672,22 @@ paths:
                         application/json:
                             schema:
                                 $ref: "#/components/schemas/ErrorMessage"
+    /appointment/days:
+        get:
+            summary: Gets all days with appointments from the current date
+            operationId: getAllDaysWithAppointments
+            tags:
+                - Appointments
+            responses:
+                200:
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    type: string
+                                    format: date
 
     /appointmentCategory:
         get:
@@ -960,31 +897,6 @@ paths:
                                 type: array
                                 items:
                                     $ref: "#/components/schemas/Invoice"
-                                    example:
-                                        [
-                                            {
-                                                id: 1,
-                                                status: "WAITING",
-                                                description: "Invoice description",
-                                                paymentMethod: "Payment method",
-                                                notes: "Invoice notes",
-                                                totalPrice: 1,
-                                                userId: 1,
-                                                createdAt: "2021-01-01T00:00:00.000Z",
-                                                updatedAt: "2021-01-01T00:00:00.000Z",
-                                            },
-                                            {
-                                                id: 2,
-                                                status: "PAID",
-                                                description: "Invoice description",
-                                                paymentMethod: "Payment method",
-                                                notes: "Invoice notes",
-                                                totalPrice: 1,
-                                                userId: 1,
-                                                createdAt: "2021-01-01T00:00:00.000Z",
-                                                updatedAt: "2021-01-01T00:00:00.000Z",
-                                            },
-                                        ]
         post:
             summary: Add a new invoice
             operationId: addInvoice
@@ -1176,25 +1088,6 @@ paths:
                                 type: array
                                 items:
                                     $ref: "#/components/schemas/LineItem"
-                                    example:
-                                        [
-                                            {
-                                                id: 1,
-                                                subtotal: 1,
-                                                quantity: 1,
-                                                appointment: 1,
-                                                invoiceId:1,
-                                                createdAt: "2021-01-01T00:00:00.000Z",
-                                            },
-                                            {
-                                                id: 2,
-                                                subtotal: 2,
-                                                quantity: 2,
-                                                appointment: 2,
-                                                invoiceId:1,
-                                                createdAt: "2021-01-01T00:00:00.000Z",
-                                            },
-                                        ]
                 401:
                     description: Unauthorized
                     content:
@@ -1225,8 +1118,6 @@ paths:
                     application/json:
                         schema:
                             $ref: "#/components/schemas/AddLineItemRequest"
-                            example:
-                                { quantity: 1, appointmentId: 1, invoiceId: 1 }
             responses:
                 201:
                     description: Successful operation
@@ -1315,6 +1206,128 @@ paths:
                                 $ref: "#/components/schemas/ErrorMessage"
                 403:
                     description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+    /auth/login:
+        post:
+            summary: User login
+            description: Authenticates a user and returns a JWT access token.
+            operationId: login
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/LoginRequest"
+            responses:
+                200:
+                    description: Login successful
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/LoginResponse"
+                400:
+                    description: Invalid login request
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ValidationErrorMessage"
+                401:
+                    description: Invalid username or password
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+    /auth/register:
+        post:
+            summary: User registration
+            description: Registers a new user and returns their details.
+            operationId: register
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/RegisterRequest"
+            responses:
+                201:
+                    description: User successfully registered
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/RegisterResponse"
+                400:
+                    description: Invalid request body
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ValidationErrorMessage"
+                409:
+                    description: User already exists
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+    /auth/refresh:
+        post:
+            summary: Refresh session
+            description: Refreshes the authentication token using a refresh token.
+            operationId: refreshSession
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/RefreshTokenRequest"
+            responses:
+                200:
+                    description: Token refreshed successfully
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/LoginResponse"
+                400:
+                    description: Invalid refresh token
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ValidationErrorMessage"
+                401:
+                    description: Expired or invalid refresh token
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+    /auth/verify:
+        get:
+            summary: Verify email
+            description: Verifies the email of a user.
+            operationId: verifyEmail
+            parameters:
+                - name: token
+                  in: query
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                200:
+                    description: Email verified successfully
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                additionalProperties:
+                                    type: string
+                400:
+                    description: Invalid token
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                401:
+                    description: Invalid token
                     content:
                         application/json:
                             schema:
@@ -1518,6 +1531,9 @@ components:
                     type: integer
                     format: int32
                 appointmentId:
+                    type: integer
+                    format: int64
+                productId:
                     type: integer
                     format: int64
                 invoiceId:
@@ -1730,12 +1746,15 @@ components:
             type: object
             # x-class-extra-annotation: '@ExactlyOneIdPresent(fields = { "appointmentId", "productId", "courseId" })'
             # TODO Add the rest of the fields once the classes have been created
-            x-class-extra-annotation: '@ExactlyOneIdPresent(fields = { "appointmentId"})'
+            x-class-extra-annotation: '@ExactlyOneIdPresent(fields = { "appointmentId", "productId"})'
             properties:
                 quantity:
                     type: integer
                     format: int32
                 appointmentId:
+                    type: integer
+                    format: int64
+                productId:
                     type: integer
                     format: int64
                 invoiceId:
@@ -1778,6 +1797,7 @@ components:
                     format: int64
                 response:
                     type: string
+            required: [userId, response]
         LoginRequest:
             type: object
             properties:
@@ -1802,6 +1822,7 @@ components:
                     format: int64
                 role:
                     $ref: "#/components/schemas/RoleEnum"
+            required: [jwt, refreshToken, userId, role]
         RefreshTokenRequest:
             type: object
             properties:

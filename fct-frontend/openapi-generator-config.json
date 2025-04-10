@@ -1,0 +1,9 @@
+{
+    "allowUnicodeIdentifiers": true,
+    "enumPropertyNaming": "UPPERCASE",
+    "supportsES6": true,
+    "withInterfaces": true,
+    "withSeparateModelsAndApi": true,
+    "apiPackage": "api",
+    "modelPackage": "models"
+}

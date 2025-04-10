@@ -1,7 +1,9 @@
 package es.jose.backend.services;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.openapitools.model.AddUserRequest;
 import org.openapitools.model.UpdateUserRequest;
@@ -27,11 +29,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<User> getAllUsers() {
-        return userRepository.findAll()
-                .stream()
+    public List<User> getAllUsers(Optional<String> usernameOrEmail) {
+        return usernameOrEmail
+                .flatMap(userRepository::findByUsernameOrEmail)
                 .map(userMapper::toDto)
-                .toList();
+                .map(Collections::singletonList)
+                .orElseGet(() -> userRepository.findAll()
+                        .stream()
+                        .map(userMapper::toDto)
+                        .collect(Collectors.toList()));
     }
 
     @Override

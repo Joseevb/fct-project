@@ -1,6 +1,7 @@
 package es.jose.backend.services;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.openapitools.model.AddUserRequest;
 import org.openapitools.model.RegisterRequest;
@@ -12,7 +13,7 @@ import es.jose.backend.persistence.entities.UserEntity;
 
 public interface UserService {
 
-    List<User> getAllUsers();
+    List<User> getAllUsers(Optional<String> usernameOrEmail);
 
     User getUserById(Long id);
 

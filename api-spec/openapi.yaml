@@ -22,15 +22,15 @@ paths:
                   schema:
                       type: string
                   example: "testuser@example.com"
-                  responses:
-                      200:
-                          description: Successful operation
-                          content:
-                              application/json:
-                                  schema:
-                                      type: array
-                                      items:
-                                          $ref: "#/components/schemas/User"
+            responses:
+                200:
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: "#/components/schemas/User"
         post:
             summary: Add a new user
             operationId: addUser
@@ -1797,6 +1797,7 @@ components:
                     format: int64
                 response:
                     type: string
+            required: [userId, response]
         LoginRequest:
             type: object
             properties:
@@ -1821,6 +1822,7 @@ components:
                     format: int64
                 role:
                     $ref: "#/components/schemas/RoleEnum"
+            required: [jwt, refreshToken, userId, role]
         RefreshTokenRequest:
             type: object
             properties:

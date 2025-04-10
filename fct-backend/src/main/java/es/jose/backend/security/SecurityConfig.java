@@ -46,6 +46,7 @@ public class SecurityConfig {
     private static final String BASE_PATH = "/api/v1";
 
     private static final String[] ALLOWED_PATHS = {
+            "/h2-console/**",
             "/api/v1/auth/**",
             "/api/v1/error/**",
             "/error/**",
@@ -67,6 +68,7 @@ public class SecurityConfig {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)
+                .headers(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.GET, BASE_PATH.concat("/user/**")).permitAll()
                         .requestMatchers(ALLOWED_PATHS).permitAll()

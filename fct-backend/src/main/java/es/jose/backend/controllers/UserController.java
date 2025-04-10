@@ -1,6 +1,7 @@
 package es.jose.backend.controllers;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.openapitools.api.UserApi;
 import org.openapitools.model.AddUserRequest;
@@ -21,8 +22,8 @@ public class UserController implements UserApi {
     private final UserService userService;
 
     @Override
-    public ResponseEntity<List<User>> getAllUsers() {
-        return ResponseEntity.ok(userService.getAllUsers());
+    public ResponseEntity<List<User>> getAllUsers(@Valid String usernameOrEmail) {
+        return ResponseEntity.ok(userService.getAllUsers(Optional.ofNullable(usernameOrEmail)));
     }
 
     @Override
