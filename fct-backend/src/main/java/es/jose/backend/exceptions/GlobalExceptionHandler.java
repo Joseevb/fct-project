@@ -11,6 +11,10 @@ import org.openapitools.model.ValidationErrorMessage;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.LockedException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
@@ -83,6 +87,27 @@ public class GlobalExceptionHandler {
                         .build());
     }
 
+    @ExceptionHandler(LockedException.class)
+    public ResponseEntity<ErrorMessage> handleLockedException(LockedException e, HttpServletRequest request) {
+        return buildAuthenticationErrorResponse("Your account is locked. Please contact support.", request);
+    }
+
+    @ExceptionHandler(DisabledException.class)
+    public ResponseEntity<ErrorMessage> handleDisabledException(DisabledException e, HttpServletRequest request) {
+        return buildAuthenticationErrorResponse("Your account is disabled.", request);
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ErrorMessage> handleBadCredentials(BadCredentialsException e, HttpServletRequest request) {
+        return buildAuthenticationErrorResponse("Invalid username or password.", request);
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ErrorMessage> handleAuthenticationException(AuthenticationException e,
+            HttpServletRequest request) {
+        return buildAuthenticationErrorResponse("Authentication failed. Please try again.", request);
+    }
+
     private <T> ResponseEntity<ValidationErrorMessage> buildValidationErrorResponse(Map<String, String> errors,
             HttpServletRequest request) {
         var res = ValidationErrorMessage.builder()
@@ -93,6 +118,10 @@ public class GlobalExceptionHandler {
                 .path(request.getRequestURI())
                 .build();
         return ResponseEntity.badRequest().body(res);
+    }
+
+    private ResponseEntity<ErrorMessage> buildAuthenticationErrorResponse(String error, HttpServletRequest request) {
+        return buildErrorResponse(error, "Authentication Failed", request, HttpStatus.UNAUTHORIZED);
     }
 
 }

@@ -32,3 +32,27 @@ spring:
         init:
             mode: always
             platform: h2
+
+    mail:
+        host: smtp.gmail.com
+        port: 587
+        username: joseevasquezbarboza@gmail.com
+        password: jxtn qtiy crkt latz
+        properties:
+            mail:
+                smtp:
+                    auth: true
+                    starttls:
+                        enable: true
+
+rsa:
+    private-key: classpath:certs/private-key.pem
+    public-key: classpath:certs/public-key.pem
+
+app:
+    jwt:
+        expiration-minutes: 120
+    refresh-token:
+        expiration-days: 7
+    verification:
+        expiration: 120

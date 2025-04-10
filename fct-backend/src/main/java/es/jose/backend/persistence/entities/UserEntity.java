@@ -81,6 +81,10 @@ public class UserEntity implements Serializable {
     @Enumerated(EnumType.STRING)
     private RoleEnum role;
 
+    @Column(name = "is_active", nullable = false)
+    @Builder.Default
+    private Boolean isActive = false;
+
     // --- Auditing Fields managed by Spring Data JPA ---
 
     @Column(name = "created_at", nullable = false, updatable = false)

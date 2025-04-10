@@ -1,5 +1,6 @@
 package es.jose.backend.controllers;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.openapitools.api.AppointmentApi;
@@ -57,6 +58,11 @@ public class AppointmentController implements AppointmentApi {
     public ResponseEntity<Appointment> updateAppointmentStatus(Long id,
             @Valid UpdateAppointmentStatusRequest updateAppointmentStatusRequest) {
         return ResponseEntity.ok(appointmentService.changeAppointmentStatus(id, updateAppointmentStatusRequest));
+    }
+
+    @Override
+    public ResponseEntity<List<LocalDate>> getAllDaysWithAppointments() {
+        return ResponseEntity.ok(appointmentService.getAllDaysWithAppointments());
     }
 
 }

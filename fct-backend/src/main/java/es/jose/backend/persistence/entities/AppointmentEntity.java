@@ -32,7 +32,7 @@ import lombok.ToString;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AppointmentEntity {
+public final class AppointmentEntity implements LineItemable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -8,6 +8,7 @@ import org.openapitools.model.UpdateUserRequest;
 import org.openapitools.model.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import es.jose.backend.exceptions.user.UserAlreadyExistsException;
 import es.jose.backend.exceptions.user.UserNotFoundException;
@@ -25,6 +26,7 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
+    @Transactional(readOnly = true)
     public List<User> getAllUsers() {
         return userRepository.findAll()
                 .stream()
@@ -33,6 +35,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public User getUserById(Long id) {
         return userRepository.findById(id)
                 .map(userMapper::toDto)
@@ -40,6 +43,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public User getUserByUsername(String username) {
         return userRepository.findByUsername(username)
                 .map(userMapper::toDto)
@@ -47,6 +51,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public User getUserByEmail(String email) {
         return userRepository.findByEmail(email)
                 .map(userMapper::toDto)
@@ -54,12 +59,22 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public User getUserByUsernameOrEmail(String usernameOrEmail) {
+        return userRepository.findByUsernameOrEmail(usernameOrEmail)
+                .map(userMapper::toDto)
+                .orElseThrow(() -> new UserNotFoundException("Username or email", usernameOrEmail));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public UserEntity getUserEntityById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("id", id.toString()));
     }
 
     @Override
+    @Transactional
     public User createUser(AddUserRequest user) {
         return Optional.of(user)
                 .filter(this::isUserUnique)
@@ -72,11 +87,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public User updateUser(Long id, UpdateUserRequest user) {
         return userRepository.findById(id)
                 .map(u -> {
                     userMapper.updateEntity(user, u);
-                    return userRepository.save(u);
+                    return u;
                 })
                 .map(userRepository::save)
                 .map(userMapper::toDto)
@@ -84,17 +100,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void deleteUser(Long id) {
-        if (userRepository.existsById(id)) {
+        if (userRepository.existsById(id))
             userRepository.deleteById(id);
-            return;
-        }
-        throw new UserNotFoundException("id", id.toString());
+
+        else
+            throw new UserNotFoundException("id", id.toString());
     }
 
     private boolean isUserUnique(AddUserRequest user) {
-        return userRepository.findByEmail(user.email()).isEmpty()
-                && userRepository.findByUsername(user.username()).isEmpty();
+        return !userRepository.existsByEmailOrUsername(user.email(), user.username());
     }
 
     private UserEntity encryptPassword(UserEntity user) {

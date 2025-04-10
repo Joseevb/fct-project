@@ -1,5 +1,6 @@
 package es.jose.backend.services;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.openapitools.model.AddAppointmentRequest;
@@ -22,6 +23,8 @@ public interface AppointmentService {
     Appointment updateAppointment(Long id, UpdateAppointmentRequest data);
 
     Appointment changeAppointmentStatus(Long id, UpdateAppointmentStatusRequest data);
+
+    List<LocalDate> getAllDaysWithAppointments();
 
     void deleteAppointment(Long id);
 

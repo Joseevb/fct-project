@@ -10,8 +10,10 @@ import org.openapitools.model.RoleEnum;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 
+import es.jose.backend.config.RsaKeyConfigProperties;
 import es.jose.backend.persistence.entities.AppointmentCategoryEntity;
 import es.jose.backend.persistence.entities.AppointmentEntity;
 import es.jose.backend.persistence.entities.UserEntity;
@@ -21,6 +23,7 @@ import es.jose.backend.persistence.repositories.UserRepository;
 import es.jose.backend.services.InvoiceService;
 
 @SpringBootApplication
+@EnableConfigurationProperties(RsaKeyConfigProperties.class)
 public class FctBackendApplication {
 
     public static void main(String[] args) {
@@ -39,6 +42,7 @@ public class FctBackendApplication {
                             .email("admin@admin.com")
                             .firstName("admin")
                             .lastName("admin")
+                            .isActive(true)
                             .build(),
                     UserEntity.builder()
                             .username("user")
@@ -47,6 +51,7 @@ public class FctBackendApplication {
                             .email("user@user.com")
                             .firstName("user")
                             .lastName("user")
+                            .isActive(true)
                             .build());
             userRepository.saveAll(users);
 

@@ -1,4 +1,4 @@
-openapi: 3.0.1
+openapi: 3.1.1
 info:
     title: REST API for the website of "Academia Fabiana Perez"
     description: REST API for the website of "Academia Fabiana Perez"
@@ -14,40 +14,23 @@ paths:
             operationId: getAllUsers
             tags:
                 - Users
-            responses:
-                200:
-                    description: Successful operation
-                    content:
-                        application/json:
-                            schema:
-                                type: array
-                                items:
-                                    $ref: "#/components/schemas/User"
-                                example:
-                                    [
-                                        {
-                                            id: 1,
-                                            username: "admin",
-                                            firstName: "Admin",
-                                            lastName: "Admin",
-                                            email: "admin@admin.com",
-                                            password: "admin",
-                                            createdAt: "2021-01-01T00:00:00.000Z",
-                                            updatedAt: "2021-01-01T00:00:00.000Z",
-                                            role: "ADMIN",
-                                        },
-                                        {
-                                            id: 2,
-                                            username: "user",
-                                            firstName: "User",
-                                            lastName: "User",
-                                            email: "user@user.com",
-                                            password: "user",
-                                            createdAt: "2021-01-01T00:00:00.000Z",
-                                            updatedAt: "2021-01-01T00:00:00.000Z",
-                                            role: "USER",
-                                        },
-                                    ]
+            parameters:
+                - name: usernameOrEmail
+                  in: query
+                  description: The username or email address to filter by.
+                  required: false
+                  schema:
+                      type: string
+                  example: "testuser@example.com"
+                  responses:
+                      200:
+                          description: Successful operation
+                          content:
+                              application/json:
+                                  schema:
+                                      type: array
+                                      items:
+                                          $ref: "#/components/schemas/User"
         post:
             summary: Add a new user
             operationId: addUser
@@ -251,33 +234,6 @@ paths:
                                 type: array
                                 items:
                                     $ref: "#/components/schemas/Address"
-                                example:
-                                    [
-                                        {
-                                            id: 1,
-                                            street: "Av. Paulista",
-                                            city: "São Paulo",
-                                            state: "SP",
-                                            zipCode: "01310-000",
-                                            country: "Brazil",
-                                            addressType: "PRIMARY",
-                                            userId: 1,
-                                            createdAt: "2021-01-01T00:00:00.000Z",
-                                            updatedAt: "2021-01-01T00:00:00.000Z",
-                                        },
-                                        {
-                                            id: 2,
-                                            street: "Rua do Rio",
-                                            city: "São Paulo",
-                                            state: "SP",
-                                            zipCode: "01310-000",
-                                            country: "Brazil",
-                                            addressType: "SECONDARY",
-                                            userId: 1,
-                                            createdAt: "2021-01-01T00:00:00.000Z",
-                                            updatedAt: "2021-01-01T00:00:00.000Z",
-                                        },
-                                    ]
         post:
             summary: Add a new address
             operationId: addAddress
@@ -486,41 +442,6 @@ paths:
                                 type: array
                                 items:
                                     $ref: "#/components/schemas/Appointment"
-                                    example:
-                                        [
-                                            {
-                                                id: 1,
-                                                date: "2021-01-01T00:00:00.000Z",
-                                                duration: 1,
-                                                status: "WAITING",
-                                                description: "Appointment description",
-                                                category:
-                                                    {
-                                                        id: 1,
-                                                        name: "Category name",
-                                                        quotePerHour: 1,
-                                                    },
-                                                price: 1,
-                                                createdAt: "2021-01-01T00:00:00.000Z",
-                                                updatedAt: "2021-01-01T00:00:00.000Z",
-                                            },
-                                            {
-                                                id: 2,
-                                                date: "2021-01-01T00:00:00.000Z",
-                                                duration: 1,
-                                                status: "ACCEPTED",
-                                                description: "Appointment description",
-                                                category:
-                                                    {
-                                                        id: 1,
-                                                        name: "Category name",
-                                                        quotePerHour: 1,
-                                                    },
-                                                price: 1,
-                                                createdAt: "2021-01-01T00:00:00.000",
-                                                updatedAt: "2021-01-01T00:00:00.000Z",
-                                            },
-                                        ]
         post:
             summary: Add a new appointment
             operationId: addAppointment
@@ -976,31 +897,6 @@ paths:
                                 type: array
                                 items:
                                     $ref: "#/components/schemas/Invoice"
-                                    example:
-                                        [
-                                            {
-                                                id: 1,
-                                                status: "WAITING",
-                                                description: "Invoice description",
-                                                paymentMethod: "Payment method",
-                                                notes: "Invoice notes",
-                                                totalPrice: 1,
-                                                userId: 1,
-                                                createdAt: "2021-01-01T00:00:00.000Z",
-                                                updatedAt: "2021-01-01T00:00:00.000Z",
-                                            },
-                                            {
-                                                id: 2,
-                                                status: "PAID",
-                                                description: "Invoice description",
-                                                paymentMethod: "Payment method",
-                                                notes: "Invoice notes",
-                                                totalPrice: 1,
-                                                userId: 1,
-                                                createdAt: "2021-01-01T00:00:00.000Z",
-                                                updatedAt: "2021-01-01T00:00:00.000Z",
-                                            },
-                                        ]
         post:
             summary: Add a new invoice
             operationId: addInvoice
@@ -1192,25 +1088,6 @@ paths:
                                 type: array
                                 items:
                                     $ref: "#/components/schemas/LineItem"
-                                    example:
-                                        [
-                                            {
-                                                id: 1,
-                                                subtotal: 1,
-                                                quantity: 1,
-                                                appointment: 1,
-                                                invoiceId:1,
-                                                createdAt: "2021-01-01T00:00:00.000Z",
-                                            },
-                                            {
-                                                id: 2,
-                                                subtotal: 2,
-                                                quantity: 2,
-                                                appointment: 2,
-                                                invoiceId:1,
-                                                createdAt: "2021-01-01T00:00:00.000Z",
-                                            },
-                                        ]
                 401:
                     description: Unauthorized
                     content:
@@ -1241,8 +1118,6 @@ paths:
                     application/json:
                         schema:
                             $ref: "#/components/schemas/AddLineItemRequest"
-                            example:
-                                { quantity: 1, appointmentId: 1, invoiceId: 1 }
             responses:
                 201:
                     description: Successful operation

@@ -62,9 +62,9 @@ public class LineItemEntity implements Serializable {
     private AppointmentEntity appointment;
 
     // --- Placeholders for future relationships ---
-    // @ManyToOne(optional = true, fetch = FetchType.LAZY)
-    // @JoinColumn(name = "product_id", nullable = true)
-    // private ProductEntity product;
+    @ManyToOne(optional = true, fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id", nullable = true)
+    private ProductEntity product;
     //
     // @ManyToOne(optional = true, fetch = FetchType.LAZY)
     // @JoinColumn(name = "course_id", nullable = true)
@@ -93,7 +93,7 @@ public class LineItemEntity implements Serializable {
     @Transient
     private long countPresentRelationships() {
         // !! IMPORTANT: Update when product and course entities/fields are added !!
-        return Stream.of(appointment /* , product, course */)
+        return Stream.of(appointment, product /* , course */)
                 .filter(Objects::nonNull)
                 .count();
     }

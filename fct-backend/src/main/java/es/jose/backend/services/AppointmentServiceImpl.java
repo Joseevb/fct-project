@@ -1,6 +1,8 @@
 package es.jose.backend.services;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 import org.openapitools.model.AddAppointmentRequest;
@@ -84,6 +86,15 @@ public class AppointmentServiceImpl implements AppointmentService {
                 .map(appointmentRepository::save)
                 .map(appointmentMapper::toDto)
                 .orElseThrow(() -> new AppointmentNotFoundException("id", id.toString()));
+    }
+
+    @Override
+    public List<LocalDate> getAllDaysWithAppointments() {
+        return getAllAppointments().stream()
+                .map(Appointment::date)
+                .map(OffsetDateTime::toLocalDate)
+                .distinct()
+                .toList();
     }
 
     @Override
