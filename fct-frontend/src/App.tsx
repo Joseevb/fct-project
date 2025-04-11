@@ -15,11 +15,8 @@ export default function App() {
         <ThemeProvider defaultTheme="dark" storageKey="theme">
             <BrowserRouter>
                 <Header />
-
                 <Routes>
-                    {["/", "/home", "/index"].map((path, idx) => (
-                        <Route key={idx} path={path} element={<HomePage />} />
-                    ))}
+                    <Route path="/" element={<HomePage />} />
                     <Route path="/login" element={<AuthPage />} />
                 </Routes>
                 <Toaster />
@@ -27,3 +24,10 @@ export default function App() {
         </ThemeProvider>
     );
 }
+
+/**
+ * 
+                    {["/", "/home", "/index"].map((path, idx) => (
+                        <Route key={idx} path={path} element={<HomePage />} />
+                    ))}
+ */

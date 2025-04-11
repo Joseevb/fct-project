@@ -24,6 +24,7 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form";
+import RouterLogger from "@/components/RouterLogger";
 
 const formSchema = z.object({
     username: z
@@ -55,19 +56,18 @@ export default function LoginPage() {
         resolver: zodResolver(formSchema),
     });
 
-    const handleSubmit = async (e: z.infer<typeof formSchema>) => {
+    const onSubmit = async (data: z.infer<typeof formSchema>) => {
         setError("");
         setIsLoading(true);
 
         try {
-            await login(e.username, e.password);
+            await login(data.username, data.password);
 
             // Navigate to the page they were trying to access
             navigate(from, { replace: true });
         } catch (err: unknown) {
-            console.log("Error", err);
-
             if (err instanceof AxiosError) {
+                console.log("Error", err.response);
                 setError(
                     err.response?.data?.message ||
                     "Login failed. Please check your credentials.",
@@ -82,6 +82,7 @@ export default function LoginPage() {
 
     return (
         <Card className="w-full max-w-md">
+            <RouterLogger componentName="Login Page" />
             <CardHeader>
                 <CardTitle>Iniciar Sesión</CardTitle>
                 <CardDescription>
@@ -89,7 +90,7 @@ export default function LoginPage() {
                 </CardDescription>
             </CardHeader>
             <Form {...form}>
-                <form onSubmit={form.handleSubmit(handleSubmit)}>
+                <form onSubmit={form.handleSubmit(onSubmit)} method="post">
                     <CardContent className="space-y-4">
                         {error && (
                             <Alert variant="destructive">

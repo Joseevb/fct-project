@@ -47,6 +47,8 @@ export default function AuthProvider({
 	const logout = () => {
 		authService.logout();
 		setUser(null);
+		// Redirect to login page or update state as needed
+		window.location.href = "/";
 	};
 
 	const value = {

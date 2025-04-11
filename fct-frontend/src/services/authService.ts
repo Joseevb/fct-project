@@ -138,8 +138,6 @@ export default class AuthService {
         localStorage.removeItem(this.tokenKey);
         localStorage.removeItem(this.refreshTokenKey);
         localStorage.removeItem(this.userIdKey);
-        // Redirect to login page or update state as needed
-        window.location.href = "/";
     }
 
     // Check if user is authenticated
