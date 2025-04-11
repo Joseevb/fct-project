@@ -5,6 +5,7 @@ import HomePage from "@/components/pages/HomePage";
 import { ThemeProvider } from "@/components/theme-provider";
 import AuthPage from "@/components/pages/AuthPage";
 import { useAuth } from "@/hooks/useAuth";
+import ScrollToHashElement from "@cascadia-code/scroll-to-hash-element";
 
 export default function App() {
     const { user } = useAuth();
@@ -15,7 +16,11 @@ export default function App() {
         <ThemeProvider defaultTheme="dark" storageKey="theme">
             <BrowserRouter>
                 <Header />
+                <ScrollToHashElement behavior="smooth" />
                 <Routes>
+                    {["/", "/home", "/index"].map((path, idx) => (
+                        <Route key={idx} path={path} element={<HomePage />} />
+                    ))}
                     <Route path="/" element={<HomePage />} />
                     <Route path="/login" element={<AuthPage />} />
                 </Routes>
@@ -24,10 +29,3 @@ export default function App() {
         </ThemeProvider>
     );
 }
-
-/**
- * 
-                    {["/", "/home", "/index"].map((path, idx) => (
-                        <Route key={idx} path={path} element={<HomePage />} />
-                    ))}
- */

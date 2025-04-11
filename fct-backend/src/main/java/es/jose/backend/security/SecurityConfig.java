@@ -58,6 +58,12 @@ public class SecurityConfig {
             "/swagger-ui/**",
             "/v3/api-docs/**" };
 
+    private static final String[] ALLOWED_ORIGINS = {
+            "http://localhost:5173",
+            "http://localhost:4173",
+            "http://localhost",
+    };
+
     @Bean
     public AuthenticationManager authManager() {
         var authProvider = new DaoAuthenticationProvider();
@@ -69,7 +75,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:5173")); // Add allowed origins
+        configuration.setAllowedOrigins(List.of(ALLOWED_ORIGINS)); // Add allowed origins
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE")); // Add allowed methods
         configuration.setAllowedHeaders(List.of("*")); // Add allowed headers, or specify them as needed
         configuration.setAllowCredentials(true); // Enable sending credentials (cookies, etc.)

@@ -1,30 +1,56 @@
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import { toast } from "sonner";
-import RouterLogger from "../RouterLogger";
+import Hero from "@/components/ui/Hero";
+import AboutPage from "@/components/pages/AboutPage";
+import useScrollDirection from "@/hooks/useScrollDirection";
+import { useEffect, useRef } from "react";
 
 export default function HomePage() {
-	const [date, setDate] = useState<Date | undefined>(new Date());
+    const { direction } = useScrollDirection();
+    const aboutSectionRef = useRef<HTMLDivElement>(null);
+    const heroSectionRef = useRef<HTMLDivElement>(null);
+    const isScrolling = useRef(false);
 
-	const handleDateSelection = () => {
-		toast.success("Date saved: ", {
-			description: `Date selected: ${date?.toLocaleDateString("es")}`,
-			richColors: true,
-		});
-	};
+    useEffect(() => {
+        const handleScrollNavigation = () => {
+            if (isScrolling.current) return;
 
-	return (
-		<div className="flex flex-col items-center justify-center min-h-dvh">
-			<RouterLogger componentName="Home" />
-			<Calendar
-				mode="single"
-				selected={date}
-				onSelect={setDate}
-				className="rounded-md border shadow"
-				initialFocus
-			/>
-			<Button onClick={handleDateSelection}>Click me</Button>
-		</div>
-	);
+            isScrolling.current = true;
+
+            if (direction === "down" && aboutSectionRef.current) {
+                aboutSectionRef.current.scrollIntoView({
+                    behavior: "smooth",
+                });
+                window.history.pushState(null, "", "/#about");
+            } else if (direction === "up" && heroSectionRef.current) {
+                heroSectionRef.current.scrollIntoView({
+                    behavior: "smooth",
+                });
+                window.history.pushState(null, "", "/");
+            }
+
+            // Reset after scroll completes
+            setTimeout(() => {
+                isScrolling.current = false;
+            }, 1000);
+        };
+
+        handleScrollNavigation();
+    }, [direction]);
+
+    // Handle initial hash URL
+    useEffect(() => {
+        if (window.location.hash === "#about" && aboutSectionRef.current) {
+            aboutSectionRef.current.scrollIntoView();
+        }
+    }, []);
+
+    return (
+        <main className="min-h-dvh">
+            <div ref={heroSectionRef}>
+                <Hero />
+            </div>
+            <div ref={aboutSectionRef} id="about">
+                <AboutPage />
+            </div>
+        </main>
+    );
 }
