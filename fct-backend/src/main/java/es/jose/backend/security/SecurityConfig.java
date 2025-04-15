@@ -1,6 +1,15 @@
 package es.jose.backend.security;
 
-import java.util.List;
+import com.nimbusds.jose.jwk.JWKSet;
+import com.nimbusds.jose.jwk.RSAKey;
+import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
+import com.nimbusds.jose.jwk.source.JWKSource;
+import com.nimbusds.jose.proc.SecurityContext;
+
+import es.jose.backend.config.RsaKeyConfigProperties;
+import es.jose.backend.services.security.UserSecurityService;
+
+import lombok.RequiredArgsConstructor;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,15 +37,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
-import com.nimbusds.jose.jwk.JWKSet;
-import com.nimbusds.jose.jwk.RSAKey;
-import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
-import com.nimbusds.jose.jwk.source.JWKSource;
-import com.nimbusds.jose.proc.SecurityContext;
-
-import es.jose.backend.config.RsaKeyConfigProperties;
-import es.jose.backend.services.security.UserSecurityService;
-import lombok.RequiredArgsConstructor;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -51,17 +52,17 @@ public class SecurityConfig {
     private static final String BASE_PATH = "/api/v1";
 
     private static final String[] ALLOWED_PATHS = {
-            "/h2-console/**",
-            "/api/v1/auth/**",
-            "/api/v1/error/**",
-            "/error/**",
-            "/swagger-ui/**",
-            "/v3/api-docs/**" };
+        "/h2-console/**",
+        "/api/v1/auth/**",
+        "/api/v1/error/**",
+        "/api/v1/auth",
+        "/error/**",
+        "/swagger-ui/**",
+        "/v3/api-docs/**"
+    };
 
     private static final String[] ALLOWED_ORIGINS = {
-            "http://localhost:5173",
-            "http://localhost:4173",
-            "http://localhost",
+        "http://localhost:5173", "http://localhost:4173", "http://localhost",
     };
 
     @Bean
@@ -76,32 +77,41 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(List.of(ALLOWED_ORIGINS)); // Add allowed origins
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE")); // Add allowed methods
-        configuration.setAllowedHeaders(List.of("*")); // Add allowed headers, or specify them as needed
+        configuration.setAllowedMethods(
+                List.of("GET", "POST", "PUT", "DELETE")); // Add allowed methods
+        configuration.setAllowedHeaders(
+                List.of("*")); // Add allowed headers, or specify them as needed
         configuration.setAllowCredentials(true); // Enable sending credentials (cookies, etc.)
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration); // Apply this config to all endpoints
+        source.registerCorsConfiguration(
+                "/**", configuration); // Apply this config to all endpoints
         return source;
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http, HandlerMappingIntrospector introspector)
-            throws Exception {
+    public SecurityFilterChain filterChain(
+            HttpSecurity http, HandlerMappingIntrospector introspector) throws Exception {
 
-        return http
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+        return http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .headers(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.GET, BASE_PATH.concat("/user/**")).permitAll()
-                        .requestMatchers(ALLOWED_PATHS).permitAll()
-                        .anyRequest().authenticated())
+                .authorizeHttpRequests(
+                        auth ->
+                                auth.requestMatchers(HttpMethod.GET, BASE_PATH.concat("/user/**"))
+                                        .permitAll()
+                                        .requestMatchers(ALLOWED_PATHS)
+                                        .permitAll()
+                                        .anyRequest()
+                                        .authenticated())
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .oauth2ResourceServer((oauth2) -> oauth2.jwt(
-                        (jwt) -> jwt
-                                .decoder(jwtDecoder())
-                                .jwtAuthenticationConverter(jwtAuthenticationConverter())))
+                .oauth2ResourceServer(
+                        (oauth2) ->
+                                oauth2.jwt(
+                                        (jwt) ->
+                                                jwt.decoder(jwtDecoder())
+                                                        .jwtAuthenticationConverter(
+                                                                jwtAuthenticationConverter())))
                 .userDetailsService(userDetailsService)
                 .httpBasic(Customizer.withDefaults())
                 .build();
@@ -114,8 +124,10 @@ public class SecurityConfig {
 
     @Bean
     public JwtEncoder jwtEncoder() {
-        var jwk = new RSAKey.Builder(rsaKeyConfigProperties.publicKey()).privateKey(rsaKeyConfigProperties.privateKey())
-                .build();
+        var jwk =
+                new RSAKey.Builder(rsaKeyConfigProperties.publicKey())
+                        .privateKey(rsaKeyConfigProperties.privateKey())
+                        .build();
 
         JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
         return new NimbusJwtEncoder(jwks);
@@ -137,5 +149,4 @@ public class SecurityConfig {
     public UserSecurityService userSecurityService() {
         return this.userSecurityService;
     }
-
 }

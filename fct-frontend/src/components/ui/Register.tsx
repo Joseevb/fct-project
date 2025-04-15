@@ -106,10 +106,8 @@ function DynamicFormField({
 export default function Register() {
 	const [error, setError] = useState("");
 
-	const { login, isAuthenticated } = useAuth();
+	const { login } = useAuth();
 	const navigate = useNavigate();
-
-	if (isAuthenticated) navigate("/");
 
 	const api = new DefaultApi();
 
@@ -132,7 +130,7 @@ export default function Register() {
 			const response = await api.register({ ...data });
 			console.log("res:", response);
 
-			login(data.username, data.password);
+			await login({ username: data.username, password: data.password });
 			navigate("/");
 		} catch (err) {
 			if (err instanceof AxiosError) {

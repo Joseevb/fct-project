@@ -1,9 +1,12 @@
 package es.jose.backend.services;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import es.jose.backend.exceptions.user.UserAlreadyExistsException;
+import es.jose.backend.exceptions.user.UserNotFoundException;
+import es.jose.backend.mappers.UserMapper;
+import es.jose.backend.persistence.entities.UserEntity;
+import es.jose.backend.persistence.repositories.UserRepository;
+
+import lombok.RequiredArgsConstructor;
 
 import org.openapitools.model.AddUserRequest;
 import org.openapitools.model.UpdateUserRequest;
@@ -12,12 +15,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import es.jose.backend.exceptions.user.UserAlreadyExistsException;
-import es.jose.backend.exceptions.user.UserNotFoundException;
-import es.jose.backend.mappers.UserMapper;
-import es.jose.backend.persistence.entities.UserEntity;
-import es.jose.backend.persistence.repositories.UserRepository;
-import lombok.RequiredArgsConstructor;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -34,16 +35,18 @@ public class UserServiceImpl implements UserService {
                 .flatMap(userRepository::findByUsernameOrEmail)
                 .map(userMapper::toDto)
                 .map(Collections::singletonList)
-                .orElseGet(() -> userRepository.findAll()
-                        .stream()
-                        .map(userMapper::toDto)
-                        .collect(Collectors.toList()));
+                .orElseGet(
+                        () ->
+                                userRepository.findAll().stream()
+                                        .map(userMapper::toDto)
+                                        .collect(Collectors.toList()));
     }
 
     @Override
     @Transactional(readOnly = true)
     public User getUserById(Long id) {
-        return userRepository.findById(id)
+        return userRepository
+                .findById(id)
                 .map(userMapper::toDto)
                 .orElseThrow(() -> new UserNotFoundException("id", id.toString()));
     }
@@ -51,7 +54,8 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public User getUserByUsername(String username) {
-        return userRepository.findByUsername(username)
+        return userRepository
+                .findByUsername(username)
                 .map(userMapper::toDto)
                 .orElseThrow(() -> new UserNotFoundException("username", username));
     }
@@ -59,7 +63,8 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public User getUserByEmail(String email) {
-        return userRepository.findByEmail(email)
+        return userRepository
+                .findByEmail(email)
                 .map(userMapper::toDto)
                 .orElseThrow(() -> new UserNotFoundException("email", email));
     }
@@ -67,7 +72,8 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public User getUserByUsernameOrEmail(String usernameOrEmail) {
-        return userRepository.findByUsernameOrEmail(usernameOrEmail)
+        return userRepository
+                .findByUsernameOrEmail(usernameOrEmail)
                 .map(userMapper::toDto)
                 .orElseThrow(() -> new UserNotFoundException("Username or email", usernameOrEmail));
     }
@@ -75,7 +81,8 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public UserEntity getUserEntityById(Long id) {
-        return userRepository.findById(id)
+        return userRepository
+                .findById(id)
                 .orElseThrow(() -> new UserNotFoundException("id", id.toString()));
     }
 
@@ -88,18 +95,23 @@ public class UserServiceImpl implements UserService {
                 .map(this::encryptPassword)
                 .map(userRepository::save)
                 .map(userMapper::toDto)
-                .orElseThrow(() -> new UserAlreadyExistsException("email or username",
-                        "%s or %s".formatted(user.email(), user.username())));
+                .orElseThrow(
+                        () ->
+                                new UserAlreadyExistsException(
+                                        "email or username",
+                                        "%s or %s".formatted(user.email(), user.username())));
     }
 
     @Override
     @Transactional
     public User updateUser(Long id, UpdateUserRequest user) {
-        return userRepository.findById(id)
-                .map(u -> {
-                    userMapper.updateEntity(user, u);
-                    return u;
-                })
+        return userRepository
+                .findById(id)
+                .map(
+                        u -> {
+                            userMapper.updateEntity(user, u);
+                            return u;
+                        })
                 .map(userRepository::save)
                 .map(userMapper::toDto)
                 .orElseThrow(() -> new UserNotFoundException("id", id.toString()));
@@ -108,11 +120,8 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void deleteUser(Long id) {
-        if (userRepository.existsById(id))
-            userRepository.deleteById(id);
-
-        else
-            throw new UserNotFoundException("id", id.toString());
+        if (userRepository.existsById(id)) userRepository.deleteById(id);
+        else throw new UserNotFoundException("id", id.toString());
     }
 
     private boolean isUserUnique(AddUserRequest user) {

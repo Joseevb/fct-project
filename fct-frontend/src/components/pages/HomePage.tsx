@@ -1,56 +1,80 @@
 import Hero from "@/components/ui/Hero";
 import AboutPage from "@/components/pages/AboutPage";
-import useScrollDirection from "@/hooks/useScrollDirection";
-import { useEffect, useRef } from "react";
+import { useCallback, useRef, useState, useEffect } from "react";
+import useScrollHijack from "@/hooks/useScrollHijack";
+import Direction from "@/types/Direction";
 
-export default function HomePage() {
-    const { direction } = useScrollDirection();
-    const aboutSectionRef = useRef<HTMLDivElement>(null);
-    const heroSectionRef = useRef<HTMLDivElement>(null);
-    const isScrolling = useRef(false);
+interface HomePageProps {
+	headerRef: React.RefObject<HTMLElement | null>;
+}
 
-    useEffect(() => {
-        const handleScrollNavigation = () => {
-            if (isScrolling.current) return;
+export default function HomePage({ headerRef }: Readonly<HomePageProps>) {
+	const [areButtonsVisible, setAreButtonsVisible] = useState(false);
+	const isVisibleRef = useRef(areButtonsVisible);
+	const aboutSectionRef = useRef<HTMLDivElement>(null);
 
-            isScrolling.current = true;
+	useEffect(() => {
+		isVisibleRef.current = areButtonsVisible;
+	}, [areButtonsVisible]);
 
-            if (direction === "down" && aboutSectionRef.current) {
-                aboutSectionRef.current.scrollIntoView({
-                    behavior: "smooth",
-                });
-                window.history.pushState(null, "", "/#about");
-            } else if (direction === "up" && heroSectionRef.current) {
-                heroSectionRef.current.scrollIntoView({
-                    behavior: "smooth",
-                });
-                window.history.pushState(null, "", "/");
-            }
+	const handleScrollAttempt = useCallback(
+		(direction: Direction) => {
+			if (direction === "up") {
+				if (headerRef.current) {
+					headerRef.current.scrollIntoView({ behavior: "smooth" });
+					window.history.pushState(null, "", "/#mainHeader");
+				}
+			} else if (direction === "down") {
+				if (!isVisibleRef.current) {
+					setAreButtonsVisible(true); // Show buttons on first scroll down
+				} else if (isVisibleRef.current && aboutSectionRef.current) {
+					// Scroll to about on second scroll down
+					aboutSectionRef.current.scrollIntoView({
+						behavior: "smooth",
+					});
+					window.history.pushState(null, "", "/#about");
+					// Optional: Keep buttons visible or hide them again
+					// setAreButtonsVisible(false);
+				}
+			}
+		},
+		[headerRef, aboutSectionRef],
+	);
 
-            // Reset after scroll completes
-            setTimeout(() => {
-                isScrolling.current = false;
-            }, 1000);
-        };
+	useScrollHijack({
+		callback: handleScrollAttempt,
+		throttleDelay: 700,
+		enabled: true,
+	});
 
-        handleScrollNavigation();
-    }, [direction]);
+	// Optional: Initial hash handling
+	useEffect(() => {
+		const timer = setTimeout(() => {
+			const hash = window.location.hash;
+			if (hash === "#about" && aboutSectionRef.current) {
+				aboutSectionRef.current.scrollIntoView({ behavior: "auto" });
+				setAreButtonsVisible(true);
+			} else if (hash === "#mainHeader" && headerRef.current) {
+				headerRef.current.scrollIntoView({ behavior: "auto" });
+				setAreButtonsVisible(false);
+			} else if (!hash || hash === "#") {
+				// Ensure buttons start hidden on initial load at the top
+				setAreButtonsVisible(false);
+			}
+		}, 100);
+		return () => clearTimeout(timer);
+	}, [headerRef]);
 
-    // Handle initial hash URL
-    useEffect(() => {
-        if (window.location.hash === "#about" && aboutSectionRef.current) {
-            aboutSectionRef.current.scrollIntoView();
-        }
-    }, []);
+	return (
+		<main className="min-h-dvh">
+			<section id="hero" className="relative">
+				<Hero areButtonsVisible={areButtonsVisible} />
+			</section>
 
-    return (
-        <main className="min-h-dvh">
-            <div ref={heroSectionRef}>
-                <Hero />
-            </div>
-            <div ref={aboutSectionRef} id="about">
-                <AboutPage />
-            </div>
-        </main>
-    );
+			{/* About section */}
+			<section ref={aboutSectionRef} id="about">
+				<AboutPage />
+			</section>
+		</main>
+	);
 }

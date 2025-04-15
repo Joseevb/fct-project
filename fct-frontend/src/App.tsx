@@ -1,31 +1,40 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import Header from "@/components/ui/Header";
 import { Toaster } from "@/components/ui/sonner";
 import HomePage from "@/components/pages/HomePage";
 import { ThemeProvider } from "@/components/theme-provider";
 import AuthPage from "@/components/pages/AuthPage";
 import { useAuth } from "@/hooks/useAuth";
+import { useRef } from "react";
 import ScrollToHashElement from "@cascadia-code/scroll-to-hash-element";
+import AdminPanel from "./components/pages/AdminPanel";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 export default function App() {
-    const { user } = useAuth();
+	const { user } = useAuth();
 
-    console.log("user:", user);
+	console.log("user:", user);
 
-    return (
-        <ThemeProvider defaultTheme="dark" storageKey="theme">
-            <BrowserRouter>
-                <Header />
-                <ScrollToHashElement behavior="smooth" />
-                <Routes>
-                    {["/", "/home", "/index"].map((path, idx) => (
-                        <Route key={idx} path={path} element={<HomePage />} />
-                    ))}
-                    <Route path="/" element={<HomePage />} />
-                    <Route path="/login" element={<AuthPage />} />
-                </Routes>
-                <Toaster />
-            </BrowserRouter>
-        </ThemeProvider>
-    );
+	const headerRef = useRef<HTMLDivElement>(null);
+
+	return (
+		<ThemeProvider defaultTheme="dark" storageKey="theme">
+			<ScrollToHashElement behavior="smooth" />
+			<Header ref={headerRef} userRole={user?.role} />
+			<Routes>
+				{["/", "/home", "/index"].map((path, idx) => (
+					<Route
+						key={idx}
+						path={path}
+						element={<HomePage headerRef={headerRef} />}
+					/>
+				))}
+				<Route path="/login" element={<AuthPage />} />
+				<Route path="/admin" element={<ProtectedRoute />}>
+					<Route index element={<AdminPanel />} />
+				</Route>
+			</Routes>
+			<Toaster />
+		</ThemeProvider>
+	);
 }
