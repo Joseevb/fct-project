@@ -3,7 +3,6 @@
 import {
 	Configuration,
 	DefaultApi,
-	ErrorMessage,
 	LoginRequest,
 	LoginResponse,
 	User,
@@ -12,12 +11,6 @@ import {
 import { BASE_PATH } from "@/api/base";
 import { storage } from "@/lib/localStorageUtils";
 import axios, { AxiosError } from "axios";
-
-export type LoginReturnType =
-	| LoginResponse
-	| "INVALID_REQUEST"
-	| "LOGIN_ERROR"
-	| "UNKNOWN_ERROR";
 
 class AuthService {
 	#basePath: string;
@@ -29,7 +22,7 @@ class AuthService {
 		this.#cofiguration = configuration;
 	}
 
-	async login(credentials: LoginRequest): Promise<LoginReturnType> {
+	async login(credentials: LoginRequest): Promise<LoginResponse> {
 		try {
 			const api = new DefaultApi(this.#cofiguration, this.#basePath);
 			const usersApi = new UsersApi(this.#cofiguration, this.#basePath);
@@ -52,21 +45,37 @@ class AuthService {
 
 			return loginResponse.data;
 		} catch (err: unknown) {
-			console.error("Error logging in:", err);
 			if (err instanceof AxiosError) {
-				const axiosError = err as AxiosError<ErrorMessage>;
-
-				switch (axiosError.response?.status) {
+				switch (err.response?.status) {
 					case 400:
-						throw Error("INVALID_REQUEST");
+						throw "INVALID_REQUEST";
 					case 401:
-						throw Error("LOGIN_ERROR");
+						throw "CREDENTIAL_ERROR";
 					default:
-						throw Error("UNKNOWN_ERROR");
+						throw "UNKNOWN_ERROR";
 				}
-			} else {
-				throw Error("UNKNOWN_ERROR");
 			}
+			throw "UNKNOWN_ERROR";
+		}
+	}
+
+	async restoreSession(): Promise<User | null> {
+		const token = storage.getToken();
+		const userId = storage.getUserId();
+
+		if (!token || !userId) return null;
+
+		axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
+		try {
+			const usersApi = new UsersApi(this.#cofiguration, this.#basePath);
+			const userResponse = await usersApi.getUserById(Number(userId));
+			this.#user = userResponse.data;
+			return this.#user;
+		} catch (err) {
+			console.error(err);
+			this.logout();
+			return null;
 		}
 	}
 
@@ -80,7 +89,7 @@ class AuthService {
 	}
 
 	isAuthenticated(): boolean {
-		return !!this.#user;
+		return !!this.#user || !!storage.getToken();
 	}
 }
 

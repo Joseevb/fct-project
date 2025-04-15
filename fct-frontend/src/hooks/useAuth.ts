@@ -1,16 +1,16 @@
 // src/hooks/useAuth.ts
 import { createContext, useContext } from "react";
-import { LoginRequest, User } from "@/api";
-import { LoginReturnType } from "@/services/authService";
+import { LoginRequest, LoginResponse, User } from "@/api";
+import { LoginError } from "@/types/errors";
 
 // Define the shape of the context
 export interface AuthContextType {
 	isAuthenticated: boolean;
 	user: User | null;
 	loading: boolean;
-	error: string | null; // Add error state
-	login: (credentials: LoginRequest) => Promise<LoginReturnType>; // Return boolean success indication
+	login: (credentials: LoginRequest) => Promise<LoginResponse | undefined>;
 	logout: () => void;
+	error: LoginError | null;
 }
 
 // Create the context with a default undefined value initially

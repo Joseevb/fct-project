@@ -15,6 +15,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { AxiosError } from "axios";
 import { toast } from "sonner";
+import { Skeleton } from "../ui/skeleton";
 
 export default function AdminPanel() {
 	const [selectedDate, setSelectedDate] = useState<Date>();
@@ -33,6 +34,7 @@ export default function AdminPanel() {
 				console.log(appointmentsApi);
 
 				const response = await appointmentsApi.getAllAppointments();
+				setAppointments(response.data);
 
 				console.log(response.data);
 			} catch (err) {
@@ -52,11 +54,21 @@ export default function AdminPanel() {
 	}, []);
 
 	useEffect(() => {
-		toast.error("Ocurrio un error al cargar los datos", {
-			richColors: true,
-			description: error,
-		});
+		if (error != "") {
+			toast.error("Ocurrio un error al cargar los datos", {
+				richColors: true,
+				description: error,
+			});
+			console.log(error);
+		}
 	}, [error]);
+
+	const availableDates = appointments.map((app) => new Date(app.date));
+
+	const disabledDays = (date: Date) => {
+		const formattedDate = date.toDateString();
+		return !availableDates.some((d) => d.toDateString() === formattedDate);
+	};
 
 	if (user?.role !== RoleEnum.ADMIN) {
 		return (
@@ -91,14 +103,16 @@ export default function AdminPanel() {
 	}
 
 	return (
-		<main>
+		<main className="p-8">
 			<h2>Admin panel</h2>
 
-			<section>
+			<section className="flex flex-col w-fit my-10">
 				<h3>Citas</h3>
+				{loading && <Skeleton />}
 				<Calendar
 					mode="single"
-					// disabled={notBookedDays}
+					disabled={disabledDays}
+					selected={selectedDate}
 					onSelect={(date) => {
 						setSelectedDate(date);
 						console.log(selectedDate);

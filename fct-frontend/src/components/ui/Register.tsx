@@ -133,13 +133,23 @@ export default function Register() {
 			await login({ username: data.username, password: data.password });
 			navigate("/");
 		} catch (err) {
-			if (err instanceof AxiosError) {
-				setError(
-					err.response?.data?.message ||
-						"Registration failed. Please check your credentials.",
-				);
+			if (err instanceof AxiosError && err.response?.data) {
+				const data = err.response.data;
+
+				if ("messages" in data && typeof data.messages === "object") {
+					// This is a ValidationErrorMessage
+					const validationErrors = Object.entries(data.messages)
+						.map(([field, message]) => `${field}: ${message}`)
+						.join(", ");
+					setError(`Errores de validación: ${validationErrors}`);
+				} else if ("message" in data) {
+					// This is a general ErrorMessage
+					setError(data.message);
+				} else {
+					setError("Ocurrió un error inesperado.");
+				}
 			} else {
-				setError("Unknown error. Please try again.");
+				setError("Error desconocido.");
 			}
 		}
 	};
