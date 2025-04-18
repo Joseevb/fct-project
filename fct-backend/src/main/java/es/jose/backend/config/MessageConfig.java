@@ -23,7 +23,7 @@ public class MessageConfig {
 
     @Bean
     public LocaleResolver localeResolver() {
-        AcceptHeaderLocaleResolver localeResolver = new AcceptHeaderLocaleResolver();
+        var localeResolver = new AcceptHeaderLocaleResolver();
         localeResolver.setDefaultLocale(Locale.of("es")); // Default locale
         return localeResolver;
     }

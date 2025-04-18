@@ -6,8 +6,9 @@ import {
 import Autoplay from "embla-carousel-autoplay";
 // import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { heroImages } from "@/assets/hero";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { Link } from "react-router-dom";
 
 interface HeroProps {
 	areButtonsVisible: boolean;
@@ -59,15 +60,39 @@ export default function Hero({ areButtonsVisible }: Readonly<HeroProps>) {
 				)}
 			>
 				{/* Individual Buttons */}
-				<Button className={buttonStyle} variant="outline">
+				<Link
+					to="/appointments"
+					className={cn(
+						buttonVariants({
+							variant: "outline",
+						}),
+						buttonStyle,
+					)}
+				>
 					Citas
-				</Button>
-				<Button className={buttonStyle} variant="outline">
+				</Link>
+				<Link
+					to="/courses"
+					className={cn(
+						buttonVariants({
+							variant: "outline",
+						}),
+						buttonStyle,
+					)}
+				>
 					Cursos
-				</Button>
-				<Button className={buttonStyle} variant="outline">
+				</Link>
+				<Link
+					to="/products"
+					className={cn(
+						buttonVariants({
+							variant: "outline",
+						}),
+						buttonStyle,
+					)}
+				>
 					Productos
-				</Button>
+				</Link>
 			</div>
 		</div>
 	);

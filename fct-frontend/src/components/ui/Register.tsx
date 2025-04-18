@@ -17,7 +17,7 @@ import { AxiosError } from "axios";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { tryCatch } from "@/lib/tryCatch";
 import { RegisterFormData, registerSchema } from "@/schemas/registerSchema";
-import { DynamicFormField } from "./DynamicFormField";
+import { DynamicFormField } from "@/components/ui/DynamicFormField";
 import { applyValidationErrors } from "@/lib/errorHandlers";
 
 const fieldConfigs = {
@@ -81,6 +81,8 @@ export default function Register({ setIsOtp }: Readonly<RegisterProps>) {
 		console.log("res:", registerData);
 
 		if (registerError) {
+			console.log(registerError);
+
 			if (registerError instanceof AxiosError) {
 				const errRes: ResponseError = registerError.response?.data;
 

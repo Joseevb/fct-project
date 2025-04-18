@@ -2,7 +2,7 @@ import Hero from "@/components/ui/Hero";
 import AboutPage from "@/components/pages/AboutPage";
 import { useCallback, useRef, useState, useEffect } from "react";
 import useScrollHijack from "@/hooks/useScrollHijack";
-import Direction from "@/types/direction";
+import Direction from "@/types/Direction";
 
 interface HomePageProps {
 	headerRef: React.RefObject<HTMLElement | null>;

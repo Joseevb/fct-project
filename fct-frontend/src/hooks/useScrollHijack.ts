@@ -1,5 +1,5 @@
 // src/hooks/useScrollHijack.ts
-import Direction from "@/types/direction";
+import Direction from "@/types/Direction";
 import { useEffect, useRef, useCallback } from "react";
 
 // Type for the callback function the hook user will provide

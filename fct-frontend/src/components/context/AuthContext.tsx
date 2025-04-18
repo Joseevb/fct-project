@@ -1,4 +1,4 @@
-import { LoginRequest, LoginResponse, User } from "@/api";
+import { LoginRequest, LoginResponse, User, UsersApi } from "@/api";
 import { AuthContext, AuthContextType } from "@/hooks/useAuth";
 import { tryCatch } from "@/lib/tryCatch";
 import { authService } from "@/services/authService";
@@ -47,7 +47,9 @@ export default function AuthProvider({ children }: AuthContextProps) {
 			}
 
 			if (data) {
+				const user = await new UsersApi().getUserById(data.userId);
 				success = true;
+				setUser(user.data);
 			}
 
 			setLoading(false);
