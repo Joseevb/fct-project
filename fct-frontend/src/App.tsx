@@ -7,8 +7,8 @@ import AuthPage from "@/components/pages/AuthPage";
 import { useAuth } from "@/hooks/useAuth";
 import { useRef } from "react";
 import ScrollToHashElement from "@cascadia-code/scroll-to-hash-element";
-import AdminPanel from "./components/pages/AdminPanel";
-import ProtectedRoute from "./components/ProtectedRoute";
+import AdminPanel from "@/components/pages/AdminPanel";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
 export default function App() {
 	const { user } = useAuth();
@@ -20,7 +20,7 @@ export default function App() {
 	return (
 		<ThemeProvider defaultTheme="dark" storageKey="theme">
 			<ScrollToHashElement behavior="smooth" />
-			<Header ref={headerRef} userRole={user?.role} />
+			<Header ref={headerRef} />
 			<Routes>
 				{["/", "/home", "/index"].map((path, idx) => (
 					<Route

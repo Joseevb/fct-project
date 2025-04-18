@@ -3,14 +3,14 @@ import { ModeToggle } from "@/components/ui/mode-toggle";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { RoleEnum } from "@/api";
+import LanguageSelector from "@/components/ui/LanguageSelector";
 
 interface HeaderProps {
 	ref: React.RefObject<HTMLDivElement | null>;
-	userRole?: RoleEnum;
 }
 
-export default function Header({ ref, userRole }: Readonly<HeaderProps>) {
-	const { isAuthenticated, logout } = useAuth();
+export default function Header({ ref }: Readonly<HeaderProps>) {
+	const { isAuthenticated, user, logout } = useAuth();
 	const location = useLocation();
 
 	return (
@@ -24,7 +24,7 @@ export default function Header({ ref, userRole }: Readonly<HeaderProps>) {
 			</Link>
 
 			<section className="flex gap-2">
-				{userRole === RoleEnum.ADMIN && (
+				{user && user.role === RoleEnum.ADMIN && (
 					<Link
 						to="/admin"
 						className={buttonVariants({ variant: "link" })}
@@ -40,7 +40,7 @@ export default function Header({ ref, userRole }: Readonly<HeaderProps>) {
 					Acerca de
 				</Link>
 				{isAuthenticated ? (
-					<Button variant={"outline"} onClick={logout}>
+					<Button variant={"outline"} onClick={() => logout()}>
 						Cerrar sesión
 					</Button>
 				) : (
@@ -52,7 +52,11 @@ export default function Header({ ref, userRole }: Readonly<HeaderProps>) {
 						Iniciar sesión
 					</Link>
 				)}
-				<ModeToggle />
+
+				<div className="flex items-center gap-3">
+					<LanguageSelector />
+					<ModeToggle />
+				</div>
 			</section>
 		</header>
 	);

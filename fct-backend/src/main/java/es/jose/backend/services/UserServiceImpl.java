@@ -95,11 +95,7 @@ public class UserServiceImpl implements UserService {
                 .map(this::encryptPassword)
                 .map(userRepository::save)
                 .map(userMapper::toDto)
-                .orElseThrow(
-                        () ->
-                                new UserAlreadyExistsException(
-                                        "email or username",
-                                        "%s or %s".formatted(user.email(), user.username())));
+                .orElseThrow(() -> new UserAlreadyExistsException("email or username"));
     }
 
     @Override

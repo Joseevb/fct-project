@@ -3,7 +3,8 @@ import { AuthContext, AuthContextType } from "@/hooks/useAuth";
 import { tryCatch } from "@/lib/tryCatch";
 import { authService } from "@/services/authService";
 import { LoginError } from "@/types/errors";
-import { useEffect, useState, type ReactNode } from "react";
+import { LoginResult } from "@/types/login";
+import { useCallback, useEffect, useState, type ReactNode } from "react";
 
 export interface AuthContextProps {
 	children: ReactNode;
@@ -29,33 +30,37 @@ export default function AuthProvider({ children }: AuthContextProps) {
 		restore();
 	}, []);
 
-	const login = async (
-		credentials: LoginRequest,
-	): Promise<LoginResponse | undefined> => {
-		setLoading(true);
-		const { data, error } = await tryCatch<LoginResponse, LoginError>(
-			authService.login(credentials),
-		);
+	const login = useCallback(
+		async (credentials: LoginRequest): Promise<LoginResult> => {
+			setError(null);
+			setLoading(true);
 
-		if (data) {
+			let success: boolean = false;
+
+			const { data, error } = await tryCatch<LoginResponse, LoginError>(
+				authService.login(credentials),
+			);
+
+			if (error) {
+				setError(error);
+				setLoading(false);
+			}
+
+			if (data) {
+				success = true;
+			}
+
 			setLoading(false);
-			return data;
-		}
-
-		if (error) {
-			setError(error);
-			setLoading(false);
-			return;
-		}
-
-		console.log(data, error);
-		setLoading(false);
-	};
+			return { success, data, error };
+		},
+		[],
+	);
 
 	const logout = () => {
 		authService.logout();
 		setUser(null);
 		setLoading(false);
+		window.location.replace("/");
 	};
 
 	const providerValue: AuthContextType = {

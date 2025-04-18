@@ -1,22 +1,22 @@
-package es.jose.backend.exceptions.appointment;
+package es.jose.backend.exceptions.token;
 
 import es.jose.backend.config.MessageSourceProvider;
 import es.jose.backend.exceptions.BadRequestException;
 
 import org.springframework.context.i18n.LocaleContextHolder;
 
-public class InvalidAppointmentStatusException extends BadRequestException {
+class InvalidValidationTokenException extends BadRequestException {
 
-    private static final String APPOINTMENT_MESSAGE_KEY = "exception.invalidAppointmentStatus";
-    private static final String INVALID_STATUS_KEY = "appointment.invalidStatus";
+    private static final String MESSAGE_KEY = "exception.invalidValidationToken";
+    private static final String TOKEN_ERROR_KEY = "token.invalidValidation";
 
-    public InvalidAppointmentStatusException() {
+    public InvalidValidationTokenException(String details) {
         super(
                 MessageSourceProvider.getMessageSource()
                         .getMessage(
-                                INVALID_STATUS_KEY,
+                                TOKEN_ERROR_KEY,
                                 null,
-                                "Invalid appointment status",
+                                "Invalid validation token",
                                 LocaleContextHolder.getLocale()),
                 MessageSourceProvider.getMessageSource());
     }
@@ -25,7 +25,7 @@ public class InvalidAppointmentStatusException extends BadRequestException {
     public String getMessage() {
         return MessageSourceProvider.getMessageSource()
                 .getMessage(
-                        APPOINTMENT_MESSAGE_KEY,
+                        MESSAGE_KEY,
                         null,
                         super.getMessage(), // fallback to parent message
                         LocaleContextHolder.getLocale());

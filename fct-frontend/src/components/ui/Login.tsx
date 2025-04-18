@@ -11,7 +11,6 @@ import {
 	CardTitle,
 } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { AxiosError } from "axios";
 import { useAuth } from "@/hooks/useAuth";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -25,7 +24,6 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import RouterLogger from "@/components/RouterLogger";
-import { tryCatch } from "@/lib/tryCatch";
 
 const formSchema = z.object({
 	username: z
@@ -59,29 +57,30 @@ export default function Login() {
 		setError("");
 		setIsLoading(true);
 
-		try {
-			const { loginRes, loginError } = tryCatch<LoginResponse>(
-				login({ username: data.username, password: data.password }),
-			);
+		const { error: loginError } = await login({
+			username: data.username,
+			password: data.password,
+		});
+		console.log("Login error: ", loginError);
 
-			loginRes;
-
-			// Navigate to the page they were trying to access
-			console.log("from:", from);
-			navigate(from, { replace: true });
-		} catch (err: unknown) {
-			if (err instanceof AxiosError) {
-				console.log("Error", err.response);
-				setError(
-					err.response?.data?.message ||
-						"Login failed. Please check your credentials.",
-				);
-			} else {
-				setError("Unknown error. Please try again.");
+		if (loginError) {
+			switch (loginError) {
+				case "CREDENTIAL_ERROR":
+					setError("Credenciales incorrectas");
+					break;
+				case "INVALID_REQUEST":
+					setError("Error en la solicitud");
+					break;
+				case "UNKNOWN_ERROR":
+					setError("Ha ocurrido un error desconocido");
+					break;
 			}
-		} finally {
 			setIsLoading(false);
+			return;
 		}
+
+		setIsLoading(false);
+		navigate(from, { replace: true });
 	};
 
 	return (
@@ -142,7 +141,9 @@ export default function Login() {
 							className="w-full mt-4"
 							disabled={isLoading}
 						>
-							{isLoading ? "Signing in..." : "Sign In"}
+							{isLoading
+								? "Iniciando sesión..."
+								: "Iniciar sesión"}
 						</Button>
 					</CardFooter>
 				</form>

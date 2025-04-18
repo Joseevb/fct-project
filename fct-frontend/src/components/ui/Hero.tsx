@@ -4,7 +4,7 @@ import {
 	CarouselItem,
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
-import { AspectRatio } from "@/components/ui/aspect-ratio";
+// import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { heroImages } from "@/assets/hero";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";

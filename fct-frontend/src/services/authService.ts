@@ -40,6 +40,7 @@ class AuthService {
 				loginResponse.data.userId.toString(),
 			);
 
+			// Adds global Authorization header to every request
 			axios.defaults.headers.common["Authorization"] =
 				`Bearer ${loginResponse.data.jwt}`;
 
@@ -82,6 +83,9 @@ class AuthService {
 	async logout() {
 		this.#user = undefined;
 		storage.clearAuthTokens();
+
+		// Removes the Authorization header from every request
+		delete axios.defaults.headers.common["Authorization"];
 	}
 
 	get user(): User | null {

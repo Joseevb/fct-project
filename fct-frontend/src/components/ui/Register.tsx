@@ -1,16 +1,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Control, FieldPath, FieldValues, useForm } from "react-hook-form";
+import { FieldPath, useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
-import {
-	Form,
-	FormControl,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import { Form } from "@/components/ui/form";
 import {
 	Card,
 	CardContent,
@@ -20,11 +12,13 @@ import {
 	CardTitle,
 } from "@/components/ui/card";
 import { useState } from "react";
-import { DefaultApi } from "@/api";
+import { DefaultApi, ErrorMessage, ValidationErrorMessage } from "@/api";
 import { AxiosError } from "axios";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { useAuth } from "@/hooks/useAuth";
-import { useNavigate } from "react-router-dom";
+import { tryCatch } from "@/lib/tryCatch";
+import { RegisterFormData, registerSchema } from "@/schemas/registerSchema";
+import { DynamicFormField } from "./DynamicFormField";
+import { applyValidationErrors } from "@/lib/errorHandlers";
 
 const fieldConfigs = {
 	username: {
@@ -54,64 +48,19 @@ const fieldConfigs = {
 	},
 } as const;
 
-type FormSchemaType = z.infer<typeof formSchema>;
+type ResponseError = ErrorMessage | ValidationErrorMessage;
 
-const formSchema = z.object({
-	username: z
-		.string()
-		.min(3)
-		.max(20)
-		.trim()
-		.regex(/^[a-zA-Z0-9_]+$/),
-	email: z.string().email().trim(),
-	password: z.string().min(8).max(20).trim(),
-	firstName: z.string().nonempty().trim(),
-	lastName: z.string().nonempty().trim(),
-});
-
-const schemaKeys = Object.keys(formSchema.shape) as Array<keyof FormSchemaType>;
-
-interface DynamicFormFieldProps<T extends FieldValues> {
-	name: FieldPath<T>;
-	control: Control<T>;
+interface RegisterProps {
+	setIsOtp: (isOtp: boolean) => void;
 }
 
-function DynamicFormField({
-	name,
-	control,
-}: Readonly<DynamicFormFieldProps<FormSchemaType>>) {
-	const config = fieldConfigs[name];
-
-	return (
-		<FormField
-			control={control}
-			name={name}
-			render={({ field }) => (
-				<FormItem>
-					<FormLabel>{config.label}</FormLabel>
-					<FormControl>
-						<Input
-							placeholder={config.placeholder}
-							type={config.type}
-							{...field}
-						/>
-					</FormControl>
-					<FormMessage />
-				</FormItem>
-			)}
-		/>
-	);
-}
-
-export default function Register() {
+export default function Register({ setIsOtp }: Readonly<RegisterProps>) {
 	const [error, setError] = useState("");
-
-	const { login } = useAuth();
-	const navigate = useNavigate();
+	const [isLoading, setIsLoading] = useState(false);
 
 	const api = new DefaultApi();
 
-	const form = useForm<z.infer<typeof formSchema>>({
+	const form = useForm<RegisterFormData>({
 		defaultValues: {
 			username: "",
 			password: "",
@@ -119,38 +68,45 @@ export default function Register() {
 			firstName: "",
 			lastName: "",
 		},
-		resolver: zodResolver(formSchema),
+		resolver: zodResolver(registerSchema),
 	});
 
-	const onSubmit = async (data: z.infer<typeof formSchema>) => {
+	const onSubmit = async (data: z.infer<typeof registerSchema>) => {
 		setError("");
-		console.log("data:", data);
+		setIsLoading(true);
 
-		try {
-			const response = await api.register({ ...data });
-			console.log("res:", response);
+		const { data: registerData, error: registerError } = await tryCatch(
+			api.register({ ...data }),
+		);
+		console.log("res:", registerData);
 
-			await login({ username: data.username, password: data.password });
-			navigate("/");
-		} catch (err) {
-			if (err instanceof AxiosError && err.response?.data) {
-				const data = err.response.data;
+		if (registerError) {
+			if (registerError instanceof AxiosError) {
+				const errRes: ResponseError = registerError.response?.data;
 
-				if ("messages" in data && typeof data.messages === "object") {
-					// This is a ValidationErrorMessage
-					const validationErrors = Object.entries(data.messages)
-						.map(([field, message]) => `${field}: ${message}`)
-						.join(", ");
-					setError(`Errores de validación: ${validationErrors}`);
-				} else if ("message" in data) {
-					// This is a general ErrorMessage
-					setError(data.message);
+				if ("messages" in errRes) {
+					const validationErrors = Object.entries(
+						errRes.messages,
+					).map(([field, message]) => ({
+						field,
+						message,
+					}));
+
+					applyValidationErrors(validationErrors, form.setError);
+				} else if ("message" in errRes) {
+					setError(errRes.message);
 				} else {
 					setError("Ocurrió un error inesperado.");
 				}
 			} else {
 				setError("Error desconocido.");
 			}
+			setIsLoading(false);
+		}
+
+		if (registerData) {
+			setIsLoading(false);
+			setIsOtp(true);
 		}
 	};
 
@@ -170,17 +126,22 @@ export default function Register() {
 								<AlertDescription>{error}</AlertDescription>
 							</Alert>
 						)}
-						{schemaKeys.map((fieldName) => (
-							<DynamicFormField
+						{Object.keys(fieldConfigs).map((fieldName) => (
+							<DynamicFormField<RegisterFormData>
 								key={fieldName}
-								name={fieldName}
+								name={fieldName as FieldPath<RegisterFormData>}
+								fieldConfigs={fieldConfigs}
 								control={form.control}
 							/>
 						))}
 					</CardContent>
 					<CardFooter>
-						<Button type="submit" className="w-full mt-4">
-							Submit
+						<Button
+							type="submit"
+							className="w-full mt-4"
+							disabled={isLoading}
+						>
+							{isLoading ? "Registrando..." : "Registrarse"}
 						</Button>
 					</CardFooter>
 				</form>
