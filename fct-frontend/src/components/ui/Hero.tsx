@@ -15,7 +15,7 @@ interface HeroProps {
 }
 
 export default function Hero({ areButtonsVisible }: Readonly<HeroProps>) {
-	const buttonStyle = cn("text-2xl p-6");
+	const buttonStyle = cn("sm:text-base");
 
 	const autoplay = Autoplay({ delay: 4000, stopOnInteraction: false });
 

@@ -65,6 +65,8 @@ public class SecurityConfig {
         "http://localhost:5173", "http://localhost:4173", "http://localhost",
     };
 
+    private static final List<String> GET_ALLOWED_PATHS = List.of("/user/**", "/appointment/**");
+
     @Bean
     public AuthenticationManager authManager() {
         var authProvider = new DaoAuthenticationProvider();
@@ -97,7 +99,11 @@ public class SecurityConfig {
                 .headers(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(
                         auth ->
-                                auth.requestMatchers(HttpMethod.GET, BASE_PATH.concat("/user/**"))
+                                auth.requestMatchers(
+                                                HttpMethod.GET,
+                                                GET_ALLOWED_PATHS.stream()
+                                                        .map(p -> BASE_PATH.concat(p))
+                                                        .toArray(String[]::new))
                                         .permitAll()
                                         .requestMatchers(ALLOWED_PATHS)
                                         .permitAll()

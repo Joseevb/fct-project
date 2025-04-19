@@ -9,6 +9,7 @@ import { useRef } from "react";
 import ScrollToHashElement from "@cascadia-code/scroll-to-hash-element";
 import AdminPanel from "@/components/pages/AdminPanel";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import AppointmentSchedulePage from "./components/pages/AppointmentSchedulePage";
 
 export default function App() {
 	const { user } = useAuth();
@@ -33,6 +34,11 @@ export default function App() {
 				<Route path="/admin" element={<ProtectedRoute />}>
 					<Route index element={<AdminPanel />} />
 				</Route>
+
+				<Route
+					path="/appointments"
+					element={<AppointmentSchedulePage />}
+				/>
 			</Routes>
 			<Toaster />
 		</ThemeProvider>

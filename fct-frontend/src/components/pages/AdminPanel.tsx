@@ -7,21 +7,9 @@ import { AlertCircle, CheckCircle, XCircle, Loader2 } from "lucide-react";
 import { Appointment, AppointmentStatusEnum } from "@/api";
 import { useLanguage } from "@/hooks/useLanguage";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
+import { cn, formatDate } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { tryCatch } from "@/lib/tryCatch";
-
-// Keep formatDate or move to utils
-function formatDate(date: Date): string {
-	// ... (implementation using local dates) ...
-	if (!(date instanceof Date) || isNaN(date.getTime())) {
-		return "invalid-date";
-	}
-	const year = date.getFullYear();
-	const month = String(date.getMonth() + 1).padStart(2, "0");
-	const day = String(date.getDate()).padStart(2, "0");
-	return `${year}-${month}-${day}`;
-}
 
 export default function AdminPanel() {
 	const [selectedDate, setSelectedDate] = useState<Date | undefined>();
