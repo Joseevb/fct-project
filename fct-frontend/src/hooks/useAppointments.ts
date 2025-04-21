@@ -34,7 +34,7 @@ export function useAppointments(): UseAppointmentsResult {
 		if (error) {
 			if (error instanceof AxiosError) {
 				const axiosError = error as AxiosError<ErrorMessage>;
-				console.log("Error", axiosError.response?.data.message);
+				console.error("Error", axiosError.response?.data.message);
 				setErrorMessage(
 					axiosError.response?.data.message || "Unknown error",
 				);
@@ -48,10 +48,7 @@ export function useAppointments(): UseAppointmentsResult {
 			});
 		}
 
-		if (res) {
-			setAppointments(res.data || []);
-			console.log("Loaded appointment data successfully", res.data);
-		}
+		if (res) setAppointments(res.data || []);
 
 		setIsLoading(false);
 	}, [errorMessage]);
@@ -74,7 +71,7 @@ export function useAppointments(): UseAppointmentsResult {
 			if (error) {
 				if (error instanceof AxiosError) {
 					const axiosError = error as AxiosError<ErrorMessage>;
-					console.log("Error", axiosError.response?.data.message);
+					console.error("Error", axiosError.response?.data.message);
 					setErrorMessage(
 						axiosError.response?.data.message || "Unknown error",
 					);

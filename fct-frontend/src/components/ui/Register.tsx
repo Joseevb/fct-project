@@ -12,13 +12,14 @@ import {
 	CardTitle,
 } from "@/components/ui/card";
 import { useState } from "react";
-import { DefaultApi, ErrorMessage, ValidationErrorMessage } from "@/api";
-import { AxiosError } from "axios";
+import { DefaultApi, RegisterResponse } from "@/api";
+import { AxiosError, AxiosResponse } from "axios";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { tryCatch } from "@/lib/tryCatch";
 import { RegisterFormData, registerSchema } from "@/schemas/registerSchema";
 import { DynamicFormField } from "@/components/ui/DynamicFormField";
 import { applyValidationErrors } from "@/lib/errorHandlers";
+import { ResponseError } from "@/types/errors";
 
 const fieldConfigs = {
 	username: {
@@ -48,8 +49,6 @@ const fieldConfigs = {
 	},
 } as const;
 
-type ResponseError = ErrorMessage | ValidationErrorMessage;
-
 interface RegisterProps {
 	setIsOtp: (isOtp: boolean) => void;
 }
@@ -75,17 +74,18 @@ export default function Register({ setIsOtp }: Readonly<RegisterProps>) {
 		setError("");
 		setIsLoading(true);
 
-		const { data: registerData, error: registerError } = await tryCatch(
-			api.register({ ...data }),
-		);
+		const { data: registerData, error: registerError } = await tryCatch<
+			AxiosResponse<RegisterResponse>,
+			AxiosError<ResponseError>
+		>(api.register({ ...data }));
 		console.log("res:", registerData);
 
 		if (registerError) {
 			console.log(registerError);
 
-			if (registerError instanceof AxiosError) {
-				const errRes: ResponseError = registerError.response?.data;
+			const errRes = registerError.response?.data;
 
+			if (errRes) {
 				if ("messages" in errRes) {
 					const validationErrors = Object.entries(
 						errRes.messages,
@@ -100,9 +100,8 @@ export default function Register({ setIsOtp }: Readonly<RegisterProps>) {
 				} else {
 					setError("Ocurrió un error inesperado.");
 				}
-			} else {
-				setError("Error desconocido.");
 			}
+
 			setIsLoading(false);
 		}
 

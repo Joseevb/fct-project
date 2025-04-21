@@ -39,6 +39,16 @@ export function DynamicFormField<T extends FieldValues>({
 							placeholder={config.placeholder}
 							type={config.type}
 							{...field}
+							onChange={(e) => {
+								let value: unknown = e.target.value;
+								if (config.type === "number") {
+									value =
+										e.target.value === ""
+											? 0
+											: Number(e.target.value);
+								}
+								field.onChange(value);
+							}}
 						/>
 					</FormControl>
 					<FormMessage />

@@ -8,7 +8,7 @@ import { Toaster } from "@/components/ui/sonner";
 import ScrollToHashElement from "@cascadia-code/scroll-to-hash-element";
 import { useRef } from "react";
 import { Route, Routes } from "react-router-dom";
-import AppointmentSchedulePage from "./components/pages/AppointmentSchedulePage";
+import AppointmentBookingPage from "./components/pages/AppointmentBookingPage";
 
 export default function App() {
 	const headerRef = useRef<HTMLDivElement>(null);
@@ -32,7 +32,7 @@ export default function App() {
 
 				<Route
 					path="/appointments"
-					element={<AppointmentSchedulePage />}
+					element={<AppointmentBookingPage />}
 				/>
 			</Routes>
 			<Toaster />
