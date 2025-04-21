@@ -37,7 +37,11 @@ export default function HomePage({ headerRef }: Readonly<HomePageProps>) {
 							behavior: "smooth",
 						});
 
-						window.history.pushState(null, "", "/#hero");
+						window.history.pushState(
+							{ fromProgrammaticScroll: true },
+							"",
+							"/#main",
+						);
 
 						if (areButtonsVisible) setAreButtonsVisible(false);
 					}
@@ -50,7 +54,11 @@ export default function HomePage({ headerRef }: Readonly<HomePageProps>) {
 								behavior: "smooth",
 							});
 
-							window.history.pushState(null, "", "/#about");
+							window.history.pushState(
+								{ fromProgrammaticScroll: true },
+								"",
+								"/#about",
+							);
 						}
 						setAreButtonsVisible(false);
 					} else {
@@ -61,6 +69,23 @@ export default function HomePage({ headerRef }: Readonly<HomePageProps>) {
 		},
 		[areButtonsVisible, headerRef],
 	);
+
+	useEffect(() => {
+		const hash = window.location.hash;
+		const isFromUserNavigation =
+			!window.history.state?.fromProgrammaticScroll;
+
+		if (isFromUserNavigation) {
+			switch (hash) {
+				case "#main":
+					handleScrollAttempt("up");
+					break;
+				case "#about":
+					handleScrollAttempt("down");
+					break;
+			}
+		}
+	}, [handleScrollAttempt]);
 
 	useScrollHijack({
 		callback: handleScrollAttempt,
