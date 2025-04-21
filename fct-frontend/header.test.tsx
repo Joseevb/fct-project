@@ -1,5 +1,5 @@
 import { ForwardedRef, forwardRef } from "react"; // Import Fragment
-import { Link, useLocation } from "react-router-dom"; // Use React Router Link
+import { Link } from "react-router-dom"; // Use React Router Link
 import { ModeToggle } from "@/components/ui/mode-toggle";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
@@ -67,7 +67,7 @@ function NavLinkItem({ to, label, isSheet, className }: NavItemProps) {
 // Need forwardRef to correctly pass the ref from parent to the DOM header element
 const Header = forwardRef((ref: ForwardedRef<HTMLDivElement>) => {
 	const { isAuthenticated, user, logout } = useAuth();
-	const location = useLocation();
+	// const location = useLocation();
 
 	// Define Navigation/Auth Items Data
 	const navItems = [

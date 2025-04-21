@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { ModeToggle } from "@/components/ui/mode-toggle";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
@@ -20,7 +20,7 @@ interface HeaderProps {
 
 export default function Header({ ref }: Readonly<HeaderProps>) {
 	const { isAuthenticated, user, logout } = useAuth();
-	const location = useLocation();
+	// const location = useLocation();
 	const screenSize = useScreenSize();
 
 	return (

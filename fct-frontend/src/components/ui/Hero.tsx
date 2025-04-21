@@ -20,7 +20,7 @@ export default function Hero({ areButtonsVisible }: Readonly<HeroProps>) {
 	const autoplay = Autoplay({ delay: 4000, stopOnInteraction: false });
 
 	return (
-		<div className="relative h-[80dvh] p-3 my-5 rounded shadow">
+		<div className="relative h-screen p-3 my-5 rounded shadow">
 			<Carousel
 				opts={{ loop: true }}
 				className="h-ful w-full"
@@ -44,56 +44,56 @@ export default function Hero({ areButtonsVisible }: Readonly<HeroProps>) {
 						</CarouselItem>
 					))}
 				</CarouselContent>
+				{/* --- Button Container  --- */}
+				<div
+					className={cn(
+						// Base styles: absolute positioning, centering, flex, z-index
+						// Position relative to the inner div now
+						"absolute w-fill bottom-10 left-1/2 z-10 flex w-auto -translate-x-1/2 justify-center space-x-15",
+						// Transition styles
+						"transition-all duration-500 ease-in-out",
+						// Conditional styles based on passed prop
+						areButtonsVisible
+							? "opacity-100 translate-y-0"
+							: "pointer-events-none translate-y-4 opacity-0",
+					)}
+				>
+					{/* Individual Buttons */}
+					<Link
+						to="/appointments"
+						className={cn(
+							buttonVariants({
+								variant: "outline",
+							}),
+							buttonStyle,
+						)}
+					>
+						Citas
+					</Link>
+					<Link
+						to="/courses"
+						className={cn(
+							buttonVariants({
+								variant: "outline",
+							}),
+							buttonStyle,
+						)}
+					>
+						Cursos
+					</Link>
+					<Link
+						to="/products"
+						className={cn(
+							buttonVariants({
+								variant: "outline",
+							}),
+							buttonStyle,
+						)}
+					>
+						Productos
+					</Link>
+				</div>
 			</Carousel>
-			{/* --- Button Container  --- */}
-			<div
-				className={cn(
-					// Base styles: absolute positioning, centering, flex, z-index
-					// Position relative to the inner div now
-					"absolute w-fill bottom-10 left-1/2 z-10 flex w-auto -translate-x-1/2 justify-center space-x-15",
-					// Transition styles
-					"transition-all duration-500 ease-in-out",
-					// Conditional styles based on passed prop
-					areButtonsVisible
-						? "opacity-100 translate-y-0"
-						: "pointer-events-none translate-y-4 opacity-0",
-				)}
-			>
-				{/* Individual Buttons */}
-				<Link
-					to="/appointments"
-					className={cn(
-						buttonVariants({
-							variant: "outline",
-						}),
-						buttonStyle,
-					)}
-				>
-					Citas
-				</Link>
-				<Link
-					to="/courses"
-					className={cn(
-						buttonVariants({
-							variant: "outline",
-						}),
-						buttonStyle,
-					)}
-				>
-					Cursos
-				</Link>
-				<Link
-					to="/products"
-					className={cn(
-						buttonVariants({
-							variant: "outline",
-						}),
-						buttonStyle,
-					)}
-				>
-					Productos
-				</Link>
-			</div>
 		</div>
 	);
 }

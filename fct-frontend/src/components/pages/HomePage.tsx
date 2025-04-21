@@ -1,8 +1,8 @@
-import Hero from "@/components/ui/Hero";
 import AboutPage from "@/components/pages/AboutPage";
-import { useCallback, useRef, useState, useEffect } from "react";
+import Hero from "@/components/ui/Hero";
 import useScrollHijack from "@/hooks/useScrollHijack";
-import Direction from "@/types/Direction";
+import direction from "@/types/direction";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 interface HomePageProps {
 	headerRef: React.RefObject<HTMLElement | null>;
@@ -10,69 +10,71 @@ interface HomePageProps {
 
 export default function HomePage({ headerRef }: Readonly<HomePageProps>) {
 	const [areButtonsVisible, setAreButtonsVisible] = useState(false);
-	const isVisibleRef = useRef(areButtonsVisible);
-	const aboutSectionRef = useRef<HTMLDivElement>(null);
 
+	const heroRef = useRef<HTMLDivElement>(null);
+	const aboutRef = useRef<HTMLDivElement>(null);
+
+	// Add CSS scroll padding when component mounts
 	useEffect(() => {
-		isVisibleRef.current = areButtonsVisible;
-	}, [areButtonsVisible]);
+		// Apply scroll padding
+		document.documentElement.style.scrollPaddingTop = `${headerRef.current?.offsetHeight || 0}px`;
+
+		// Cleanup when component unmounts
+		return () => {
+			document.documentElement.style.scrollPaddingTop = "";
+		};
+	}, [headerRef]);
 
 	const handleScrollAttempt = useCallback(
-		(direction: Direction) => {
-			if (direction === "up") {
-				if (headerRef.current) {
-					headerRef.current.scrollIntoView({ behavior: "smooth" });
-					window.history.pushState(null, "", "/#mainHeader");
-				}
-			} else if (direction === "down") {
-				if (!isVisibleRef.current) {
-					setAreButtonsVisible(true); // Show buttons on first scroll down
-				} else if (isVisibleRef.current && aboutSectionRef.current) {
-					// Scroll to about on second scroll down
-					aboutSectionRef.current.scrollIntoView({
-						behavior: "smooth",
-					});
-					window.history.pushState(null, "", "/#about");
-					// Optional: Keep buttons visible or hide them again
-					// setAreButtonsVisible(false);
-				}
+		(direction: direction) => {
+			// Get header height
+			const headerHeight = headerRef.current?.offsetHeight || 0;
+			switch (direction) {
+				case "up":
+					if (heroRef.current) {
+						window.scrollTo({
+							top: heroRef.current.offsetTop - headerHeight,
+							behavior: "smooth",
+						});
+
+						window.history.pushState(null, "", "/#hero");
+
+						if (areButtonsVisible) setAreButtonsVisible(false);
+					}
+					break;
+				case "down":
+					if (areButtonsVisible) {
+						if (aboutRef.current) {
+							window.scrollTo({
+								top: aboutRef.current.offsetTop - headerHeight,
+								behavior: "smooth",
+							});
+
+							window.history.pushState(null, "", "/#about");
+						}
+						setAreButtonsVisible(false);
+					} else {
+						setAreButtonsVisible(true);
+					}
+					break;
 			}
 		},
-		[headerRef, aboutSectionRef],
+		[areButtonsVisible, headerRef],
 	);
 
 	useScrollHijack({
 		callback: handleScrollAttempt,
-		throttleDelay: 700,
-		enabled: true,
+		throttleDelay: 1,
 	});
 
-	// Optional: Initial hash handling
-	useEffect(() => {
-		const timer = setTimeout(() => {
-			const hash = window.location.hash;
-			if (hash === "#about" && aboutSectionRef.current) {
-				aboutSectionRef.current.scrollIntoView({ behavior: "auto" });
-				setAreButtonsVisible(true);
-			} else if (hash === "#mainHeader" && headerRef.current) {
-				headerRef.current.scrollIntoView({ behavior: "auto" });
-				setAreButtonsVisible(false);
-			} else if (!hash || hash === "#") {
-				// Ensure buttons start hidden on initial load at the top
-				setAreButtonsVisible(false);
-			}
-		}, 100);
-		return () => clearTimeout(timer);
-	}, [headerRef]);
-
 	return (
-		<main className="min-h-dvh">
-			<section id="hero" className="relative">
+		<main className="min-h-screen">
+			<section ref={heroRef} id="hero" className="relative h-screen">
 				<Hero areButtonsVisible={areButtonsVisible} />
 			</section>
 
 			{/* About section */}
-			<section ref={aboutSectionRef} id="about">
+			<section ref={aboutRef} id="about" className="relative h-screen">
 				<AboutPage />
 			</section>
 		</main>

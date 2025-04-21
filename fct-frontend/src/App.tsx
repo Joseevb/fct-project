@@ -1,21 +1,16 @@
-import { Route, Routes } from "react-router-dom";
+import AdminPanel from "@/components/pages/AdminPanel";
+import AuthPage from "@/components/pages/AuthPage";
+import HomePage from "@/components/pages/HomePage";
+import ProtectedRoute from "@/components/ProtectedRoute";
+import { ThemeProvider } from "@/components/theme-provider";
 import Header from "@/components/ui/Header";
 import { Toaster } from "@/components/ui/sonner";
-import HomePage from "@/components/pages/HomePage";
-import { ThemeProvider } from "@/components/theme-provider";
-import AuthPage from "@/components/pages/AuthPage";
-import { useAuth } from "@/hooks/useAuth";
-import { useRef } from "react";
 import ScrollToHashElement from "@cascadia-code/scroll-to-hash-element";
-import AdminPanel from "@/components/pages/AdminPanel";
-import ProtectedRoute from "@/components/ProtectedRoute";
+import { useRef } from "react";
+import { Route, Routes } from "react-router-dom";
 import AppointmentSchedulePage from "./components/pages/AppointmentSchedulePage";
 
 export default function App() {
-	const { user } = useAuth();
-
-	console.log("user:", user);
-
 	const headerRef = useRef<HTMLDivElement>(null);
 
 	return (
