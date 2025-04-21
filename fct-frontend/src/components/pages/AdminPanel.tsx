@@ -71,33 +71,14 @@ export default function AdminPanel() {
 		if (!date) console.log("Date selection cleared.");
 	};
 
-	const handleAcceptAppointment = async () => {
+	const handleAppointmentChange = async (kind: "accept" | "decline") => {
 		if (!selectedAppointment?.id) return;
 		setIsUpdating(true);
-		// setActionError(null);
-		const success = await acceptAppointment(selectedAppointment.id);
-		if (!success) {
-			// Error is likely already shown via toast from the hook
-			// setActionError("Error al aceptar la cita."); // Optionally set local error
-		} else {
-			// Optionally clear selection or provide other feedback
-			// setSelectedAppointment(null); // Example: clear details after action
-			// setSelectedDate(undefined);
-		}
-		setIsUpdating(false);
-	};
 
-	const handleCancelAppointment = async () => {
-		if (!selectedAppointment?.id) return;
-		setIsUpdating(true);
-		// setActionError(null);
-		const success = await cancelAppointment(selectedAppointment.id); // Await the hook method
-		if (!success) {
-			// Error shown via toast from hook
-			// setActionError("Error al cancelar la cita.");
-		} else {
-			// Optionally clear selection
-		}
+		const action =
+			kind === "accept" ? acceptAppointment : cancelAppointment;
+		await action(selectedAppointment.id);
+
 		setIsUpdating(false);
 	};
 
@@ -223,8 +204,10 @@ export default function AdminPanel() {
 													type="button"
 													variant="outline"
 													size="sm" // Smaller buttons often fit better here
-													onClick={
-														handleAcceptAppointment
+													onClick={() =>
+														handleAppointmentChange(
+															"accept",
+														)
 													}
 													// Disable if already accepted OR while updating
 													disabled={
@@ -246,8 +229,10 @@ export default function AdminPanel() {
 													type="button"
 													variant="destructive"
 													size="sm"
-													onClick={
-														handleCancelAppointment
+													onClick={() =>
+														handleAppointmentChange(
+															"decline",
+														)
 													}
 													// Disable if already declined OR while updating
 													disabled={
@@ -281,3 +266,5 @@ export default function AdminPanel() {
 		</AdminAuthGuard>
 	);
 }
+
+//Ok so another thing, I have an admin page that has a calendar, which when I click on the date it shows me the appointment information of that date. The issue is that for the users I will make something similar: a calendar that let's me see the available dates, and when I click on them it allows me to book an appointment. So I want to make a "Appointment calendar" component that's modular and allows me to use it both for admin and user pages. Can you modularize the component? Make it as modular as possible::xa

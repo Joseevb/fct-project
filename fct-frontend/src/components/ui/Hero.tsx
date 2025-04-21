@@ -17,7 +17,8 @@ export default function Hero({ areButtonsVisible }: Readonly<HeroProps>) {
 	// Enhanced button styles with larger text and padding
 	const buttonStyle = cn(
 		// Base styles for all screen sizes
-		"font-bold transition-all duration-300",
+		"font-bold transition-all duration-300 shadow",
+		"hover:scale-105 hover:shadow-md",
 		// Large screens - much bigger buttons with plenty of padding
 		"md:text-xl md:px-7 md:py-8",
 		// Extra large screens - even larger text
@@ -27,7 +28,7 @@ export default function Hero({ areButtonsVisible }: Readonly<HeroProps>) {
 	const autoplay = Autoplay({ delay: 4000, stopOnInteraction: false });
 
 	return (
-		<div className="relative h-screen p-3 my-5 rounded shadow">
+		<div className="relative h-screen p-3 my-5 bg-none ">
 			<Carousel
 				opts={{ loop: true }}
 				className="h-ful w-full"
@@ -56,16 +57,16 @@ export default function Hero({ areButtonsVisible }: Readonly<HeroProps>) {
 				<div
 					className={cn(
 						// Base styles
-						"z-10 transition-all duration-500 ease-in-out",
+						"z-10 transition-all duration-500 ease-in-out md:max-h-full",
 
 						// Mobile: vertical stack, outside carousel, always visible
-						"flex flex-col space-y-4 px-4 w-full absolute -bottom-32",
+						"flex flex-col px-4 w-full absolute -bottom-32 gap-4",
 
 						// Desktop: horizontal layout, inside carousel
-						"md:flex-row md:space-y-0 md:space-x-8 md:justify-center md:absolute md:bottom-10 md:left-1/2 md:-translate-x-1/2 md:w-auto",
+						"md:flex-row md:space-y-0 md:justify-center md:absolute md:bottom-10 md:left-1/2 md:-translate-x-1/2 md:w-auto md:gap-5",
 
 						// Larger screens: wider spacing
-						"lg:space-x-12",
+						"lg:gap-10",
 
 						// Visibility toggle only affects desktop view
 						"opacity-100", // Always visible on mobile
@@ -76,20 +77,24 @@ export default function Hero({ areButtonsVisible }: Readonly<HeroProps>) {
 					)}
 				>
 					{/* Buttons - each takes 1/3 of container on desktop */}
-					{["Citas", "Cursos", "Productos"].map((text, idx) => (
+					{[
+						{ label: "Citas", url: "/appointments" },
+						{ label: "Cursos", url: "" },
+						{ label: "Productos", url: "" },
+					].map((obj, idx) => (
 						<Link
 							key={idx}
-							to={text.toLowerCase()}
+							to={obj.url}
 							className={cn(
 								buttonVariants({
 									variant: "outline",
 									size: "lg", // Default larger size
 								}),
 								buttonStyle,
-								"w-full md:w-64 lg:w-80", // Full width on mobile, specific width on desktop
+								"w-full md:w-50 lg:w-70", // Full width on mobile, specific width on desktop
 							)}
 						>
-							{text}
+							{obj.label}
 						</Link>
 					))}
 				</div>
