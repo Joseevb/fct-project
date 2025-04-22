@@ -1442,7 +1442,7 @@ components:
                     format: int64
                 date:
                     type: string
-                    format: date-time
+                    format: date
                 duration:
                     type: integer
                     format: int32
@@ -1652,7 +1652,7 @@ components:
                     x-field-extra-annotation: '@NotBlank(message = "Description field cannot be blank")'
                 date:
                     type: string
-                    format: date-time
+                    format: date
                     x-field-extra-annotation: >-
                         @Future(message = "Date must be in the future")
                         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
@@ -1684,7 +1684,7 @@ components:
                         @Max(value = 7, message = "Duration must be less than 7")
                 date:
                     type: string
-                    format: date-time
+                    format: date
                     x-field-extra-annotation: >-
                         @Future(message = "Date must be in the future")
                         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)

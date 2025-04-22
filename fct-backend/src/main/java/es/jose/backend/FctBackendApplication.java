@@ -19,7 +19,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 
 import java.math.BigDecimal;
-import java.time.OffsetDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 @SpringBootApplication
@@ -87,7 +87,7 @@ public class FctBackendApplication {
             var appointments =
                     List.of(
                             AppointmentEntity.builder()
-                                    .date(OffsetDateTime.now().plusDays(5))
+                                    .date(LocalDate.now().plusDays(5))
                                     .duration(30)
                                     .status(AppointmentStatusEnum.WAITING)
                                     .description("Appointment description")
@@ -96,7 +96,7 @@ public class FctBackendApplication {
                                     .category(appointmentCategories.getFirst())
                                     .build(),
                             AppointmentEntity.builder()
-                                    .date(OffsetDateTime.now().plusDays(7))
+                                    .date(LocalDate.now().plusDays(7))
                                     .duration(60)
                                     .status(AppointmentStatusEnum.WAITING)
                                     .description("Cita de maquillaje de novia")
@@ -108,7 +108,7 @@ public class FctBackendApplication {
             appointmentRepository.saveAll(appointments);
 
             invoiceService.createInvoice(
-                    AddInvoiceRequest.builder().notes("").userId(1L).paymentMethod("").build());
+                    AddInvoiceRequest.builder().userId(1L).paymentMethod("").build());
         };
     }
 }

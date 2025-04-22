@@ -18,3 +18,10 @@ export function formatDate(date: Date): string {
 	const day = String(date.getDate()).padStart(2, "0");
 	return `${year}-${month}-${day}`;
 }
+
+/**
+ * Waits for a specified number of milliseconds.
+ */
+export function wait(ms: number): Promise<void> {
+	return new Promise((resolve) => setTimeout(resolve, ms));
+}

@@ -8,7 +8,7 @@ interface Failure<E> {
 	error: E;
 }
 
-type Result<T, E = Error> = Success<T> | Failure<E>;
+export type Result<T, E = Error> = Success<T> | Failure<E>;
 
 // Overload signatures
 export function tryCatch<T, E = Error>(

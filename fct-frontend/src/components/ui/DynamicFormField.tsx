@@ -7,6 +7,7 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "./textarea";
 
 interface FieldConfig {
 	label: string;
@@ -35,21 +36,28 @@ export function DynamicFormField<T extends FieldValues>({
 				<FormItem>
 					<FormLabel>{config.label}</FormLabel>
 					<FormControl>
-						<Input
-							placeholder={config.placeholder}
-							type={config.type}
-							{...field}
-							onChange={(e) => {
-								let value: unknown = e.target.value;
-								if (config.type === "number") {
-									value =
-										e.target.value === ""
-											? 0
-											: Number(e.target.value);
-								}
-								field.onChange(value);
-							}}
-						/>
+						{config.type === "textarea" ? (
+							<Textarea
+								placeholder={config.placeholder}
+								{...field}
+							/>
+						) : (
+							<Input
+								placeholder={config.placeholder}
+								type={config.type}
+								{...field}
+								onChange={(e) => {
+									let value: unknown = e.target.value;
+									if (config.type === "number") {
+										value =
+											e.target.value === ""
+												? 0
+												: Number(e.target.value);
+									}
+									field.onChange(value);
+								}}
+							/>
+						)}
 					</FormControl>
 					<FormMessage />
 				</FormItem>

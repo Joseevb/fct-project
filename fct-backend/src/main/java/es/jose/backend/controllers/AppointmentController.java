@@ -1,7 +1,10 @@
 package es.jose.backend.controllers;
 
-import java.time.LocalDate;
-import java.util.List;
+import es.jose.backend.services.AppointmentService;
+
+import jakarta.validation.Valid;
+
+import lombok.RequiredArgsConstructor;
 
 import org.openapitools.api.AppointmentApi;
 import org.openapitools.model.AddAppointmentRequest;
@@ -13,9 +16,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
-import es.jose.backend.services.AppointmentService;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,9 +28,9 @@ public class AppointmentController implements AppointmentApi {
 
     @Override
     public ResponseEntity<List<Appointment>> getAllAppointments(
-            @Valid String userId,
-            @Valid AppointmentStatusEnum status) {
-        return ResponseEntity.ok(appointmentService.getAllAppointments());
+            @Valid Long userId, @Valid AppointmentStatusEnum status) {
+        return ResponseEntity.ok(
+                appointmentService.getAllAppointments(Optional.ofNullable(userId)));
     }
 
     @Override
@@ -36,9 +39,9 @@ public class AppointmentController implements AppointmentApi {
     }
 
     @Override
-    public ResponseEntity<Appointment> addAppointment(@Valid AddAppointmentRequest addAppointmentRequest) {
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
+    public ResponseEntity<Appointment> addAppointment(
+            @Valid AddAppointmentRequest addAppointmentRequest) {
+        return ResponseEntity.status(HttpStatus.CREATED)
                 .body(appointmentService.createAppointment(addAppointmentRequest));
     }
 
@@ -49,20 +52,21 @@ public class AppointmentController implements AppointmentApi {
     }
 
     @Override
-    public ResponseEntity<Appointment> updateAppointment(Long id,
-            @Valid UpdateAppointmentRequest updateAppointmentRequest) {
-        return ResponseEntity.ok(appointmentService.updateAppointment(id, updateAppointmentRequest));
+    public ResponseEntity<Appointment> updateAppointment(
+            Long id, @Valid UpdateAppointmentRequest updateAppointmentRequest) {
+        return ResponseEntity.ok(
+                appointmentService.updateAppointment(id, updateAppointmentRequest));
     }
 
     @Override
-    public ResponseEntity<Appointment> updateAppointmentStatus(Long id,
-            @Valid UpdateAppointmentStatusRequest updateAppointmentStatusRequest) {
-        return ResponseEntity.ok(appointmentService.changeAppointmentStatus(id, updateAppointmentStatusRequest));
+    public ResponseEntity<Appointment> updateAppointmentStatus(
+            Long id, @Valid UpdateAppointmentStatusRequest updateAppointmentStatusRequest) {
+        return ResponseEntity.ok(
+                appointmentService.changeAppointmentStatus(id, updateAppointmentStatusRequest));
     }
 
     @Override
     public ResponseEntity<List<LocalDate>> getAllDaysWithAppointments() {
         return ResponseEntity.ok(appointmentService.getAllDaysWithAppointments());
     }
-
 }

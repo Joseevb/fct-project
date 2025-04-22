@@ -1,11 +1,5 @@
 package es.jose.backend.persistence.entities;
 
-import java.math.BigDecimal;
-import java.time.OffsetDateTime;
-import java.util.Objects;
-
-import org.openapitools.model.AppointmentStatusEnum;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -17,12 +11,19 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+
+import org.openapitools.model.AppointmentStatusEnum;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.Objects;
 
 @Entity
 @Table(name = "appointments")
@@ -39,7 +40,7 @@ public final class AppointmentEntity implements LineItemable {
     private Long id;
 
     @Column(name = "date", nullable = false)
-    private OffsetDateTime date;
+    private LocalDate date;
 
     @Column(name = "duration", nullable = false)
     private Integer duration;
@@ -66,11 +67,9 @@ public final class AppointmentEntity implements LineItemable {
     // --- Manually Implemented equals() and hashCode() for robustness ---
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
+        if (this == o) return true;
         // Use getClass() for proxy safety
-        if (o == null || getClass() != o.getClass())
-            return false;
+        if (o == null || getClass() != o.getClass()) return false;
         AppointmentEntity that = (AppointmentEntity) o;
         // If ID is null, objects are only equal if they are the same instance.
         // If ID is not null, compare by ID. Handles transient vs persistent correctly.

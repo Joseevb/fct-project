@@ -1,18 +1,14 @@
-import { AppointmentCategoriesApi, AppointmentCategory } from "@/api";
+import {
+	AddAppointmentRequest,
+	Appointment,
+	AppointmentCategoriesApi,
+	AppointmentCategory,
+	AppointmentsApi,
+} from "@/api";
+import { InvoiceType } from "@/components/pages/InvoicePage";
+import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { useAppointments } from "@/hooks/useAppointments";
-import { tryCatch } from "@/lib/tryCatch";
-import { cn, formatDate } from "@/lib/utils";
-import {
-	BookAppointmentFormData,
-	bookAppointmentSchema,
-} from "@/schemas/bookAppointmentSchema";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { AlertCircle, CheckCircle, Loader2 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
-import { FieldPath, useForm } from "react-hook-form";
 import { DynamicFormField } from "@/components/ui/DynamicFormField";
 import {
 	Form,
@@ -30,7 +26,25 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
-import { Button } from "../ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useAppointments } from "@/hooks/useAppointments";
+import { useAuth } from "@/hooks/useAuth";
+import { applyValidationErrors } from "@/lib/errorHandlers";
+import { tryCatch } from "@/lib/tryCatch";
+import { cn, formatDate } from "@/lib/utils";
+import {
+	BookAppointmentFormData,
+	bookAppointmentSchema,
+} from "@/schemas/bookAppointmentSchema";
+import { ResponseError } from "@/types/errors";
+import { LineItemable, TemporaryLineItem } from "@/types/lineItem";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { AxiosError, AxiosResponse } from "axios";
+import { AlertCircle, CheckCircle, Loader2 } from "lucide-react";
+import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
+import { FieldPath, useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import { z } from "zod";
 
 const fieldConfigs = {
@@ -45,7 +59,7 @@ const fieldConfigs = {
 		type: "textarea",
 	},
 	duration: {
-		label: "Duración",
+		label: "Duración en minutos",
 		placeholder: "Introduzca la duración de la cita",
 		type: "number",
 	},
@@ -61,18 +75,29 @@ const fieldConfigs = {
 	},
 } as const;
 
-export default function AppointmentBookingPage() {
+interface AppointmentBookingPageProps {
+	setInvoiceObjs: Dispatch<SetStateAction<LineItemable[]>>;
+	setLineItemType: Dispatch<SetStateAction<InvoiceType>>;
+	setTemporaryLineItems: Dispatch<SetStateAction<TemporaryLineItem[]>>;
+}
+
+export default function AppointmentBookingPage({
+	setInvoiceObjs,
+	setLineItemType,
+	setTemporaryLineItems,
+}: AppointmentBookingPageProps) {
 	const [selectedDate, setSelectedDate] = useState<Date | undefined>();
 	const [isUploading, setIsUploading] = useState(false);
 	const [appointmentCategories, setAppointmentCategories] = useState<
 		AppointmentCategory[]
 	>([]);
+	const [error, setError] = useState<string | undefined>();
 
-	const {
-		appointments,
-		isLoading,
-		error: appointmentsError,
-	} = useAppointments();
+	const { user } = useAuth();
+
+	const navigate = useNavigate();
+
+	const { appointments, isLoading, fetchAppointments } = useAppointments();
 
 	const form = useForm<BookAppointmentFormData>({
 		defaultValues: {
@@ -132,8 +157,64 @@ export default function AppointmentBookingPage() {
 	};
 
 	const onSubmit = async (data: z.infer<typeof bookAppointmentSchema>) => {
+		if (!user) {
+			navigate("/login");
+			return;
+		}
+
 		setIsUploading(true);
-		console.log("data:", data);
+
+		const api = new AppointmentsApi();
+
+		const request: AddAppointmentRequest = {
+			...data,
+			userId: user.id,
+		};
+
+		const { data: res, error: bookError } = await tryCatch<
+			AxiosResponse<Appointment>,
+			AxiosError<ResponseError>
+		>(api.addAppointment(request));
+
+		const errRes = bookError?.response?.data;
+
+		if (errRes) {
+			if ("messages" in errRes) {
+				const validationErrors = Object.entries(errRes.messages).map(
+					([field, message]) => ({
+						field,
+						message,
+					}),
+				);
+
+				applyValidationErrors(validationErrors, form.setError);
+			} else if ("message" in errRes) {
+				setError(errRes.message);
+			} else {
+				setError("Ocurrió un error inesperado.");
+			}
+			setIsUploading(false);
+			return;
+		}
+
+		if (res) {
+			toast.success("Cita agregada exitosamente", { richColors: true });
+			fetchAppointments();
+
+			const lineItem: TemporaryLineItem = {
+				appointmentId: res.data.id,
+				quantity: 1,
+				subtotal: res.data.price,
+			};
+
+			setInvoiceObjs((arr) => [...arr, res.data]);
+			setLineItemType("APPOINTMENT");
+			setTemporaryLineItems((arr) => [...arr, lineItem]);
+
+			setIsUploading(false);
+			navigate("/invoice");
+		}
+
 		setIsUploading(false);
 	};
 
@@ -154,15 +235,15 @@ export default function AppointmentBookingPage() {
 				)}
 
 				{/* Error State for Initial Fetch */}
-				{!isLoading && appointmentsError && (
+				{!isLoading && error && (
 					<div className="flex items-center space-x-2 text-destructive border border-destructive/50 bg-destructive/10 p-3 rounded-md max-w-md mx-auto">
 						<AlertCircle className="h-5 w-5" />
-						<p className="text-sm">Error: {appointmentsError}</p>
+						<p className="text-sm">Error: {error}</p>
 					</div>
 				)}
 
 				{/* Calendar and Details View  */}
-				{!isLoading && !appointmentsError && (
+				{!isLoading && !error && (
 					<div className="flex flex-col md:flex-row items-start gap-6 md:gap-10">
 						{/* Calendar */}
 						<Calendar
@@ -237,7 +318,7 @@ export default function AppointmentBookingPage() {
 													</FormLabel>
 													<Select
 														onValueChange={(
-															value,
+															value: string,
 														) =>
 															field.onChange(
 																parseInt(
@@ -281,7 +362,7 @@ export default function AppointmentBookingPage() {
 										<Button
 											type="submit"
 											variant="outline"
-											size="sm"
+											size="lg"
 											disabled={isUploading}
 											className="bg-green-50 hover:bg-green-100 border-green-300 text-green-700 disabled:opacity-50"
 										>

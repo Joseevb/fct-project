@@ -1,18 +1,19 @@
 package es.jose.backend.services;
 
-import java.time.LocalDate;
-import java.util.List;
+import es.jose.backend.persistence.entities.AppointmentEntity;
 
 import org.openapitools.model.AddAppointmentRequest;
 import org.openapitools.model.Appointment;
 import org.openapitools.model.UpdateAppointmentRequest;
 import org.openapitools.model.UpdateAppointmentStatusRequest;
 
-import es.jose.backend.persistence.entities.AppointmentEntity;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
 
 public interface AppointmentService {
 
-    List<Appointment> getAllAppointments();
+    List<Appointment> getAllAppointments(Optional<Long> userId);
 
     Appointment getAppointmentById(Long id);
 
@@ -27,5 +28,4 @@ public interface AppointmentService {
     List<LocalDate> getAllDaysWithAppointments();
 
     void deleteAppointment(Long id);
-
 }

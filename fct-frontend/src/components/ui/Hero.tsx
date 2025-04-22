@@ -8,12 +8,15 @@ import { heroImages } from "@/assets/hero";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
+import { useTheme } from "@/components/theme-provider";
 
 interface HeroProps {
 	areButtonsVisible: boolean;
 }
 
 export default function Hero({ areButtonsVisible }: Readonly<HeroProps>) {
+	const { resolvedTheme } = useTheme();
+
 	// Enhanced button styles with larger text and padding
 	const buttonStyle = cn(
 		// Base styles for all screen sizes
@@ -87,7 +90,10 @@ export default function Hero({ areButtonsVisible }: Readonly<HeroProps>) {
 							to={obj.url}
 							className={cn(
 								buttonVariants({
-									variant: "outline",
+									variant:
+										resolvedTheme === "dark"
+											? "default"
+											: "outline",
 									size: "lg", // Default larger size
 								}),
 								buttonStyle,

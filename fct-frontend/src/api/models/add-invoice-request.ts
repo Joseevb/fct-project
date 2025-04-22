@@ -22,18 +22,6 @@
 export interface AddInvoiceRequest {
     /**
      * 
-     * @type {string}
-     * @memberof AddInvoiceRequest
-     */
-    'paymentMethod': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof AddInvoiceRequest
-     */
-    'notes': string;
-    /**
-     * 
      * @type {number}
      * @memberof AddInvoiceRequest
      */

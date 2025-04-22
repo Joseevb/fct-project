@@ -426,7 +426,8 @@ paths:
                   description: Filter by user id
                   required: false
                   schema:
-                      type: string
+                      type: integer
+                      format: int64
                 - name: status
                   in: query
                   description: Filter by status
@@ -1442,7 +1443,7 @@ components:
                     format: int64
                 date:
                     type: string
-                    format: date-time
+                    format: date
                 duration:
                     type: integer
                     format: int32
@@ -1652,7 +1653,7 @@ components:
                     x-field-extra-annotation: '@NotBlank(message = "Description field cannot be blank")'
                 date:
                     type: string
-                    format: date-time
+                    format: date
                     x-field-extra-annotation: >-
                         @Future(message = "Date must be in the future")
                         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
@@ -1661,7 +1662,6 @@ components:
                     format: int32
                     x-field-extra-annotation: >-
                         @Min(value = 1, message = "Duration must be greater than 0")
-                        @Max(value = 7, message = "Duration must be less than 7")
                 userId:
                     type: integer
                     format: int64
@@ -1684,7 +1684,7 @@ components:
                         @Max(value = 7, message = "Duration must be less than 7")
                 date:
                     type: string
-                    format: date-time
+                    format: date
                     x-field-extra-annotation: >-
                         @Future(message = "Date must be in the future")
                         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
@@ -1725,15 +1725,12 @@ components:
         AddInvoiceRequest:
             type: object
             properties:
-                paymentMethod:
-                    type: string
-                    x-field-extra-annotation: '@NotBlank(message = "Payment method field cannot be blank")'
-                notes:
-                    type: string
                 userId:
                     type: integer
                     format: int64
-            required: [paymentMethod, notes, userId]
+                paymentMethod:
+                    type: string
+            required: [userId, paymentMethod]
         UpdateInvoiceStatusRequest:
             type: object
             properties:

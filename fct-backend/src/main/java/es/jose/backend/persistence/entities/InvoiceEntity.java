@@ -1,16 +1,5 @@
 package es.jose.backend.persistence.entities;
 
-import java.math.BigDecimal;
-import java.time.OffsetDateTime;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
-
-import org.openapitools.model.InvoiceStatusEnum;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -25,6 +14,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -32,11 +22,22 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import org.openapitools.model.InvoiceStatusEnum;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.math.BigDecimal;
+import java.time.OffsetDateTime;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
+
 @Entity
 @Table(name = "invoices")
 @Getter
 @Setter
-@ToString(exclude = { "lineItems" })
+@ToString(exclude = {"lineItems"})
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -50,9 +51,6 @@ public class InvoiceEntity {
     @Column(name = "payment_method", nullable = false, length = 50)
     private String paymentMethod;
 
-    @Column(name = "notes", nullable = false, length = 500)
-    private String notes;
-
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private UserEntity user;
@@ -63,7 +61,11 @@ public class InvoiceEntity {
     private InvoiceStatusEnum status = InvoiceStatusEnum.WAITING;
 
     @Builder.Default
-    @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(
+            mappedBy = "invoice",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY)
     private Set<LineItemEntity> lineItems = new HashSet<>();
 
     @Column(name = "total_price", nullable = false, precision = 10, scale = 2)
@@ -84,11 +86,9 @@ public class InvoiceEntity {
     // --- Manually Implemented equals() and hashCode() for robustness ---
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
+        if (this == o) return true;
         // Use getClass() for proxy safety
-        if (o == null || getClass() != o.getClass())
-            return false;
+        if (o == null || getClass() != o.getClass()) return false;
         InvoiceEntity that = (InvoiceEntity) o;
         // If ID is null, objects are only equal if they are the same instance.
         // If ID is not null, compare by ID. Handles transient vs persistent correctly.
