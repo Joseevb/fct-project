@@ -44,6 +44,7 @@ export default function AuthProvider({ children }: AuthContextProps) {
 			if (error) {
 				setError(error);
 				setLoading(false);
+				console.log(error);
 			}
 
 			if (data) {
