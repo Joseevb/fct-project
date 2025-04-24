@@ -1,0 +1,57 @@
+services:
+    mariadb:
+        image: mariadb
+        container_name: mariadb
+        environment:
+            MYSQL_ROOT_PASSWORD: rootpassword
+            MYSQL_DATABASE: mydatabase
+            MYSQL_USER: user
+            MYSQL_PASSWORD: userpassword
+        volumes:
+            - ./mariadb_data:/var/lib/mysql
+        networks:
+            - backend_db
+        restart: always
+
+    backend:
+        build:
+            context: .
+            dockerfile: fct-backend/Dockerfile
+        container_name: backend
+        depends_on:
+            - mariadb
+        environment:
+            # DB_HOST: mariadb
+            DB_PORT: 3306
+            DB_NAME: mydatabase
+            DB_USER: user
+            DB_PASSWORD: userpassword
+        networks:
+            - backend_db
+            - frontend_backend
+        ports:
+            - "8080:8080"
+        restart: on-failure
+
+    frontend:
+        build:
+            context: .
+            dockerfile: fct-frontend/Dockerfile
+        container_name: frontend
+        depends_on:
+            - backend
+        networks:
+            - frontend_backend
+        ports:
+            - "80:80"
+        restart: on-failure
+
+networks:
+    backend_db:
+        driver: bridge
+    frontend_backend:
+        driver: bridge
+
+volumes:
+    mariadb_data:
+        driver: local
