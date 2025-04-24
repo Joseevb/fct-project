@@ -11,6 +11,11 @@ services:
             - ./mariadb_data:/var/lib/mysql
         networks:
             - backend_db
+        healthcheck:
+            test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+            interval: 5s
+            timeout: 10s
+            retries: 10
         restart: always
 
     backend:
@@ -19,9 +24,10 @@ services:
             dockerfile: fct-backend/Dockerfile
         container_name: backend
         depends_on:
-            - mariadb
+            mariadb:
+                condition: service_healthy
         environment:
-            # DB_HOST: mariadb
+            DB_HOST: mariadb
             DB_PORT: 3306
             DB_NAME: mydatabase
             DB_USER: user

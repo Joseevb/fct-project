@@ -15,17 +15,18 @@ RUN apt-get update && \
 COPY ./fct-frontend/package*.json ./
 
 # Install dependencies
-RUN npm install --legacy-peer-deps
+RUN npm install --force
 
 # Copy the rest of the application files
 COPY ./fct-frontend/ .
 
-COPY ./api-spec/openapi.yaml /app/api-spec/openapi.yaml
+# COPY ./api-spec/openapi.yaml /app/api-spec/openapi.yaml
 
 # Generate API code
 # Build the application
-RUN npm run generate-api && \
-    npm run build --legacy-peer-deps
+# RUN npm run generate-api && \
+#     npm run build --legacy-peer-deps
+RUN npm run build
 
 # Stage 2: Production
 FROM nginx:alpine
