@@ -31,7 +31,7 @@ services:
             - frontend_backend
         ports:
             - "8080:8080"
-        restart: on-failure
+        restart: on-failure:10
 
     frontend:
         build:

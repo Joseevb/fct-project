@@ -24,6 +24,9 @@ WORKDIR /app
 
 # Copy the built JAR from the builder stage
 COPY --from=builder /app/target/*.jar app.jar
+COPY ./wait-for-it.sh /wait-for-it.sh
+
+EXPOSE 8080
 
 # Command to run the application
-CMD ["java", "-jar", "app.jar"]
+ENTRYPOINT ["./wait-for-it.sh", "mariadb:3306", "--", "java", "-jar", "your-app.jar"]
