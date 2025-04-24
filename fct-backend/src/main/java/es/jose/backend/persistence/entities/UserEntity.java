@@ -1,14 +1,5 @@
 package es.jose.backend.persistence.entities;
 
-import java.io.Serializable;
-import java.time.OffsetDateTime;
-import java.util.Objects;
-
-import org.openapitools.model.RoleEnum;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -22,6 +13,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -29,11 +21,20 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import org.openapitools.model.RoleEnum;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.io.Serializable;
+import java.time.OffsetDateTime;
+import java.util.Objects;
+
 @Entity
 @Table(name = "users")
 @Getter
 @Setter
-@ToString(exclude = { "password" })
+@ToString(exclude = {"password"})
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -57,10 +58,9 @@ public class UserEntity implements Serializable {
     private String username;
 
     /**
-     * IMPORTANT: This field stores the HASHED password, not the plaintext password.
-     * Validation (@NotBlank, length checks) should apply primarily to the user
-     * INPUT (in DTO),
-     * but the stored hash should also not be blank.
+     * IMPORTANT: This field stores the HASHED password, not the plaintext password. Validation
+     * (@NotBlank, length checks) should apply primarily to the user INPUT (in DTO), but the stored
+     * hash should also not be blank.
      */
     @NotBlank(message = "Password hash cannot be blank")
     @Column(name = "password", nullable = false, length = 70)
@@ -88,9 +88,8 @@ public class UserEntity implements Serializable {
     // --- Auditing Fields managed by Spring Data JPA ---
 
     @Column(name = "created_at", nullable = false, updatable = false)
-    @Builder.Default
     @CreatedDate
-    private OffsetDateTime createdAt = OffsetDateTime.now();
+    private OffsetDateTime createdAt;
 
     @Column(name = "updated_at", nullable = true)
     @LastModifiedDate
@@ -100,11 +99,9 @@ public class UserEntity implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
+        if (this == o) return true;
         // Use getClass() comparison for JPA proxy safety
-        if (o == null || getClass() != o.getClass())
-            return false;
+        if (o == null || getClass() != o.getClass()) return false;
         UserEntity that = (UserEntity) o;
         // If ID is null (transient state), objects are only equal if they are the same
         // instance.

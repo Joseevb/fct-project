@@ -29,10 +29,10 @@ spring:
             platform: mariadb
 
 mail:
-    host: ${MAIL_HOST:smtp.gmail.com}
-    port: ${MAIL_PORT:587}
-    username: ${MAIL_USERNAME:joseevasquezbarboza@gmail.com}
-    password: ${MAIL_PASSWORD:}
+    host: smtp.gmail.com
+    port: 587
+    username: joseevasquezbarboza@gmail.com
+    password: jxtn qtiy crkt latz
     properties:
         mail:
             smtp:
