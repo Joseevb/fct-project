@@ -75,9 +75,8 @@ public class InvoiceEntity {
     // --- Auditing Fields managed by Spring Data JPA ---
 
     @Column(name = "created_at", nullable = false, updatable = false)
-    @Builder.Default
     @CreatedDate
-    private OffsetDateTime createdAt = OffsetDateTime.now();
+    private OffsetDateTime createdAt;
 
     @Column(name = "updated_at", nullable = true)
     @LastModifiedDate

@@ -1,14 +1,5 @@
 package es.jose.backend.persistence.entities;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.time.OffsetDateTime;
-import java.util.Objects;
-import java.util.stream.Stream;
-
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -22,6 +13,7 @@ import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -29,12 +21,24 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.time.OffsetDateTime;
+import java.util.Objects;
+import java.util.stream.Stream;
+
 @Entity
 @Table(name = "line_items")
 @Getter
 @Setter
 @Builder
-@ToString(exclude = { "invoice", /* "appointment" , "product", "course" */ })
+@ToString(
+        exclude = {
+            "invoice", /* "appointment" , "product", "course" */
+        })
 @NoArgsConstructor
 @AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
@@ -65,15 +69,15 @@ public class LineItemEntity implements Serializable {
     @ManyToOne(optional = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id", nullable = true)
     private ProductEntity product;
+
     //
     // @ManyToOne(optional = true, fetch = FetchType.LAZY)
     // @JoinColumn(name = "course_id", nullable = true)
     // private CourseEntity course;
 
     @Column(name = "created_at", nullable = false, updatable = false)
-    @Builder.Default
     @CreatedDate
-    private OffsetDateTime createdAt = OffsetDateTime.now();
+    private OffsetDateTime createdAt;
 
     @PrePersist
     @PreUpdate
@@ -81,11 +85,13 @@ public class LineItemEntity implements Serializable {
         long count = countPresentRelationships();
         if (count == 0) {
             throw new IllegalStateException(
-                    "LineItem must relate to at least one of: Appointment, Product, or Course. None found.");
+                    "LineItem must relate to at least one of: Appointment, Product, or Course. None"
+                        + " found.");
         }
         if (count > 1) {
             throw new IllegalStateException(
-                    "LineItem must relate to exactly one of: Appointment, Product, or Course. Found relationships: "
+                    "LineItem must relate to exactly one of: Appointment, Product, or Course. Found"
+                        + " relationships: "
                             + count);
         }
     }
@@ -93,19 +99,15 @@ public class LineItemEntity implements Serializable {
     @Transient
     private long countPresentRelationships() {
         // !! IMPORTANT: Update when product and course entities/fields are added !!
-        return Stream.of(appointment, product /* , course */)
-                .filter(Objects::nonNull)
-                .count();
+        return Stream.of(appointment, product /* , course */).filter(Objects::nonNull).count();
     }
 
     // --- Manually Implemented equals() and hashCode() for robustness ---
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
+        if (this == o) return true;
         // Use getClass() for proxy safety
-        if (o == null || getClass() != o.getClass())
-            return false;
+        if (o == null || getClass() != o.getClass()) return false;
         LineItemEntity that = (LineItemEntity) o;
         // If ID is null, objects are only equal if they are the same instance.
         // If ID is not null, compare by ID. Handles transient vs persistent correctly.
