@@ -1,14 +1,15 @@
 package es.jose.backend.services;
 
-import java.util.List;
-import java.util.Optional;
+import es.jose.backend.persistence.entities.InvoiceEntity;
 
 import org.openapitools.model.AddInvoiceRequest;
 import org.openapitools.model.Invoice;
 import org.openapitools.model.InvoiceStatusEnum;
+import org.openapitools.model.UpdateInvoiceRequest;
 import org.openapitools.model.UpdateInvoiceStatusRequest;
 
-import es.jose.backend.persistence.entities.InvoiceEntity;
+import java.util.List;
+import java.util.Optional;
 
 public interface InvoiceService {
 
@@ -34,8 +35,9 @@ public interface InvoiceService {
 
     Invoice createInvoice(AddInvoiceRequest invoice);
 
+    Invoice updateInvoice(Long id, UpdateInvoiceRequest data);
+
     Invoice updateInvoiceStatus(Long id, UpdateInvoiceStatusRequest invoice);
 
     void deleteInvoice(Long id);
-
 }

@@ -32,7 +32,7 @@ export default function useInvoice(): UseInvoiceResult {
 		const api = new InvoicesApi();
 
 		const { data, error } = await tryCatch(
-			api.addInvoice({ userId: user.id }),
+			api.addInvoice({ userId: user.id, paymentMethod: "" }),
 		);
 
 		if (error) throw error;
@@ -66,7 +66,7 @@ export default function useInvoice(): UseInvoiceResult {
 	const payInvoice = async (invoiceId: number) => {
 		const api = new InvoicesApi();
 		const { data, error } = await tryCatch(
-			api.updateInvoice(invoiceId, { status: "PAID" }),
+			api.updateInvoiceStatus(invoiceId, { status: "PAID" }),
 		);
 		if (error) throw error;
 		setInvoice(data.data);

@@ -15,6 +15,7 @@ import { LineItemable, TemporaryLineItem } from "@/types/lineItem";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 
 export type InvoiceType = "APPOINTMENT" | "PRODUCT" | "COURSE";
@@ -44,6 +45,8 @@ export default function InvoicePage({
 
 	const { initInvoice, addLineItem, payInvoice } = useInvoice();
 
+	const navigate = useNavigate();
+
 	const form = useForm<PaymentFormData>({
 		defaultValues: {
 			cardNumber: "",
@@ -54,6 +57,11 @@ export default function InvoicePage({
 		resolver: zodResolver(paymentSchema),
 	});
 
+	if (!(objs && data && itemType)) {
+		navigate("/");
+		return;
+	}
+
 	const onSubmit = async (formData: z.infer<typeof paymentSchema>) => {
 		setError("");
 		setIsLoading(true);
@@ -62,6 +70,8 @@ export default function InvoicePage({
 			await tryCatch(initInvoice());
 
 		if (invoiceErr) {
+			console.error("Error initializing invoice", invoiceErr);
+
 			setError(invoiceErr.message);
 			return;
 		}
@@ -71,6 +81,11 @@ export default function InvoicePage({
 		const resolvedRes = await Promise.all(res);
 
 		if (resolvedRes.some((res) => res.error)) {
+			console.error(
+				resolvedRes.find((res) => res.error)?.error?.message ||
+					"Error al agregar linea",
+			);
+
 			setError(
 				resolvedRes.find((res) => res.error)?.error?.message ||
 					"Error al agregar linea",

@@ -24,6 +24,7 @@ export * from './update-address-request';
 export * from './update-appointment-category-request';
 export * from './update-appointment-request';
 export * from './update-appointment-status-request';
+export * from './update-invoice-request';
 export * from './update-invoice-status-request';
 export * from './update-user-request';
 export * from './user';

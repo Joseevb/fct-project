@@ -114,12 +114,12 @@ export const AppointmentsApiAxiosParamCreator = function (configuration?: Config
         /**
          * 
          * @summary Get all appointments
-         * @param {string} [userId] Filter by user id
+         * @param {number} [userId] Filter by user id
          * @param {AppointmentStatusEnum} [status] Filter by status
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getAllAppointments: async (userId?: string, status?: AppointmentStatusEnum, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getAllAppointments: async (userId?: number, status?: AppointmentStatusEnum, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/appointment`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -334,12 +334,12 @@ export const AppointmentsApiFp = function(configuration?: Configuration) {
         /**
          * 
          * @summary Get all appointments
-         * @param {string} [userId] Filter by user id
+         * @param {number} [userId] Filter by user id
          * @param {AppointmentStatusEnum} [status] Filter by status
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getAllAppointments(userId?: string, status?: AppointmentStatusEnum, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<Appointment>>> {
+        async getAllAppointments(userId?: number, status?: AppointmentStatusEnum, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<Appointment>>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getAllAppointments(userId, status, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['AppointmentsApi.getAllAppointments']?.[localVarOperationServerIndex]?.url;
@@ -431,12 +431,12 @@ export const AppointmentsApiFactory = function (configuration?: Configuration, b
         /**
          * 
          * @summary Get all appointments
-         * @param {string} [userId] Filter by user id
+         * @param {number} [userId] Filter by user id
          * @param {AppointmentStatusEnum} [status] Filter by status
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getAllAppointments(userId?: string, status?: AppointmentStatusEnum, options?: RawAxiosRequestConfig): AxiosPromise<Array<Appointment>> {
+        getAllAppointments(userId?: number, status?: AppointmentStatusEnum, options?: RawAxiosRequestConfig): AxiosPromise<Array<Appointment>> {
             return localVarFp.getAllAppointments(userId, status, options).then((request) => request(axios, basePath));
         },
         /**
@@ -512,13 +512,13 @@ export interface AppointmentsApiInterface {
     /**
      * 
      * @summary Get all appointments
-     * @param {string} [userId] Filter by user id
+     * @param {number} [userId] Filter by user id
      * @param {AppointmentStatusEnum} [status] Filter by status
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof AppointmentsApiInterface
      */
-    getAllAppointments(userId?: string, status?: AppointmentStatusEnum, options?: RawAxiosRequestConfig): AxiosPromise<Array<Appointment>>;
+    getAllAppointments(userId?: number, status?: AppointmentStatusEnum, options?: RawAxiosRequestConfig): AxiosPromise<Array<Appointment>>;
 
     /**
      * 
@@ -597,13 +597,13 @@ export class AppointmentsApi extends BaseAPI implements AppointmentsApiInterface
     /**
      * 
      * @summary Get all appointments
-     * @param {string} [userId] Filter by user id
+     * @param {number} [userId] Filter by user id
      * @param {AppointmentStatusEnum} [status] Filter by status
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof AppointmentsApi
      */
-    public getAllAppointments(userId?: string, status?: AppointmentStatusEnum, options?: RawAxiosRequestConfig) {
+    public getAllAppointments(userId?: number, status?: AppointmentStatusEnum, options?: RawAxiosRequestConfig) {
         return AppointmentsApiFp(this.configuration).getAllAppointments(userId, status, options).then((request) => request(this.axios, this.basePath));
     }
 

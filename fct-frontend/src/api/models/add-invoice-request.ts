@@ -26,5 +26,11 @@ export interface AddInvoiceRequest {
      * @memberof AddInvoiceRequest
      */
     'userId': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof AddInvoiceRequest
+     */
+    'paymentMethod': string;
 }
 

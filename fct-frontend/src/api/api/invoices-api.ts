@@ -30,6 +30,8 @@ import type { Invoice } from '../models';
 // @ts-ignore
 import type { InvoiceStatusEnum } from '../models';
 // @ts-ignore
+import type { UpdateInvoiceRequest } from '../models';
+// @ts-ignore
 import type { UpdateInvoiceStatusRequest } from '../models';
 // @ts-ignore
 import type { ValidationErrorMessage } from '../models';
@@ -185,17 +187,57 @@ export const InvoicesApiAxiosParamCreator = function (configuration?: Configurat
         },
         /**
          * 
+         * @summary Update an invoice
+         * @param {number} id Invoice id
+         * @param {UpdateInvoiceRequest} updateInvoiceRequest Invoice to update
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateInvoice: async (id: number, updateInvoiceRequest: UpdateInvoiceRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('updateInvoice', 'id', id)
+            // verify required parameter 'updateInvoiceRequest' is not null or undefined
+            assertParamExists('updateInvoice', 'updateInvoiceRequest', updateInvoiceRequest)
+            const localVarPath = `/invoice/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(updateInvoiceRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @summary Update an invoice status
          * @param {number} id Invoice id
          * @param {UpdateInvoiceStatusRequest} updateInvoiceStatusRequest Invoice to update
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        updateInvoice: async (id: number, updateInvoiceStatusRequest: UpdateInvoiceStatusRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        updateInvoiceStatus: async (id: number, updateInvoiceStatusRequest: UpdateInvoiceStatusRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
-            assertParamExists('updateInvoice', 'id', id)
+            assertParamExists('updateInvoiceStatus', 'id', id)
             // verify required parameter 'updateInvoiceStatusRequest' is not null or undefined
-            assertParamExists('updateInvoice', 'updateInvoiceStatusRequest', updateInvoiceStatusRequest)
+            assertParamExists('updateInvoiceStatus', 'updateInvoiceStatusRequest', updateInvoiceStatusRequest)
             const localVarPath = `/invoice/{id}`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
@@ -288,16 +330,30 @@ export const InvoicesApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @summary Update an invoice
+         * @param {number} id Invoice id
+         * @param {UpdateInvoiceRequest} updateInvoiceRequest Invoice to update
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async updateInvoice(id: number, updateInvoiceRequest: UpdateInvoiceRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Invoice>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.updateInvoice(id, updateInvoiceRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['InvoicesApi.updateInvoice']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
          * @summary Update an invoice status
          * @param {number} id Invoice id
          * @param {UpdateInvoiceStatusRequest} updateInvoiceStatusRequest Invoice to update
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async updateInvoice(id: number, updateInvoiceStatusRequest: UpdateInvoiceStatusRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Invoice>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.updateInvoice(id, updateInvoiceStatusRequest, options);
+        async updateInvoiceStatus(id: number, updateInvoiceStatusRequest: UpdateInvoiceStatusRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Invoice>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.updateInvoiceStatus(id, updateInvoiceStatusRequest, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['InvoicesApi.updateInvoice']?.[localVarOperationServerIndex]?.url;
+            const localVarOperationServerBasePath = operationServerMap['InvoicesApi.updateInvoiceStatus']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
     }
@@ -353,14 +409,25 @@ export const InvoicesApiFactory = function (configuration?: Configuration, baseP
         },
         /**
          * 
+         * @summary Update an invoice
+         * @param {number} id Invoice id
+         * @param {UpdateInvoiceRequest} updateInvoiceRequest Invoice to update
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        updateInvoice(id: number, updateInvoiceRequest: UpdateInvoiceRequest, options?: RawAxiosRequestConfig): AxiosPromise<Invoice> {
+            return localVarFp.updateInvoice(id, updateInvoiceRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @summary Update an invoice status
          * @param {number} id Invoice id
          * @param {UpdateInvoiceStatusRequest} updateInvoiceStatusRequest Invoice to update
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        updateInvoice(id: number, updateInvoiceStatusRequest: UpdateInvoiceStatusRequest, options?: RawAxiosRequestConfig): AxiosPromise<Invoice> {
-            return localVarFp.updateInvoice(id, updateInvoiceStatusRequest, options).then((request) => request(axios, basePath));
+        updateInvoiceStatus(id: number, updateInvoiceStatusRequest: UpdateInvoiceStatusRequest, options?: RawAxiosRequestConfig): AxiosPromise<Invoice> {
+            return localVarFp.updateInvoiceStatus(id, updateInvoiceStatusRequest, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -414,6 +481,17 @@ export interface InvoicesApiInterface {
 
     /**
      * 
+     * @summary Update an invoice
+     * @param {number} id Invoice id
+     * @param {UpdateInvoiceRequest} updateInvoiceRequest Invoice to update
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof InvoicesApiInterface
+     */
+    updateInvoice(id: number, updateInvoiceRequest: UpdateInvoiceRequest, options?: RawAxiosRequestConfig): AxiosPromise<Invoice>;
+
+    /**
+     * 
      * @summary Update an invoice status
      * @param {number} id Invoice id
      * @param {UpdateInvoiceStatusRequest} updateInvoiceStatusRequest Invoice to update
@@ -421,7 +499,7 @@ export interface InvoicesApiInterface {
      * @throws {RequiredError}
      * @memberof InvoicesApiInterface
      */
-    updateInvoice(id: number, updateInvoiceStatusRequest: UpdateInvoiceStatusRequest, options?: RawAxiosRequestConfig): AxiosPromise<Invoice>;
+    updateInvoiceStatus(id: number, updateInvoiceStatusRequest: UpdateInvoiceStatusRequest, options?: RawAxiosRequestConfig): AxiosPromise<Invoice>;
 
 }
 
@@ -483,6 +561,19 @@ export class InvoicesApi extends BaseAPI implements InvoicesApiInterface {
 
     /**
      * 
+     * @summary Update an invoice
+     * @param {number} id Invoice id
+     * @param {UpdateInvoiceRequest} updateInvoiceRequest Invoice to update
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof InvoicesApi
+     */
+    public updateInvoice(id: number, updateInvoiceRequest: UpdateInvoiceRequest, options?: RawAxiosRequestConfig) {
+        return InvoicesApiFp(this.configuration).updateInvoice(id, updateInvoiceRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
      * @summary Update an invoice status
      * @param {number} id Invoice id
      * @param {UpdateInvoiceStatusRequest} updateInvoiceStatusRequest Invoice to update
@@ -490,8 +581,8 @@ export class InvoicesApi extends BaseAPI implements InvoicesApiInterface {
      * @throws {RequiredError}
      * @memberof InvoicesApi
      */
-    public updateInvoice(id: number, updateInvoiceStatusRequest: UpdateInvoiceStatusRequest, options?: RawAxiosRequestConfig) {
-        return InvoicesApiFp(this.configuration).updateInvoice(id, updateInvoiceStatusRequest, options).then((request) => request(this.axios, this.basePath));
+    public updateInvoiceStatus(id: number, updateInvoiceStatusRequest: UpdateInvoiceStatusRequest, options?: RawAxiosRequestConfig) {
+        return InvoicesApiFp(this.configuration).updateInvoiceStatus(id, updateInvoiceStatusRequest, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

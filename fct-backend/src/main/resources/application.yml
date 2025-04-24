@@ -2,57 +2,52 @@ server:
     error:
         include-stacktrace: never
         include-message: always
-    port: 8080
+    port: ${SERVER_PORT:8080}
 
 spring:
     application:
-        name: fct-backend
+        name: ${SPRING_APPLICATION_NAME:fct-backend}
     output:
         ansi:
             enabled: always
     datasource:
-        url: jdbc:h2:mem:testdb
-        driverClassName: org.h2.Driver
-        username: sa
-        password:
-        platform: h2
-
+        url: jdbc:mariadb://${DB_HOST:mariadb}:${DB_PORT:3306}/${DB_NAME:mydatabase}
+        driver-class-name: org.mariadb.jdbc.Driver
+        username: ${DB_USER:user}
+        password: ${DB_PASSWORD:userpassword}
     jpa:
-        database-platform: org.hibernate.dialect.H2Dialect
+        # database-platform: org.hibernate.dialect.MariaDB103Dialect
         hibernate:
-            ddl-auto: update
-        defer-datasource-initialization: true
-
+            ddl-auto: create-drop
+        database-platform: org.hibernate.dialect.MariaDBDialect
     h2:
         console:
-            enabled: true
-            path: /h2-console
-
+            enabled: false
     sql:
         init:
             mode: always
-            platform: h2
+            platform: mariadb
 
-    mail:
-        host: smtp.gmail.com
-        port: 587
-        username: joseevasquezbarboza@gmail.com
-        password: jxtn qtiy crkt latz
-        properties:
-            mail:
-                smtp:
-                    auth: true
-                    starttls:
-                        enable: true
+mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:joseevasquezbarboza@gmail.com}
+    password: ${MAIL_PASSWORD:}
+    properties:
+        mail:
+            smtp:
+                auth: true
+                starttls:
+                    enable: true
 
 rsa:
-    private-key: classpath:certs/private-key.pem
-    public-key: classpath:certs/public-key.pem
+    private-key: ${RSA_PRIVATE_KEY:classpath:certs/private-key.pem}
+    public-key: ${RSA_PUBLIC_KEY:classpath:certs/public-key.pem}
 
 app:
     jwt:
-        expiration-minutes: 120
+        expiration-minutes: ${JWT_EXPIRATION_MINUTES:120}
     refresh-token:
-        expiration-days: 7
+        expiration-days: ${REFRESH_TOKEN_EXPIRATION_DAYS:7}
     verification:
-        expiration: 120
+        expiration: ${VERIFICATION_EXPIRATION:120}

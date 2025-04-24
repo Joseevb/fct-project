@@ -41,6 +41,7 @@ models/update-address-request.ts
 models/update-appointment-category-request.ts
 models/update-appointment-request.ts
 models/update-appointment-status-request.ts
+models/update-invoice-request.ts
 models/update-invoice-status-request.ts
 models/update-user-request.ts
 models/user.ts

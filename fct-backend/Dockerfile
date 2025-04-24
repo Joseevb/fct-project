@@ -5,11 +5,13 @@ FROM maven:3.9.9-eclipse-temurin-21 AS builder
 WORKDIR /app
 
 # Copy Maven files first (for caching dependencies)
-COPY pom.xml ./
+COPY ./fct-backend/pom.xml ./
 RUN mvn dependency:go-offline
 
 # Copy the rest of the project
-COPY . ./
+COPY ./fct-backend/ ./
+
+COPY ./api-spec/openapi.yaml ./src/main/resources/openapi/openapi.yaml
 
 # Build the application
 RUN mvn clean package

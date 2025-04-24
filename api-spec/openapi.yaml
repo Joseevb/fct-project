@@ -988,7 +988,7 @@ paths:
                                 $ref: "#/components/schemas/ErrorMessage"
         patch:
             summary: Update an invoice status
-            operationId: updateInvoice
+            operationId: updateInvoiceStatus
             tags:
                 - Invoices
             parameters:
@@ -1053,6 +1053,51 @@ paths:
                         application/json:
                             schema:
                                 $ref: "#/components/schemas/ErrorMessage"
+                401:
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                403:
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+        put:
+            summary: Update an invoice
+            operationId: updateInvoice
+            tags:
+                - Invoices
+            parameters:
+                - name: id
+                  in: path
+                  description: Invoice id
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            requestBody:
+                description: Invoice to update
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/UpdateInvoiceRequest"
+            responses:
+                200:
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Invoice"
+                400:
+                    description: Bad request
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ValidationErrorMessage"
                 401:
                     description: Unauthorized
                     content:
@@ -1494,8 +1539,6 @@ components:
                     $ref: "#/components/schemas/InvoiceStatusEnum"
                 paymentMethod:
                     type: string
-                notes:
-                    type: string
                 totalPrice:
                     type: number
                     format: double
@@ -1513,7 +1556,6 @@ components:
                     id,
                     status,
                     paymentMethod,
-                    notes,
                     totalPrice,
                     userId,
                     createdAt,
@@ -1731,6 +1773,16 @@ components:
                 paymentMethod:
                     type: string
             required: [userId, paymentMethod]
+        UpdateInvoiceRequest:
+            type: object
+            properties:
+                status:
+                    $ref: "#/components/schemas/InvoiceStatusEnum"
+                paymentMethod:
+                    type: string
+                totalPrice:
+                    type: number
+                    format: double
         UpdateInvoiceStatusRequest:
             type: object
             properties:

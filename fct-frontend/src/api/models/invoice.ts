@@ -43,12 +43,6 @@ export interface Invoice {
     'paymentMethod': string;
     /**
      * 
-     * @type {string}
-     * @memberof Invoice
-     */
-    'notes': string;
-    /**
-     * 
      * @type {number}
      * @memberof Invoice
      */
