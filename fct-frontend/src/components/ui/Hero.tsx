@@ -8,15 +8,12 @@ import { heroImages } from "@/assets/hero";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
-import { useTheme } from "@/components/theme-provider";
 
 interface HeroProps {
 	areButtonsVisible: boolean;
 }
 
 export default function Hero({ areButtonsVisible }: Readonly<HeroProps>) {
-	const { resolvedTheme } = useTheme();
-
 	// Enhanced button styles with larger text and padding
 	const buttonStyle = cn(
 		// Base styles for all screen sizes
@@ -71,12 +68,9 @@ export default function Hero({ areButtonsVisible }: Readonly<HeroProps>) {
 						// Larger screens: wider spacing
 						"lg:gap-10",
 
-						// Visibility toggle only affects desktop view
-						"opacity-100", // Always visible on mobile
-						"md:" +
-							(areButtonsVisible
-								? "opacity-100 translate-y-0"
-								: "pointer-events-none translate-y-4 opacity-0"),
+						areButtonsVisible
+							? "opacity-100 translate-y-0"
+							: "pointer-events-none translate-y-4 opacity-0",
 					)}
 				>
 					{/* Buttons - each takes 1/3 of container on desktop */}
@@ -90,10 +84,7 @@ export default function Hero({ areButtonsVisible }: Readonly<HeroProps>) {
 							to={obj.url}
 							className={cn(
 								buttonVariants({
-									variant:
-										resolvedTheme === "dark"
-											? "default"
-											: "outline",
+									variant: "hero",
 									size: "lg", // Default larger size
 								}),
 								buttonStyle,

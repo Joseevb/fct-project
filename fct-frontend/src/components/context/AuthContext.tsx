@@ -66,13 +66,18 @@ export default function AuthProvider({ children }: AuthContextProps) {
 		window.location.replace("/");
 	};
 
+	const updateLoggedUser = (user: User) => {
+		setUser(user);
+	};
+
 	const providerValue: AuthContextType = {
 		isAuthenticated: authService.isAuthenticated(),
-		user: user,
-		login: login,
-		logout: logout,
-		loading: loading,
+		user,
 		error,
+		loading,
+		login,
+		logout,
+		updateLoggedUser,
 	};
 
 	return (

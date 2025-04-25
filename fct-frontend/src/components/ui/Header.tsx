@@ -13,6 +13,8 @@ import {
 import { useScreenSize } from "@/hooks/useScreenSize";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Menu } from "lucide-react";
+import { cn } from "@/lib/utils";
+import UserMenu from "@/components/ui/UserMenu";
 
 interface HeaderProps {
 	ref: React.RefObject<HTMLDivElement | null>;
@@ -20,8 +22,9 @@ interface HeaderProps {
 
 export default function Header({ ref }: Readonly<HeaderProps>) {
 	const { isAuthenticated, user, logout } = useAuth();
-	// const location = useLocation();
 	const screenSize = useScreenSize();
+
+	const headerLinkStyle = "text-foreground";
 
 	return (
 		<header
@@ -42,9 +45,12 @@ export default function Header({ ref }: Readonly<HeaderProps>) {
 									<NavigationMenuLink asChild>
 										<Link
 											to="/admin"
-											className={buttonVariants({
-												variant: "link",
-											})}
+											className={cn(
+												buttonVariants({
+													variant: "link",
+												}),
+												headerLinkStyle,
+											)}
 										>
 											Admin
 										</Link>
@@ -56,9 +62,12 @@ export default function Header({ ref }: Readonly<HeaderProps>) {
 								<NavigationMenuLink asChild>
 									<Link
 										to="/#about"
-										className={buttonVariants({
-											variant: "link",
-										})}
+										className={cn(
+											buttonVariants({
+												variant: "link",
+											}),
+											headerLinkStyle,
+										)}
 									>
 										Acerca de
 									</Link>
@@ -67,19 +76,17 @@ export default function Header({ ref }: Readonly<HeaderProps>) {
 
 							<NavigationMenuItem>
 								{isAuthenticated ? (
-									<Button
-										variant={"outline"}
-										onClick={() => logout()}
-									>
-										Cerrar sesión
-									</Button>
+									<UserMenu logout={logout} />
 								) : (
 									<NavigationMenuLink asChild>
 										<Link
 											to="/login"
-											className={buttonVariants({
-												variant: "link",
-											})}
+											className={cn(
+												buttonVariants({
+													variant: "link",
+												}),
+												headerLinkStyle,
+											)}
 											state={{ from: location.pathname }}
 										>
 											Iniciar sesión
@@ -90,7 +97,7 @@ export default function Header({ ref }: Readonly<HeaderProps>) {
 						</NavigationMenuList>
 					</NavigationMenu>
 					<div className="flex items-center gap-3">
-						<LanguageSelector />
+						{/* <LanguageSelector />*/}
 						<ModeToggle />
 					</div>
 				</div>
@@ -130,13 +137,7 @@ export default function Header({ ref }: Readonly<HeaderProps>) {
 							</Link>
 
 							{isAuthenticated ? (
-								<Button
-									variant={"outline"}
-									onClick={() => logout()}
-									className="w-full"
-								>
-									Cerrar sesión
-								</Button>
+								<UserMenu logout={logout} />
 							) : (
 								<Link
 									to="/login"
@@ -151,7 +152,7 @@ export default function Header({ ref }: Readonly<HeaderProps>) {
 							)}
 
 							<div className="flex items-center gap-3 mt-4 justify-between">
-								<LanguageSelector />
+								{/* <LanguageSelector />*/}
 								<ModeToggle />
 							</div>
 						</div>

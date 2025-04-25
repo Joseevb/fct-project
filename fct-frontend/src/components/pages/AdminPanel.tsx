@@ -77,12 +77,11 @@ export default function AdminPanel() {
 
 		const action =
 			kind === "accept" ? acceptAppointment : cancelAppointment;
-		await action(selectedAppointment.id);
+		await action(selectedAppointment.id).then();
 
 		setIsUpdating(false);
 	};
 
-	// --- Render ---
 	return (
 		<AdminAuthGuard>
 			<main className="p-6 md:p-8 space-y-6">
@@ -266,5 +265,3 @@ export default function AdminPanel() {
 		</AdminAuthGuard>
 	);
 }
-
-//Ok so another thing, I have an admin page that has a calendar, which when I click on the date it shows me the appointment information of that date. The issue is that for the users I will make something similar: a calendar that let's me see the available dates, and when I click on them it allows me to book an appointment. So I want to make a "Appointment calendar" component that's modular and allows me to use it both for admin and user pages. Can you modularize the component? Make it as modular as possible::xa

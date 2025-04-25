@@ -1,6 +1,6 @@
 package es.jose.backend.services;
 
-import java.time.OffsetDateTime;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.openapitools.model.AddLineItemRequest;
@@ -30,23 +30,20 @@ public class LineItemServiceImpl implements LineItemService {
 
     @Override
     public List<LineItem> getAllLineItems() {
-        return lineItemRepository.findAll()
-                .stream()
-                .map(lineItemMapper::toDto)
-                .toList();
+        return lineItemRepository.findAll().stream().map(lineItemMapper::toDto).toList();
     }
 
     @Override
     public List<LineItem> getAllLineItemsByInvoiceId(final Long invoiceId) {
-        return lineItemRepository.findAllByInvoiceId(invoiceId)
-                .stream()
+        return lineItemRepository.findAllByInvoiceId(invoiceId).stream()
                 .map(lineItemMapper::toDto)
                 .toList();
     }
 
     @Override
     public LineItem getLineItemById(Long id) {
-        return lineItemRepository.findById(id)
+        return lineItemRepository
+                .findById(id)
                 .map(lineItemMapper::toDto)
                 .orElseThrow(() -> new LineItemNotFoundException("id", id.toString()));
     }
@@ -83,7 +80,8 @@ public class LineItemServiceImpl implements LineItemService {
         // TODO: Implement rest of the logic
     }
 
-    private LineItemEntity setLineItemObject(final LineItemEntity entity, final LineItemable object) {
+    private LineItemEntity setLineItemObject(
+            final LineItemEntity entity, final LineItemable object) {
         return switch (object) {
             case AppointmentEntity appointment -> {
                 entity.setAppointment(appointment);
@@ -107,7 +105,7 @@ public class LineItemServiceImpl implements LineItemService {
 
     private void updateInvoice(LineItemEntity entity) {
         final var invoice = entity.getInvoice();
-        invoice.setUpdatedAt(OffsetDateTime.now());
+        invoice.setUpdatedAt(LocalDateTime.now());
         invoice.setTotalPrice(invoice.getTotalPrice().add(entity.getSubtotal()));
         invoiceRepository.save(invoice);
     }
@@ -120,5 +118,4 @@ public class LineItemServiceImpl implements LineItemService {
 
         throw new LineItemNotFoundException("id", lineItemId.toString());
     }
-
 }

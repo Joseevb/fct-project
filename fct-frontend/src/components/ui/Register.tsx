@@ -115,9 +115,7 @@ export default function Register({ setIsOtp }: Readonly<RegisterProps>) {
 		<Card className="w-full max-w-md">
 			<CardHeader>
 				<CardTitle>Sign In</CardTitle>
-				<CardDescription>
-					Enter your credentials to access your account
-				</CardDescription>
+				<CardDescription>Registro de un nuevo usuario</CardDescription>
 			</CardHeader>
 			<Form {...form}>
 				<form onSubmit={form.handleSubmit(onSubmit)} method="post">

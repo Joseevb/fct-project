@@ -9,9 +9,10 @@ export interface AuthContextType {
 	isAuthenticated: boolean;
 	user: User | null;
 	loading: boolean;
+	error: LoginError | null;
 	login: (credentials: LoginRequest) => Promise<LoginResult>;
 	logout: () => void;
-	error: LoginError | null;
+	updateLoggedUser: (user: User) => void;
 }
 
 // Create the context with a default undefined value initially

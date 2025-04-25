@@ -2,7 +2,7 @@ import AboutPage from "@/components/pages/AboutPage";
 import Hero from "@/components/ui/Hero";
 import useScrollHijack from "@/hooks/useScrollHijack";
 import direction from "@/types/direction";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 interface HomePageProps {
 	headerRef: React.RefObject<HTMLElement | null>;
@@ -70,6 +70,15 @@ export default function HomePage({ headerRef }: Readonly<HomePageProps>) {
 		[areButtonsVisible, headerRef],
 	);
 
+	const autoCallback = useMemo(
+		() => ({
+			callback: () => handleScrollAttempt("down"),
+			delay: 1000,
+			repeat: false,
+		}),
+		[handleScrollAttempt],
+	);
+
 	useEffect(() => {
 		const hash = window.location.hash;
 		const isFromUserNavigation =
@@ -90,18 +99,25 @@ export default function HomePage({ headerRef }: Readonly<HomePageProps>) {
 	useScrollHijack({
 		callback: handleScrollAttempt,
 		throttleDelay: 1,
+		autoCallback,
 	});
 
 	return (
-		<main className="min-h-screen">
-			<section ref={heroRef} id="hero" className="relative h-screen">
-				<Hero areButtonsVisible={areButtonsVisible} />
-			</section>
+		<div className="flex flex-col items-center justify-center h-screen w-screen">
+			<main className="h-screen max-w-250">
+				<section ref={heroRef} id="hero" className="relative h-screen">
+					<Hero areButtonsVisible={areButtonsVisible} />
+				</section>
 
-			{/* About section */}
-			<section ref={aboutRef} id="about" className="relative h-screen">
-				<AboutPage />
-			</section>
-		</main>
+				{/* About section */}
+				<section
+					ref={aboutRef}
+					id="about"
+					className="relative h-screen"
+				>
+					<AboutPage />
+				</section>
+			</main>
+		</div>
 	);
 }

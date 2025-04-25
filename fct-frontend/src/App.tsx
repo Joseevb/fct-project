@@ -12,6 +12,7 @@ import AppointmentBookingPage from "@/components/pages/AppointmentBookingPage";
 import InvoicePage, { InvoiceType } from "@/components/pages/InvoicePage";
 import { TemporaryLineItem } from "@/types/lineItem";
 import { LineItemable } from "@/types/lineItem";
+import ProfilePage from "@/components/pages/ProfilePage";
 
 export default function App() {
 	const [temporaryLineItems, setTemporaryLineItems] = useState<
@@ -64,6 +65,10 @@ export default function App() {
 							/>
 						}
 					/>
+				</Route>
+
+				<Route path="/profile" element={<ProtectedRoute />}>
+					<Route index element={<ProfilePage />} />
 				</Route>
 			</Routes>
 			<Toaster />

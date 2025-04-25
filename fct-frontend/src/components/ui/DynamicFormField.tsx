@@ -13,18 +13,21 @@ interface FieldConfig {
 	label: string;
 	placeholder?: string;
 	type: string;
+	disabled?: boolean;
 }
 
 interface DynamicFormFieldProps<T extends FieldValues> {
 	name: FieldPath<T>;
 	control: Control<T>;
 	fieldConfigs: Record<string, FieldConfig>;
+	disabled?: boolean;
 }
 
 export function DynamicFormField<T extends FieldValues>({
 	name,
 	control,
 	fieldConfigs,
+	disabled = false,
 }: DynamicFormFieldProps<T>) {
 	const config = fieldConfigs[name as keyof typeof fieldConfigs];
 
@@ -40,6 +43,7 @@ export function DynamicFormField<T extends FieldValues>({
 							<Textarea
 								placeholder={config.placeholder}
 								{...field}
+								disabled={disabled || config.disabled}
 							/>
 						) : (
 							<Input
@@ -56,6 +60,7 @@ export function DynamicFormField<T extends FieldValues>({
 									}
 									field.onChange(value);
 								}}
+								disabled={disabled || config.disabled}
 							/>
 						)}
 					</FormControl>

@@ -18,7 +18,6 @@ import {
 	FormLabel,
 	FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import {
 	Select,
 	SelectContent,
@@ -48,6 +47,12 @@ import { toast } from "sonner";
 import { z } from "zod";
 
 const fieldConfigs = {
+	date: {
+		label: "Fecha",
+		placeholder: "Introduzca la fecha de la cita",
+		type: "date",
+		disabled: true,
+	},
 	name: {
 		label: "Titulo",
 		placeholder: "Introduzca el titulo de la cita",
@@ -62,11 +67,6 @@ const fieldConfigs = {
 		label: "Duración en minutos",
 		placeholder: "Introduzca la duración de la cita",
 		type: "number",
-	},
-	date: {
-		label: "Fecha",
-		placeholder: "Introduzca la fecha de la cita",
-		type: "date",
 	},
 	categoryId: {
 		label: "Categoría",
@@ -274,28 +274,9 @@ export default function AppointmentBookingPage({
 										className="space-y-4"
 										onSubmit={form.handleSubmit(onSubmit)}
 									>
-										<FormField
-											control={form.control}
-											name="date"
-											render={({ field }) => (
-												<FormItem>
-													<FormLabel>Fecha</FormLabel>
-													<FormControl>
-														<Input
-															{...field}
-															type="date"
-															disabled={true}
-															// Don't override the value here!
-														/>
-													</FormControl>
-													<FormMessage />
-												</FormItem>
-											)}
-										/>
 										{Object.keys(fieldConfigs)
 											.filter(
 												(fieldName) =>
-													fieldName !== "date" &&
 													fieldName !== "categoryId",
 											)
 											.map((fieldName) => (

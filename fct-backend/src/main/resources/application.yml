@@ -1,8 +1,8 @@
 server:
+    port: ${SERVER_PORT:8080}
     error:
         include-stacktrace: never
         include-message: always
-    port: ${SERVER_PORT:8080}
 
 spring:
     application:
@@ -10,35 +10,58 @@ spring:
     output:
         ansi:
             enabled: always
+    # TODO: Change to MariaDB
+    # datasource:
+    #     url: jdbc:mariadb://${DB_HOST:mariadb}:${DB_PORT:3306}/${DB_NAME:mydatabase}
+    #     driver-class-name: org.mariadb.jdbc.Driver
+    #     username: ${DB_USER:user}
+    #     password: ${DB_PASSWORD:userpassword}
+    # jpa:
+    #     hibernate:
+    #         ddl-auto: create-drop
+    #         database-platform: org.hibernate.dialect.MariaDBDialect
+    # h2:
+    #     console:
+    #         enabled: false
+    # sql:
+    #     init:
+    #         mode: always
+    #         platform: mariadb
+
+    # TODO: Remove
     datasource:
-        url: jdbc:mariadb://${DB_HOST:mariadb}:${DB_PORT:3306}/${DB_NAME:mydatabase}
-        driver-class-name: org.mariadb.jdbc.Driver
-        username: ${DB_USER:user}
-        password: ${DB_PASSWORD:userpassword}
+        url: jdbc:h2:mem:testdb
+        driverClassName: org.h2.Driver
+        username: sa
+        password:
+        platform: h2
+
     jpa:
-        # database-platform: org.hibernate.dialect.MariaDB103Dialect
+        database-platform: org.hibernate.dialect.H2Dialect
         hibernate:
-            ddl-auto: create-drop
-        database-platform: org.hibernate.dialect.MariaDBDialect
+            ddl-auto: update
+        defer-datasource-initialization: true
+
     h2:
         console:
-            enabled: false
+            enabled: true
+            path: /h2-console
+
     sql:
         init:
             mode: always
-            platform: mariadb
-
-mail:
-    host: smtp.gmail.com
-    port: 587
-    username: joseevasquezbarboza@gmail.com
-    password: jxtn qtiy crkt latz
-    properties:
-        mail:
-            smtp:
-                auth: true
-                starttls:
-                    enable: true
+            platform: h2
+    mail:
+        host: smtp.gmail.com
+        port: 587
+        username: joseevasquezbarboza@gmail.com
+        password: ${EMAIL_PASSWORD}
+        properties:
+            mail:
+                smtp:
+                    auth: true
+                    starttls:
+                        enable: true
 
 rsa:
     private-key: ${RSA_PRIVATE_KEY:classpath:certs/private-key.pem}

@@ -27,7 +27,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.io.Serializable;
-import java.time.OffsetDateTime;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -89,11 +89,11 @@ public class UserEntity implements Serializable {
 
     @Column(name = "created_at", nullable = false, updatable = false)
     @CreatedDate
-    private OffsetDateTime createdAt;
+    private LocalDateTime createdAt;
 
     @Column(name = "updated_at", nullable = true)
     @LastModifiedDate
-    private OffsetDateTime updatedAt;
+    private LocalDateTime updatedAt;
 
     // --- Manual equals() and hashCode() implementation for JPA entities ---
 

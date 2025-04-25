@@ -9,9 +9,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useLanguage } from "@/hooks/useLanguage";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 export default function LanguageSelector() {
 	const { language, setLanguage } = useLanguage("es");
+
+	const menuItemStyle = "cursor-pointer";
 
 	return (
 		<DropdownMenu>
@@ -25,6 +28,7 @@ export default function LanguageSelector() {
 					<DropdownMenuItem
 						key={code}
 						onSelect={() => setLanguage(code as LanguageCode)}
+						className={cn(menuItemStyle)}
 					>
 						{name}
 					</DropdownMenuItem>

@@ -8,6 +8,12 @@ type ScrollCallback = (direction: Direction) => void;
 interface UseScrollHijackOptions {
 	/** The callback function to execute on a throttled scroll attempt. */
 	callback: ScrollCallback;
+	/** Optional callback function to execute after as set delay */
+	autoCallback?: {
+		callback: ScrollCallback;
+		delay: number;
+		repeat: boolean;
+	};
 	/** Milliseconds to wait before allowing the next scroll trigger. */
 	throttleDelay?: number;
 	/** Optional ref to the scrollable element. Defaults to window. */
@@ -27,6 +33,7 @@ interface UseScrollHijackOptions {
 const useScrollHijack = (options: UseScrollHijackOptions): void => {
 	const {
 		callback,
+		autoCallback,
 		throttleDelay = 700, // Default throttle delay
 		elementRef,
 		enabled = true, // Hook is enabled by default
@@ -38,6 +45,21 @@ const useScrollHijack = (options: UseScrollHijackOptions): void => {
 	const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 	const touchStartY = useRef<number | null>(null);
 	const minTouchDistance = 50; // Minimum distance in pixels to trigger a swipe
+
+	// Track if user has “touched” the page
+	const userInteractedRef = useRef(false);
+
+	const hasFiredRef = useRef(false);
+
+	// Ref to store the auto timer id
+	const autoTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+	// Helper to clear whichever timer is pending
+	const clearAutoTimer = useCallback(() => {
+		if (autoTimerRef.current) {
+			clearTimeout(autoTimerRef.current);
+			autoTimerRef.current = null;
+		}
+	}, []);
 
 	// Function to lock scrolling for the throttle delay
 	const lockScroll = useCallback(() => {
@@ -62,8 +84,10 @@ const useScrollHijack = (options: UseScrollHijackOptions): void => {
 
 			callback(direction);
 			lockScroll();
+			userInteractedRef.current = true;
+			clearAutoTimer();
 		},
-		[callback, lockScroll],
+		[callback, clearAutoTimer, lockScroll],
 	);
 
 	// Handle wheel events (mouse wheel, trackpad)
@@ -151,6 +175,40 @@ const useScrollHijack = (options: UseScrollHijackOptions): void => {
 		},
 		[enabled],
 	);
+
+	useEffect(() => {
+		if (!enabled || !autoCallback) return;
+
+		const { callback, delay, repeat } = autoCallback;
+
+		// If the user already interacted, never start
+		if (userInteractedRef.current) return;
+
+		// Schedule only if not already fired
+		if (!repeat && hasFiredRef.current) return;
+
+		autoTimerRef.current = setTimeout(() => {
+			// If user interacted in the meantime, bail out
+			if (userInteractedRef.current) return;
+
+			callback("down");
+			hasFiredRef.current = true;
+
+			if (repeat) {
+				// schedule next iteration
+				autoTimerRef.current = null;
+				// recursion only if still not interacted
+				if (!userInteractedRef.current) {
+					// re-enter effect logic
+					setTimeout(() => {}, 0);
+				}
+			}
+		}, delay);
+
+		return () => {
+			clearAutoTimer();
+		};
+	}, [enabled, autoCallback, clearAutoTimer]);
 
 	// Effect to add/remove all event listeners
 	useEffect(() => {

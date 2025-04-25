@@ -26,7 +26,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.time.OffsetDateTime;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.stream.Stream;
 
@@ -77,7 +77,7 @@ public class LineItemEntity implements Serializable {
 
     @Column(name = "created_at", nullable = false, updatable = false)
     @CreatedDate
-    private OffsetDateTime createdAt;
+    private LocalDateTime createdAt;
 
     @PrePersist
     @PreUpdate
@@ -86,12 +86,12 @@ public class LineItemEntity implements Serializable {
         if (count == 0) {
             throw new IllegalStateException(
                     "LineItem must relate to at least one of: Appointment, Product, or Course. None"
-                        + " found.");
+                            + " found.");
         }
         if (count > 1) {
             throw new IllegalStateException(
                     "LineItem must relate to exactly one of: Appointment, Product, or Course. Found"
-                        + " relationships: "
+                            + " relationships: "
                             + count);
         }
     }

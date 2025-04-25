@@ -13,7 +13,7 @@ export default function AuthPage() {
 				<OtpValidation setIsOtp={setIsOtp} />
 			) : (
 				<Tabs defaultValue="login" className="w-[400px] mt-9">
-					<TabsList className="grid w-full grid-cols-2">
+					<TabsList className="grid w-full grid-cols-2 bg-card">
 						<TabsTrigger value="login">Login</TabsTrigger>
 						<TabsTrigger value="register">Register</TabsTrigger>
 					</TabsList>
