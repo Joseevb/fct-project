@@ -3,7 +3,7 @@ import { ModeToggle } from "@/components/ui/mode-toggle";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { RoleEnum } from "@/api";
-import LanguageSelector from "@/components/ui/LanguageSelector";
+// import LanguageSelector from "@/components/ui/LanguageSelector";
 import {
 	NavigationMenu,
 	NavigationMenuItem,

@@ -12,7 +12,13 @@ services:
         networks:
             - backend_db
         healthcheck:
-            test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+            test:
+                [
+                    "CMD",
+                    "/usr/local/bin/healthcheck.sh",
+                    "--connect",
+                    "--innodb_initialized",
+                ]
             interval: 5s
             timeout: 10s
             retries: 10
