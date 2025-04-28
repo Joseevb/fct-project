@@ -1,11 +1,22 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Login from "@/components/ui/Login";
 import Register from "@/components/ui/Register";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import OtpValidation from "@/components/ui/OtpValidation";
+import { useAuth } from "@/hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
 export default function AuthPage() {
 	const [isOtp, setIsOtp] = useState(false);
+
+	const { user } = useAuth();
+	const navigate = useNavigate();
+
+	useEffect(() => {
+		if (user) {
+			navigate("/");
+		}
+	}, [user, navigate]);
 
 	return (
 		<section className="flex items-baseline justify-center min-h-dvh">

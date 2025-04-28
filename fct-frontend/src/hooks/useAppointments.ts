@@ -50,6 +50,8 @@ export function useAppointments(): UseAppointmentsResult {
 
 		if (res) setAppointments(res.data || []);
 
+		console.log(res);
+
 		setIsLoading(false);
 	}, [errorMessage]);
 

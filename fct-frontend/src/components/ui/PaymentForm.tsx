@@ -17,6 +17,7 @@ import { CheckCircle, Loader2 } from "lucide-react";
 interface PaymentFormProps {
 	form: UseFormReturn<PaymentFormData>;
 	error: string | null;
+	success: string | null;
 	subtotal: number;
 	isLoading: boolean;
 	onSubmit: (data: z.infer<typeof paymentSchema>) => void;
@@ -25,6 +26,7 @@ interface PaymentFormProps {
 export default function PaymentForm({
 	form,
 	error,
+	success,
 	subtotal,
 	isLoading,
 	onSubmit,
@@ -34,6 +36,11 @@ export default function PaymentForm({
 			{error && (
 				<Alert variant="destructive">
 					<AlertDescription>{error}</AlertDescription>
+				</Alert>
+			)}
+			{success && (
+				<Alert variant="success">
+					<AlertDescription>{success}</AlertDescription>
 				</Alert>
 			)}
 			<h3 className="text-xl font-medium">Información de Pago</h3>

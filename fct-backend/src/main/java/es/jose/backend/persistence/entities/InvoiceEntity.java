@@ -13,6 +13,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.PostUpdate;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 
 import lombok.AllArgsConstructor;
@@ -65,12 +67,21 @@ public class InvoiceEntity {
             mappedBy = "invoice",
             cascade = CascadeType.ALL,
             orphanRemoval = true,
-            fetch = FetchType.LAZY)
+            fetch = FetchType.EAGER)
     private Set<LineItemEntity> lineItems = new HashSet<>();
 
     @Column(name = "total_price", nullable = false, precision = 10, scale = 2)
     @Builder.Default
     private BigDecimal totalPrice = BigDecimal.ZERO;
+
+    @PrePersist
+    @PostUpdate
+    public void updateTotalPrice() {
+        this.totalPrice =
+                this.lineItems.stream()
+                        .map(LineItemEntity::getSubtotal)
+                        .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
 
     // --- Auditing Fields managed by Spring Data JPA ---
 

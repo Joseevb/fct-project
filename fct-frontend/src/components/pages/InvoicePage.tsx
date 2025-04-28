@@ -1,4 +1,4 @@
-import { LineItem } from "@/api";
+import { ErrorMessage, Invoice, LineItem } from "@/api";
 import {
 	Card,
 	CardContent,
@@ -13,7 +13,8 @@ import { tryCatch } from "@/lib/tryCatch";
 import { PaymentFormData, paymentSchema } from "@/schemas/paymentSchema";
 import { LineItemable, TemporaryLineItem } from "@/types/lineItem";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { AxiosError } from "axios";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
@@ -23,15 +24,18 @@ export type InvoiceType = "APPOINTMENT" | "PRODUCT" | "COURSE";
 export interface InvoicePageProps {
 	objs: LineItemable[];
 	data: TemporaryLineItem[];
-	itemType: InvoiceType;
+	itemType: InvoiceType | null;
+	clearLineItems: () => void;
 }
 
 export default function InvoicePage({
 	objs,
 	data,
 	itemType,
+	clearLineItems,
 }: Readonly<InvoicePageProps>) {
 	const [error, setError] = useState<string | null>(null);
+	const [success, setSuccess] = useState<string | null>(null);
 	const [isLoading, setIsLoading] = useState(false);
 
 	const itemTypeTitle =
@@ -57,53 +61,71 @@ export default function InvoicePage({
 		resolver: zodResolver(paymentSchema),
 	});
 
-	if (!(objs && data && itemType)) {
-		navigate("/");
-		return;
-	}
+	useEffect(() => {
+		if (!(objs && data && itemType)) {
+			navigate("/");
+			return;
+		}
+	}, [objs, data, itemType, navigate]);
+
+	const initializeInvoiceHelper = async () => {
+		const { data: invoiceRes, error: initErr } = await tryCatch<
+			Invoice,
+			AxiosError<ErrorMessage>
+		>(initInvoice());
+		if (initErr) {
+			setError(
+				initErr.response?.data.message ||
+					"Error al inicializar la factura",
+			);
+			setIsLoading(false);
+			return;
+		}
+		return invoiceRes;
+	};
+
+	const processLineItems = async (
+		data: TemporaryLineItem[],
+		invoiceId: number,
+	) => {
+		try {
+			data.forEach(async (item) => await addLineItem(item, invoiceId));
+		} catch (err) {
+			if (err instanceof Error) {
+				console.error(err.message || "Error al agregar linea", error);
+				setError(err.message || "Error al agregar linea");
+				setIsLoading(false);
+			}
+			return err;
+		}
+	};
 
 	const onSubmit = async (formData: z.infer<typeof paymentSchema>) => {
 		setError("");
 		setIsLoading(true);
 
-		const { data: invoice, error: invoiceErr } =
-			await tryCatch(initInvoice());
-
-		if (invoiceErr) {
-			console.error("Error initializing invoice", invoiceErr);
-
-			setError(invoiceErr.message);
+		const createdInvoice = await initializeInvoiceHelper();
+		if (!createdInvoice) {
+			setError("Error al inicializar la factura");
+			setIsLoading(false);
 			return;
 		}
 
-		const res = data.map((item) => tryCatch(addLineItem(item)));
-
-		const resolvedRes = await Promise.all(res);
-
-		if (resolvedRes.some((res) => res.error)) {
-			console.error(
-				resolvedRes.find((res) => res.error)?.error?.message ||
-					"Error al agregar linea",
-			);
-
-			setError(
-				resolvedRes.find((res) => res.error)?.error?.message ||
-					"Error al agregar linea",
-			);
-			return;
-		}
-
-		payInvoice(invoice.id);
-
-		console.log(
-			"payment data",
-			formData,
-			"\nitems:",
-			data,
-			"\nobjs:",
-			objs,
+		const { error: lineItemErr } = await tryCatch(
+			processLineItems(data, createdInvoice.id),
 		);
+		if (lineItemErr) return;
+
+		await payInvoice(createdInvoice.id, formData);
+
+		setSuccess("Pago exitoso");
 		setIsLoading(false);
+		clearLineItems();
+		navigate({
+			pathname: "/",
+			hash: "#main",
+			search: "?paymentSuccess=true",
+		});
 	};
 
 	return (
@@ -189,6 +211,7 @@ export default function InvoicePage({
 				<PaymentForm
 					form={form}
 					error={error}
+					success={success}
 					subtotal={subtotal}
 					onSubmit={onSubmit}
 					isLoading={isLoading}

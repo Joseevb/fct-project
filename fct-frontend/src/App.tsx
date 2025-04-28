@@ -19,9 +19,15 @@ export default function App() {
 		TemporaryLineItem[]
 	>([]);
 	const [invoiceObjs, setInvoiceObjs] = useState<LineItemable[]>([]);
-	const [invoiceType, setInvoiceType] = useState<InvoiceType>("APPOINTMENT");
+	const [invoiceType, setInvoiceType] = useState<InvoiceType | null>(null);
 
 	const headerRef = useRef<HTMLDivElement>(null);
+
+	const clearLineItems = () => {
+		setInvoiceObjs([]);
+		setTemporaryLineItems([]);
+		setInvoiceType(null);
+	};
 
 	return (
 		<ThemeProvider defaultTheme="dark" storageKey="theme">
@@ -62,6 +68,7 @@ export default function App() {
 								objs={invoiceObjs}
 								data={temporaryLineItems}
 								itemType={invoiceType}
+								clearLineItems={clearLineItems}
 							/>
 						}
 					/>

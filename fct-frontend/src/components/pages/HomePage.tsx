@@ -3,6 +3,8 @@ import Hero from "@/components/ui/Hero";
 import useScrollHijack from "@/hooks/useScrollHijack";
 import direction from "@/types/direction";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import { toast } from "sonner";
 
 interface HomePageProps {
 	headerRef: React.RefObject<HTMLElement | null>;
@@ -10,6 +12,9 @@ interface HomePageProps {
 
 export default function HomePage({ headerRef }: Readonly<HomePageProps>) {
 	const [areButtonsVisible, setAreButtonsVisible] = useState(false);
+	const [searchParams] = useSearchParams();
+
+	const paymentStatus = searchParams.get("paymentSuccess");
 
 	const heroRef = useRef<HTMLDivElement>(null);
 	const aboutRef = useRef<HTMLDivElement>(null);
@@ -24,6 +29,15 @@ export default function HomePage({ headerRef }: Readonly<HomePageProps>) {
 			document.documentElement.style.scrollPaddingTop = "";
 		};
 	}, [headerRef]);
+
+	useEffect(() => {
+		if (paymentStatus) {
+			toast.success("Pago exitoso", {
+				// Show toast on success
+				richColors: true,
+			});
+		}
+	}, [paymentStatus]);
 
 	const handleScrollAttempt = useCallback(
 		(direction: direction) => {

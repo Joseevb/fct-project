@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,8 +28,9 @@ public class InvoiceController implements InvoiceApi {
 
     @Override
     public ResponseEntity<Invoice> addInvoice(@Valid AddInvoiceRequest addInvoiceRequest) {
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(invoiceService.createInvoice(addInvoiceRequest));
+        var invoice = invoiceService.createInvoice(addInvoiceRequest);
+
+        return ResponseEntity.created(URI.create("/api/invoices/" + invoice.id())).body(invoice);
     }
 
     @Override
@@ -53,8 +55,9 @@ public class InvoiceController implements InvoiceApi {
     @Override
     public ResponseEntity<Invoice> updateInvoice(
             Long id, @Valid UpdateInvoiceRequest updateInvoiceRequest) {
-        // TODO Auto-generated method stub
-        return InvoiceApi.super.updateInvoice(id, updateInvoiceRequest);
+        var invoice = invoiceService.updateInvoice(id, updateInvoiceRequest);
+
+        return ResponseEntity.created(URI.create("/api/invoices/" + invoice.id())).body(invoice);
     }
 
     @Override
