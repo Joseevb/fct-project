@@ -1,24 +1,23 @@
 package es.jose.backend.security;
 
-import java.util.Collection;
-import java.util.List;
+import es.jose.backend.persistence.entities.UserEntity;
+
+import lombok.AllArgsConstructor;
+import lombok.Value;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import es.jose.backend.persistence.entities.UserEntity;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import java.util.Collection;
+import java.util.List;
 
-/**
- * AuthUser
- */
-@Getter
+/** AuthUser */
+@Value
 @AllArgsConstructor
-public class AuthUser implements UserDetails {
+public class LocalAuthUser implements UserDetails {
 
-    private final UserEntity user;
+    private UserEntity user;
 
     @Override
     public String getPassword() {

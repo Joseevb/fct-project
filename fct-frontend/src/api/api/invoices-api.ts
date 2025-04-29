@@ -116,10 +116,11 @@ export const InvoicesApiAxiosParamCreator = function (configuration?: Configurat
          * @summary Get all invoices
          * @param {number} [userId] Filter by user id
          * @param {InvoiceStatusEnum} [status] Filter by status
+         * @param {number} [lineItemId] Filter by line item
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getAllInvoices: async (userId?: number, status?: InvoiceStatusEnum, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getAllInvoices: async (userId?: number, status?: InvoiceStatusEnum, lineItemId?: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/invoice`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -138,6 +139,10 @@ export const InvoicesApiAxiosParamCreator = function (configuration?: Configurat
 
             if (status !== undefined) {
                 localVarQueryParameter['status'] = status;
+            }
+
+            if (lineItemId !== undefined) {
+                localVarQueryParameter['lineItemId'] = lineItemId;
             }
 
 
@@ -306,11 +311,12 @@ export const InvoicesApiFp = function(configuration?: Configuration) {
          * @summary Get all invoices
          * @param {number} [userId] Filter by user id
          * @param {InvoiceStatusEnum} [status] Filter by status
+         * @param {number} [lineItemId] Filter by line item
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getAllInvoices(userId?: number, status?: InvoiceStatusEnum, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<Invoice>>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getAllInvoices(userId, status, options);
+        async getAllInvoices(userId?: number, status?: InvoiceStatusEnum, lineItemId?: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<Invoice>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getAllInvoices(userId, status, lineItemId, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['InvoicesApi.getAllInvoices']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -391,11 +397,12 @@ export const InvoicesApiFactory = function (configuration?: Configuration, baseP
          * @summary Get all invoices
          * @param {number} [userId] Filter by user id
          * @param {InvoiceStatusEnum} [status] Filter by status
+         * @param {number} [lineItemId] Filter by line item
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getAllInvoices(userId?: number, status?: InvoiceStatusEnum, options?: RawAxiosRequestConfig): AxiosPromise<Array<Invoice>> {
-            return localVarFp.getAllInvoices(userId, status, options).then((request) => request(axios, basePath));
+        getAllInvoices(userId?: number, status?: InvoiceStatusEnum, lineItemId?: number, options?: RawAxiosRequestConfig): AxiosPromise<Array<Invoice>> {
+            return localVarFp.getAllInvoices(userId, status, lineItemId, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -463,11 +470,12 @@ export interface InvoicesApiInterface {
      * @summary Get all invoices
      * @param {number} [userId] Filter by user id
      * @param {InvoiceStatusEnum} [status] Filter by status
+     * @param {number} [lineItemId] Filter by line item
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof InvoicesApiInterface
      */
-    getAllInvoices(userId?: number, status?: InvoiceStatusEnum, options?: RawAxiosRequestConfig): AxiosPromise<Array<Invoice>>;
+    getAllInvoices(userId?: number, status?: InvoiceStatusEnum, lineItemId?: number, options?: RawAxiosRequestConfig): AxiosPromise<Array<Invoice>>;
 
     /**
      * 
@@ -539,12 +547,13 @@ export class InvoicesApi extends BaseAPI implements InvoicesApiInterface {
      * @summary Get all invoices
      * @param {number} [userId] Filter by user id
      * @param {InvoiceStatusEnum} [status] Filter by status
+     * @param {number} [lineItemId] Filter by line item
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof InvoicesApi
      */
-    public getAllInvoices(userId?: number, status?: InvoiceStatusEnum, options?: RawAxiosRequestConfig) {
-        return InvoicesApiFp(this.configuration).getAllInvoices(userId, status, options).then((request) => request(this.axios, this.basePath));
+    public getAllInvoices(userId?: number, status?: InvoiceStatusEnum, lineItemId?: number, options?: RawAxiosRequestConfig) {
+        return InvoicesApiFp(this.configuration).getAllInvoices(userId, status, lineItemId, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

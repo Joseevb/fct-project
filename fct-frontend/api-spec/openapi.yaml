@@ -889,6 +889,13 @@ paths:
                   required: false
                   schema:
                       $ref: "#/components/schemas/InvoiceStatusEnum"
+                - name: lineItemId
+                  in: query
+                  description: Filter by line item
+                  required: false
+                  schema:
+                      type: integer
+                      format: int64
             responses:
                 200:
                     description: Successful operation

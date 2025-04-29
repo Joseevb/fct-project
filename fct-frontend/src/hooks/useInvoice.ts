@@ -103,7 +103,7 @@ export default function useInvoice(): UseInvoiceResult {
 		const { data, error } = await tryCatch(
 			api.updateInvoice(invoiceId, {
 				status: "PAID",
-				paymentMethod: paymentData?.toString() || "",
+				paymentMethod: JSON.stringify(paymentData) || "",
 			}),
 		);
 		if (error) throw error;

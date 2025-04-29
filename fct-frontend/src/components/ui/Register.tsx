@@ -1,6 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FieldPath, useForm } from "react-hook-form";
-import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import {
@@ -70,7 +69,7 @@ export default function Register({ setIsOtp }: Readonly<RegisterProps>) {
 		resolver: zodResolver(registerSchema),
 	});
 
-	const onSubmit = async (data: z.infer<typeof registerSchema>) => {
+	const onSubmit = async (data: RegisterFormData) => {
 		setError("");
 		setIsLoading(true);
 
@@ -103,12 +102,11 @@ export default function Register({ setIsOtp }: Readonly<RegisterProps>) {
 			}
 
 			setIsLoading(false);
+			return;
 		}
 
-		if (registerData) {
-			setIsLoading(false);
-			setIsOtp(true);
-		}
+		setIsLoading(false);
+		setIsOtp(true);
 	};
 
 	return (

@@ -1,4 +1,4 @@
-import AdminPanel from "@/components/pages/AdminPanel";
+import AdminPanel from "@/components/pages/admin/AdminPanel";
 import AuthPage from "@/components/pages/AuthPage";
 import HomePage from "@/components/pages/HomePage";
 import ProtectedRoute from "@/components/ProtectedRoute";
@@ -13,6 +13,7 @@ import InvoicePage, { InvoiceType } from "@/components/pages/InvoicePage";
 import { TemporaryLineItem } from "@/types/lineItem";
 import { LineItemable } from "@/types/lineItem";
 import ProfilePage from "@/components/pages/ProfilePage";
+import UserAppointmentsPage from "@/components/pages/UserAppointmentsPage";
 
 export default function App() {
 	const [temporaryLineItems, setTemporaryLineItems] = useState<
@@ -76,6 +77,10 @@ export default function App() {
 
 				<Route path="/profile" element={<ProtectedRoute />}>
 					<Route index element={<ProfilePage />} />
+				</Route>
+
+				<Route path="/user/appointments" element={<ProtectedRoute />}>
+					<Route index element={<UserAppointmentsPage />} />
 				</Route>
 			</Routes>
 			<Toaster />

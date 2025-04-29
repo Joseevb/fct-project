@@ -13,18 +13,19 @@ import java.util.Optional;
 
 public interface InvoiceService {
 
-    List<Invoice> getAllInvoices(Optional<Long> userId, Optional<InvoiceStatusEnum> status);
+    List<Invoice> getAllInvoices(
+            Optional<Long> userId, Optional<InvoiceStatusEnum> status, Optional<Long> lineItemId);
 
     default List<Invoice> getAllInvoices() {
-        return getAllInvoices(Optional.empty(), Optional.empty());
+        return getAllInvoices(Optional.empty(), Optional.empty(), Optional.empty());
     }
 
     default List<Invoice> getAllInvoicesByUserId(Long userId) {
-        return getAllInvoices(Optional.of(userId), Optional.empty());
+        return getAllInvoices(Optional.of(userId), Optional.empty(), Optional.empty());
     }
 
     default List<Invoice> getAllInvoicesByStatus(InvoiceStatusEnum status) {
-        return getAllInvoices(Optional.empty(), Optional.of(status));
+        return getAllInvoices(Optional.empty(), Optional.of(status), Optional.empty());
     }
 
     List<Invoice> getAllPaidInvoices();

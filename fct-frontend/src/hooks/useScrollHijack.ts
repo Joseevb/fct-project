@@ -30,7 +30,7 @@ interface UseScrollHijackOptions {
  * A hook to intercept all scroll events (wheel, touch, keyboard),
  * prevent default scroll, detect direction, and trigger a throttled callback.
  */
-const useScrollHijack = (options: UseScrollHijackOptions): void => {
+export default function useScrollHijack(options: UseScrollHijackOptions): void {
 	const {
 		callback,
 		autoCallback,
@@ -302,6 +302,4 @@ const useScrollHijack = (options: UseScrollHijackOptions): void => {
 		enableKeyboard,
 		enableTouch,
 	]);
-};
-
-export default useScrollHijack;
+}

@@ -50,7 +50,7 @@ public class InvoiceEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "payment_method", nullable = false, length = 50)
+    @Column(name = "payment_method", nullable = false)
     private String paymentMethod;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
@@ -78,9 +78,11 @@ public class InvoiceEntity {
     @PostUpdate
     public void updateTotalPrice() {
         this.totalPrice =
-                this.lineItems.stream()
-                        .map(LineItemEntity::getSubtotal)
-                        .reduce(BigDecimal.ZERO, BigDecimal::add);
+                (this.lineItems.size() > 0 || this.lineItems.isEmpty())
+                        ? BigDecimal.ZERO
+                        : this.lineItems.stream()
+                                .map(LineItemEntity::getSubtotal)
+                                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     // --- Auditing Fields managed by Spring Data JPA ---

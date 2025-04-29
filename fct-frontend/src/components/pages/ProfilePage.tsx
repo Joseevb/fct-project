@@ -25,6 +25,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Checkbox } from "../ui/checkbox";
+import { wait } from "@/lib/utils";
 
 const fieldConfigs = {
 	username: {
@@ -68,6 +69,8 @@ export default function ProfilePage() {
 
 	const onSubmit = async (data: z.infer<typeof updateUserSchema>) => {
 		setIsLoading(true);
+
+		await wait(10000);
 
 		if (!user) {
 			console.log("User is null");
@@ -163,7 +166,6 @@ export default function ProfilePage() {
 								type="submit"
 								variant="outline"
 								size="sm"
-								// Disable if already declined OR while updating
 								disabled={isLoading || !isEditEnabled}
 								className="disabled:opacity-50"
 							>

@@ -5,6 +5,18 @@ server:
         include-message: always
 
 spring:
+    config:
+        import: optional:file:.env[.properties]
+    security:
+        oauth2:
+            client:
+                registration:
+                    google:
+                        client-id: ${GOOGLE_CLIENT_ID}
+                        client-secret: ${GOOGLE_CLIENT_SECRET}
+                        scope:
+                            - email
+                            - profile
     application:
         name: ${SPRING_APPLICATION_NAME:fct-backend}
     output:

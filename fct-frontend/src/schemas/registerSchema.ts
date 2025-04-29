@@ -3,7 +3,7 @@ import { z } from "zod";
 export const registerSchema = z.object({
 	username: z
 		.string()
-		.min(3)
+		.min(3, "El nombre de usuario debe tener al menos 3 caracteres")
 		.max(20)
 		.trim()
 		.regex(/^[a-zA-Z0-9_]+$/),

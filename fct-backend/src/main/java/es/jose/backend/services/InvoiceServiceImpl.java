@@ -3,11 +3,15 @@ package es.jose.backend.services;
 import es.jose.backend.exceptions.invoice.InvoiceNotFoundException;
 import es.jose.backend.mappers.InvoiceMapper;
 import es.jose.backend.persistence.entities.InvoiceEntity;
+import es.jose.backend.persistence.entities.LineItemEntity;
 import es.jose.backend.persistence.repositories.InvoiceRepository;
 
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import org.openapitools.model.AddInvoiceRequest;
 import org.openapitools.model.Invoice;
@@ -22,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class InvoiceServiceImpl implements InvoiceService {
@@ -32,7 +37,10 @@ public class InvoiceServiceImpl implements InvoiceService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Invoice> getAllInvoices(Optional<Long> userId, Optional<InvoiceStatusEnum> status) {
+    public List<Invoice> getAllInvoices(
+            Optional<Long> userId,
+            Optional<InvoiceStatusEnum> status,
+            Optional<Long> lineItemableId) {
         Specification<InvoiceEntity> spec =
                 (root, query, cb) -> {
                     var predicates = new ArrayList<>();
@@ -40,6 +48,26 @@ public class InvoiceServiceImpl implements InvoiceService {
                     userId.ifPresent(
                             id -> predicates.add(cb.equal(root.get("user").get("id"), id)));
                     status.ifPresent(st -> predicates.add(cb.equal(root.get("status"), st)));
+
+                    lineItemableId.ifPresent(
+                            id -> {
+                                // Join with lineItems
+                                Join<InvoiceEntity, LineItemEntity> lineItemJoin =
+                                        root.join("lineItems", JoinType.INNER);
+
+                                // Create a disjunction (OR) for the different possible relations
+                                Predicate appointmentPredicate =
+                                        cb.equal(lineItemJoin.get("appointment").get("id"), id);
+                                // Predicate productPredicate =
+                                //         cb.equal(lineItemJoin.get("product").get("id"), id);
+                                // Uncomment when course is implemented
+                                // Predicate coursePredicate =
+                                // cb.equal(lineItemJoin.get("course").get("id"), id);
+
+                                // Add the OR condition to the predicates list
+                                predicates.add(cb.or(appointmentPredicate /*,
+                                                productPredicate, coursePredicate*/));
+                            });
 
                     return cb.and(predicates.toArray(new Predicate[0]));
                 };
@@ -82,6 +110,7 @@ public class InvoiceServiceImpl implements InvoiceService {
         var user = userService.getUserEntityById(invoice.userId());
         var invoiceEntity = invoiceMapper.toEntity(invoice);
 
+        log.info("Creating invoice: {}", invoiceEntity);
         invoiceEntity.setUser(user);
         invoiceRepository.save(invoiceEntity);
         return invoiceMapper.toDto(invoiceEntity);

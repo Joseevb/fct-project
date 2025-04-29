@@ -22,7 +22,7 @@ public interface InvoiceMapper extends MapperUtils {
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "lineItems", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
-    @Mapping(target = "totalPrice", ignore = true)
+    @Mapping(target = "totalPrice", constant = "0")
     InvoiceEntity toEntity(AddInvoiceRequest invoice);
 
     @Mapping(target = "id", ignore = true)
@@ -30,5 +30,6 @@ public interface InvoiceMapper extends MapperUtils {
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "lineItems", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "totalPrice", ignore = true)
     void updateEntity(UpdateInvoiceRequest dto, @MappingTarget InvoiceEntity entity);
 }

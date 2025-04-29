@@ -5,9 +5,7 @@ import org.openapitools.model.RegisterRequest;
 import org.openapitools.model.RegisterResponse;
 import org.springframework.security.core.Authentication;
 
-/**
- * AuthService
- */
+/** AuthService */
 public interface AuthService {
 
     LoginResponse login(Authentication authentication);

@@ -32,11 +32,12 @@ export default function UserMenu({ logout }: Readonly<UserMenuProps>) {
 				>
 					Perfil
 				</DropdownMenuItem>
-				{/*
-				<DropdownMenuItem className={cn(menuItemStyle)}>
-					Settings
+				<DropdownMenuItem
+					onClick={() => navigate("/user/appointments")}
+					className={cn(menuItemStyle)}
+				>
+					Mis citas
 				</DropdownMenuItem>
-                */}
 				<DropdownMenuItem
 					onClick={() => logout()}
 					className={cn(menuItemStyle)}

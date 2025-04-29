@@ -41,10 +41,12 @@ public class InvoiceController implements InvoiceApi {
 
     @Override
     public ResponseEntity<List<Invoice>> getAllInvoices(
-            @Valid Long userId, @Valid InvoiceStatusEnum status) {
+            @Valid Long userId, @Valid InvoiceStatusEnum status, @Valid Long lineItemId) {
         return ResponseEntity.ok(
                 invoiceService.getAllInvoices(
-                        Optional.ofNullable(userId), Optional.ofNullable(status)));
+                        Optional.ofNullable(userId),
+                        Optional.ofNullable(status),
+                        Optional.ofNullable(lineItemId)));
     }
 
     @Override

@@ -1,8 +1,12 @@
 package es.jose.backend.services.security;
 
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.util.stream.Collectors;
+import es.jose.backend.exceptions.AuthenticationFailedException;
+import es.jose.backend.security.LocalAuthUser;
+import es.jose.backend.services.UserService;
+import es.jose.backend.services.mail.EmailVerificationService;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import org.openapitools.model.LoginResponse;
 import org.openapitools.model.RegisterRequest;
@@ -17,12 +21,9 @@ import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.stereotype.Service;
 
-import es.jose.backend.exceptions.AuthenticationFailedException;
-import es.jose.backend.security.AuthUser;
-import es.jose.backend.services.UserService;
-import es.jose.backend.services.mail.EmailVerificationService;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -44,33 +45,36 @@ public class AuthServiceImpl implements AuthService {
     public LoginResponse login(final Authentication authentication) {
         final var now = Instant.now();
 
-        final var authorities = authentication.getAuthorities()
-                .stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toList());
+        final var authorities =
+                authentication.getAuthorities().stream()
+                        .map(GrantedAuthority::getAuthority)
+                        .collect(Collectors.toList());
 
-        final var jwtClaims = JwtClaimsSet.builder()
-                .issuer("self")
-                .issuedAt(now)
-                .expiresAt(now.plus(AUTH_TOKEN_EXPIRATION_MINUTES, ChronoUnit.MINUTES))
-                .subject(authentication.getName())
-                .claim("authorities", authorities)
-                .build();
+        final var jwtClaims =
+                JwtClaimsSet.builder()
+                        .issuer("self")
+                        .issuedAt(now)
+                        .expiresAt(now.plus(AUTH_TOKEN_EXPIRATION_MINUTES, ChronoUnit.MINUTES))
+                        .subject(authentication.getName())
+                        .claim("authorities", authorities)
+                        .build();
 
         final String jwt = jwtEncoder.encode(JwtEncoderParameters.from(jwtClaims)).getTokenValue();
 
-        final var refreshClaims = JwtClaimsSet.builder()
-                .issuer("self")
-                .issuedAt(now)
-                .expiresAt(now.plus(REFRESH_TOKEN_EXPIRATION_DAYS, ChronoUnit.DAYS))
-                .subject(authentication.getName())
-                .claim("type", "refresh")
-                .claim("authorities", authorities)
-                .build();
+        final var refreshClaims =
+                JwtClaimsSet.builder()
+                        .issuer("self")
+                        .issuedAt(now)
+                        .expiresAt(now.plus(REFRESH_TOKEN_EXPIRATION_DAYS, ChronoUnit.DAYS))
+                        .subject(authentication.getName())
+                        .claim("type", "refresh")
+                        .claim("authorities", authorities)
+                        .build();
 
-        final String refreshToken = jwtEncoder.encode(JwtEncoderParameters.from(refreshClaims)).getTokenValue();
+        final String refreshToken =
+                jwtEncoder.encode(JwtEncoderParameters.from(refreshClaims)).getTokenValue();
 
-        final var user = (AuthUser) authentication.getPrincipal();
+        final var user = (LocalAuthUser) authentication.getPrincipal();
 
         return LoginResponse.builder()
                 .userId(user.getUser().getId())
@@ -84,7 +88,8 @@ public class AuthServiceImpl implements AuthService {
     public RegisterResponse register(final RegisterRequest register) {
         final var user = userService.createUser(register);
 
-        emailVerificationService.generateAndSendVerificationEmail(userService.getUserEntityById(user.id()));
+        emailVerificationService.generateAndSendVerificationEmail(
+                userService.getUserEntityById(user.id()));
         return RegisterResponse.builder()
                 .userId(user.id())
                 .response("User registered successfully")
@@ -106,16 +111,19 @@ public class AuthServiceImpl implements AuthService {
             final String username = jwt.getSubject();
             final var authorities = jwt.getClaim("authorities");
 
-            final JwtClaimsSet newAccessTokenClaims = JwtClaimsSet.builder()
-                    .issuer("self")
-                    .issuedAt(now)
-                    .expiresAt(now.plus(AUTH_TOKEN_EXPIRATION_MINUTES, ChronoUnit.MINUTES))
-                    .subject(username)
-                    .claim("authorities", authorities)
-                    .build();
+            final JwtClaimsSet newAccessTokenClaims =
+                    JwtClaimsSet.builder()
+                            .issuer("self")
+                            .issuedAt(now)
+                            .expiresAt(now.plus(AUTH_TOKEN_EXPIRATION_MINUTES, ChronoUnit.MINUTES))
+                            .subject(username)
+                            .claim("authorities", authorities)
+                            .build();
 
-            final String newAccessToken = jwtEncoder.encode(JwtEncoderParameters.from(newAccessTokenClaims))
-                    .getTokenValue();
+            final String newAccessToken =
+                    jwtEncoder
+                            .encode(JwtEncoderParameters.from(newAccessTokenClaims))
+                            .getTokenValue();
 
             final var user = userService.getUserByUsernameOrEmail(username);
 
@@ -131,5 +139,4 @@ public class AuthServiceImpl implements AuthService {
             throw new AuthenticationFailedException("Invalid refresh token");
         }
     }
-
 }

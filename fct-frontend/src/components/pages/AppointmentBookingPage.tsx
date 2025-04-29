@@ -77,7 +77,7 @@ const fieldConfigs = {
 
 interface AppointmentBookingPageProps {
 	setInvoiceObjs: Dispatch<SetStateAction<LineItemable[]>>;
-	setLineItemType: Dispatch<SetStateAction<InvoiceType>>;
+	setLineItemType: Dispatch<SetStateAction<InvoiceType | null>>;
 	setTemporaryLineItems: Dispatch<SetStateAction<TemporaryLineItem[]>>;
 }
 

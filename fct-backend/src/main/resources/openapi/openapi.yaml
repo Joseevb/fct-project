@@ -889,6 +889,13 @@ paths:
                   required: false
                   schema:
                       $ref: "#/components/schemas/InvoiceStatusEnum"
+                - name: lineItemId
+                  in: query
+                  description: Filter by line item
+                  required: false
+                  schema:
+                      type: integer
+                      format: int64
             responses:
                 200:
                     description: Successful operation
@@ -1386,6 +1393,10 @@ components:
             type: string
             enum: [ADMIN, USER]
             x-field-extra-annotation: "@ValidEnum(RoleEnum.class)"
+        ProviderEnum:
+            type: string
+            enum: [LOCAL, GOOGLE]
+            x-field-extra-annotation: "@ValidEnum(ProviderEnum.class)"
         AddressTypeEnum:
             type: string
             enum: [PRIMARY, SECONDARY]
@@ -1422,6 +1433,8 @@ components:
                         @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
                 role:
                     $ref: "#/components/schemas/RoleEnum"
+                provider:
+                    $ref: "#/components/schemas/ProviderEnum"
                 createdAt:
                     type: string
                     format: date-time

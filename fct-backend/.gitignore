@@ -34,3 +34,6 @@ build/
 
 ### Other ###
 mariadb_data/
+
+## Env ##
+.env
