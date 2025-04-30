@@ -1,28 +1,30 @@
 package es.jose.backend.controllers;
 
-import java.util.List;
+import es.jose.backend.services.LineItemService;
 
-import org.openapitools.api.LineItemApi;
+import jakarta.validation.Valid;
+
+import lombok.RequiredArgsConstructor;
+
+import org.openapitools.api.LineItemsApi;
 import org.openapitools.model.AddLineItemRequest;
 import org.openapitools.model.LineItem;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
-import es.jose.backend.services.LineItemService;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-public class LineItemController implements LineItemApi {
+public class LineItemController implements LineItemsApi {
 
     private final LineItemService lineItemService;
 
     @Override
-    public ResponseEntity<LineItem> addLineItem(@Valid final AddLineItemRequest addLineItemRequest) {
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
+    public ResponseEntity<LineItem> addLineItem(
+            @Valid final AddLineItemRequest addLineItemRequest) {
+        return ResponseEntity.status(HttpStatus.CREATED)
                 .body(lineItemService.createLineItem(addLineItemRequest));
     }
 
@@ -45,5 +47,4 @@ public class LineItemController implements LineItemApi {
     public ResponseEntity<LineItem> getLineItemById(final Long id) {
         return ResponseEntity.ok(lineItemService.getLineItemById(id));
     }
-
 }

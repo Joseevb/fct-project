@@ -22,27 +22,30 @@ export default function AppointmentManagementPage() {
 		useState<AdminAppointmentView>("calendar");
 
 	return (
-		<>
-			<NavigationMenu>
-				<NavigationMenuList>
-					{adminAppointmentViews.map((view) => (
-						<NavigationMenuItem key={view.value}>
-							<Button
-								variant={
-									selectedAppointmentView === view.value
-										? "default"
-										: "ghost"
-								}
-								onClick={() =>
-									setSelectedAppointmentView(view.value)
-								}
-							>
-								{view.label}
-							</Button>
-						</NavigationMenuItem>
-					))}
-				</NavigationMenuList>
-			</NavigationMenu>
+		<section className="flex flex-col gap-4">
+			<header className="flex items-center gap-8 mb-5">
+				<h2 className="text-2xl font-semibold tracking-tight">Citas</h2>
+				<NavigationMenu>
+					<NavigationMenuList>
+						{adminAppointmentViews.map((view) => (
+							<NavigationMenuItem key={view.value}>
+								<Button
+									variant={
+										selectedAppointmentView === view.value
+											? "default"
+											: "ghost"
+									}
+									onClick={() =>
+										setSelectedAppointmentView(view.value)
+									}
+								>
+									{view.label}
+								</Button>
+							</NavigationMenuItem>
+						))}
+					</NavigationMenuList>
+				</NavigationMenu>
+			</header>
 
 			{selectedAppointmentView === "calendar" && (
 				<AdminAppointmentCalendar />
@@ -54,6 +57,6 @@ export default function AppointmentManagementPage() {
 			{selectedAppointmentView === "appointment-list" && (
 				<AdminAppointmentTable />
 			)}
-		</>
+		</section>
 	);
 }

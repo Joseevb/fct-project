@@ -4,27 +4,17 @@ import {
 	AppointmentCategoriesApi,
 	AppointmentCategory,
 	AppointmentsApi,
+	ErrorMessage,
 } from "@/api";
 import { InvoiceType } from "@/components/pages/InvoicePage";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { DynamicFormField } from "@/components/ui/DynamicFormField";
 import {
-	Form,
-	FormControl,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormMessage,
-} from "@/components/ui/form";
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "@/components/ui/select";
+	DynamicFormField,
+	FieldConfig,
+} from "@/components/ui/DynamicFormField";
+import { Form } from "@/components/ui/form";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAppointments } from "@/hooks/useAppointments";
 import { useAuth } from "@/hooks/useAuth";
@@ -46,7 +36,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { z } from "zod";
 
-const fieldConfigs = {
+const fieldConfigs: Record<string, FieldConfig> = {
 	date: {
 		label: "Fecha",
 		placeholder: "Introduzca la fecha de la cita",
@@ -72,8 +62,9 @@ const fieldConfigs = {
 		label: "Categoría",
 		placeholder: "Seleccione una categoría",
 		type: "select",
+		options: [],
 	},
-} as const;
+};
 
 interface AppointmentBookingPageProps {
 	setInvoiceObjs: Dispatch<SetStateAction<LineItemable[]>>;
@@ -88,9 +79,6 @@ export default function AppointmentBookingPage({
 }: AppointmentBookingPageProps) {
 	const [selectedDate, setSelectedDate] = useState<Date | undefined>();
 	const [isUploading, setIsUploading] = useState(false);
-	const [appointmentCategories, setAppointmentCategories] = useState<
-		AppointmentCategory[]
-	>([]);
 	const [error, setError] = useState<string | undefined>();
 
 	const { user } = useAuth();
@@ -131,20 +119,34 @@ export default function AppointmentBookingPage({
 	};
 
 	useEffect(() => {
-		const getAppointmentCategories = async () => {
+		async function getAppointmentCategories() {
 			const api = new AppointmentCategoriesApi();
-			const { data: categories, error } = await tryCatch(
-				api.getAllAppointmentCategories(),
+			const { data: categories, error: catErr } = await tryCatch<
+				AxiosResponse<AppointmentCategory[]>,
+				AxiosError<ErrorMessage>
+			>(api.getAllAppointmentCategories());
+
+			if (catErr) {
+				console.error("Error fetching appointment categories:", error);
+				setError(
+					catErr.response?.data.message ||
+						"Error obteniendo las categorias",
+				);
+				return;
+			}
+
+			fieldConfigs.categoryId.options = categories.data.map(
+				(category) => ({
+					value: category.id.toString(),
+					label: category.name,
+				}),
 			);
 
-			if (error)
-				console.error("Error fetching appointment categories:", error);
-
-			if (categories) setAppointmentCategories(categories.data);
-		};
+			console.log(fieldConfigs.categoryId.options);
+		}
 
 		getAppointmentCategories();
-	}, []);
+	}, [error]);
 
 	useEffect(() => {
 		if (selectedDate) {
@@ -275,10 +277,10 @@ export default function AppointmentBookingPage({
 										onSubmit={form.handleSubmit(onSubmit)}
 									>
 										{Object.keys(fieldConfigs)
-											.filter(
-												(fieldName) =>
-													fieldName !== "categoryId",
-											)
+											// .filter(
+											// 	(fieldName) =>
+											// 		fieldName !== "categoryId",
+											// )
 											.map((fieldName) => (
 												<DynamicFormField<BookAppointmentFormData>
 													key={fieldName}
@@ -289,56 +291,6 @@ export default function AppointmentBookingPage({
 													control={form.control}
 												/>
 											))}
-										<FormField
-											control={form.control}
-											name="categoryId"
-											render={({ field }) => (
-												<FormItem>
-													<FormLabel>
-														Categoría
-													</FormLabel>
-													<Select
-														onValueChange={(
-															value: string,
-														) =>
-															field.onChange(
-																parseInt(
-																	value,
-																	10,
-																),
-															)
-														}
-														value={
-															field.value?.toString() ||
-															""
-														}
-													>
-														<FormControl>
-															<SelectTrigger>
-																<SelectValue placeholder="Seleccione una categoría" />
-															</SelectTrigger>
-														</FormControl>
-														<SelectContent>
-															{appointmentCategories.map(
-																(category) => (
-																	<SelectItem
-																		key={
-																			category.id
-																		}
-																		value={category.id.toString()}
-																	>
-																		{
-																			category.name
-																		}
-																	</SelectItem>
-																),
-															)}
-														</SelectContent>
-													</Select>
-													<FormMessage />
-												</FormItem>
-											)}
-										/>
 
 										<Button
 											type="submit"
@@ -364,3 +316,54 @@ export default function AppointmentBookingPage({
 		</main>
 	);
 }
+
+// <FormField
+// 	control={form.control}
+// 	name="categoryId"
+// 	render={({ field }) => (
+// 		<FormItem>
+// 			<FormLabel>
+// 				Categoría
+// 			</FormLabel>
+// 			<Select
+// 				onValueChange={(
+// 					value: string,
+// 				) =>
+// 					field.onChange(
+// 						parseInt(
+// 							value,
+// 							10,
+// 						),
+// 					)
+// 				}
+// 				value={
+// 					field.value?.toString() ||
+// 					""
+// 				}
+// 			>
+// 				<FormControl>
+// 					<SelectTrigger>
+// 						<SelectValue placeholder="Seleccione una categoría" />
+// 					</SelectTrigger>
+// 				</FormControl>
+// 				<SelectContent>
+// 					{appointmentCategories.map(
+// 						(category) => (
+// 							<SelectItem
+// 								key={
+// 									category.id
+// 								}
+// 								value={category.id.toString()}
+// 							>
+// 								{
+// 									category.name
+// 								}
+// 							</SelectItem>
+// 						),
+// 					)}
+// 				</SelectContent>
+// 			</Select>
+// 			<FormMessage />
+// 		</FormItem>
+// 	)}
+// />

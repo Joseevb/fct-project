@@ -1,5 +1,8 @@
 import { User, UsersApi } from "@/api";
-import { DynamicFormField } from "@/components/ui/DynamicFormField";
+import {
+	DynamicFormField,
+	FieldConfig,
+} from "@/components/ui/DynamicFormField";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
@@ -24,10 +27,10 @@ import { CheckCircle, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Checkbox } from "../ui/checkbox";
+import { Checkbox } from "@/components/ui/checkbox";
 import { wait } from "@/lib/utils";
 
-const fieldConfigs = {
+const fieldConfigs: Record<string, FieldConfig> = {
 	username: {
 		label: "Nombre de usuario",
 		placeholder: "Introduzca su nombre de usuario",

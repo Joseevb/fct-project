@@ -45,7 +45,7 @@ export const LineItemsApiAxiosParamCreator = function (configuration?: Configura
         addLineItem: async (addLineItemRequest: AddLineItemRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'addLineItemRequest' is not null or undefined
             assertParamExists('addLineItem', 'addLineItemRequest', addLineItemRequest)
-            const localVarPath = `/lineItem`;
+            const localVarPath = `/line-items`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -81,7 +81,7 @@ export const LineItemsApiAxiosParamCreator = function (configuration?: Configura
         deleteLineItemById: async (id: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('deleteLineItemById', 'id', id)
-            const localVarPath = `/lineItem/{id}`
+            const localVarPath = `/line-items/{id}`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -113,7 +113,7 @@ export const LineItemsApiAxiosParamCreator = function (configuration?: Configura
          * @throws {RequiredError}
          */
         getAllLineItems: async (invoice?: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/lineItem`;
+            const localVarPath = `/line-items`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -150,7 +150,7 @@ export const LineItemsApiAxiosParamCreator = function (configuration?: Configura
         getLineItemById: async (id: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('getLineItemById', 'id', id)
-            const localVarPath = `/lineItem/{id}`
+            const localVarPath = `/line-items/{id}`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);

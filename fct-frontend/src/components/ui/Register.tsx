@@ -16,11 +16,14 @@ import { AxiosError, AxiosResponse } from "axios";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { tryCatch } from "@/lib/tryCatch";
 import { RegisterFormData, registerSchema } from "@/schemas/registerSchema";
-import { DynamicFormField } from "@/components/ui/DynamicFormField";
+import {
+	DynamicFormField,
+	FieldConfig,
+} from "@/components/ui/DynamicFormField";
 import { applyValidationErrors } from "@/lib/errorHandlers";
 import { ResponseError } from "@/types/errors";
 
-const fieldConfigs = {
+const fieldConfigs: Record<string, FieldConfig> = {
 	username: {
 		label: "Nombre de usuario",
 		placeholder: "Introduzca su nombre de usuario",

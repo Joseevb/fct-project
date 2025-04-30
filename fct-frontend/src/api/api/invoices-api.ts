@@ -51,7 +51,7 @@ export const InvoicesApiAxiosParamCreator = function (configuration?: Configurat
         addInvoice: async (addInvoiceRequest: AddInvoiceRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'addInvoiceRequest' is not null or undefined
             assertParamExists('addInvoice', 'addInvoiceRequest', addInvoiceRequest)
-            const localVarPath = `/invoice`;
+            const localVarPath = `/invoices`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -87,7 +87,7 @@ export const InvoicesApiAxiosParamCreator = function (configuration?: Configurat
         deleteInvoice: async (id: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('deleteInvoice', 'id', id)
-            const localVarPath = `/invoice/{id}`
+            const localVarPath = `/invoices/{id}`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -121,7 +121,7 @@ export const InvoicesApiAxiosParamCreator = function (configuration?: Configurat
          * @throws {RequiredError}
          */
         getAllInvoices: async (userId?: number, status?: InvoiceStatusEnum, lineItemId?: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/invoice`;
+            const localVarPath = `/invoices`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -158,7 +158,7 @@ export const InvoicesApiAxiosParamCreator = function (configuration?: Configurat
         },
         /**
          * 
-         * @summary Get an invoice by id
+         * @summary Get an invoice by ID, either in PDF or JSON format
          * @param {number} id Invoice id
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -166,7 +166,7 @@ export const InvoicesApiAxiosParamCreator = function (configuration?: Configurat
         getInvoiceById: async (id: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('getInvoiceById', 'id', id)
-            const localVarPath = `/invoice/{id}`
+            const localVarPath = `/invoices/{id}`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -203,7 +203,7 @@ export const InvoicesApiAxiosParamCreator = function (configuration?: Configurat
             assertParamExists('updateInvoice', 'id', id)
             // verify required parameter 'updateInvoiceRequest' is not null or undefined
             assertParamExists('updateInvoice', 'updateInvoiceRequest', updateInvoiceRequest)
-            const localVarPath = `/invoice/{id}`
+            const localVarPath = `/invoices/{id}`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -243,7 +243,7 @@ export const InvoicesApiAxiosParamCreator = function (configuration?: Configurat
             assertParamExists('updateInvoiceStatus', 'id', id)
             // verify required parameter 'updateInvoiceStatusRequest' is not null or undefined
             assertParamExists('updateInvoiceStatus', 'updateInvoiceStatusRequest', updateInvoiceStatusRequest)
-            const localVarPath = `/invoice/{id}`
+            const localVarPath = `/invoices/{id}`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -323,7 +323,7 @@ export const InvoicesApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @summary Get an invoice by id
+         * @summary Get an invoice by ID, either in PDF or JSON format
          * @param {number} id Invoice id
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -406,7 +406,7 @@ export const InvoicesApiFactory = function (configuration?: Configuration, baseP
         },
         /**
          * 
-         * @summary Get an invoice by id
+         * @summary Get an invoice by ID, either in PDF or JSON format
          * @param {number} id Invoice id
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -479,7 +479,7 @@ export interface InvoicesApiInterface {
 
     /**
      * 
-     * @summary Get an invoice by id
+     * @summary Get an invoice by ID, either in PDF or JSON format
      * @param {number} id Invoice id
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -558,7 +558,7 @@ export class InvoicesApi extends BaseAPI implements InvoicesApiInterface {
 
     /**
      * 
-     * @summary Get an invoice by id
+     * @summary Get an invoice by ID, either in PDF or JSON format
      * @param {number} id Invoice id
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}

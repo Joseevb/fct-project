@@ -43,7 +43,7 @@ export const AppointmentCategoriesApiAxiosParamCreator = function (configuration
          * @throws {RequiredError}
          */
         createAppointmentCategory: async (addAppointmentCategoryRequest?: AddAppointmentCategoryRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/appointmentCategory`;
+            const localVarPath = `/appointment-categories`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -79,7 +79,7 @@ export const AppointmentCategoriesApiAxiosParamCreator = function (configuration
         deleteAppointmentCategory: async (id: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('deleteAppointmentCategory', 'id', id)
-            const localVarPath = `/appointmentCategory/{id}`
+            const localVarPath = `/appointment-categories/{id}`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -110,7 +110,7 @@ export const AppointmentCategoriesApiAxiosParamCreator = function (configuration
          * @throws {RequiredError}
          */
         getAllAppointmentCategories: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/appointmentCategory`;
+            const localVarPath = `/appointment-categories`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -143,7 +143,7 @@ export const AppointmentCategoriesApiAxiosParamCreator = function (configuration
         getAppointmentCategoryById: async (id: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('getAppointmentCategoryById', 'id', id)
-            const localVarPath = `/appointmentCategory/{id}`
+            const localVarPath = `/appointment-categories/{id}`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -178,7 +178,7 @@ export const AppointmentCategoriesApiAxiosParamCreator = function (configuration
         updateAppointmentCategory: async (id: number, updateAppointmentCategoryRequest?: UpdateAppointmentCategoryRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('updateAppointmentCategory', 'id', id)
-            const localVarPath = `/appointmentCategory/{id}`
+            const localVarPath = `/appointment-categories/{id}`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);

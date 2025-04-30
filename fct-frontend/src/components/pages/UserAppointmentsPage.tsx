@@ -1,6 +1,7 @@
 import { Appointment } from "@/api";
 import { useAppointments } from "@/hooks/useAppointments";
 import { ColumnDef } from "@tanstack/react-table";
+import { DataTable } from "@/components/ui/data-table";
 
 const columns: ColumnDef<Appointment>[] = [
 	{
@@ -34,7 +35,7 @@ const columns: ColumnDef<Appointment>[] = [
 ] as const;
 
 export default function UserAppointmentsPage() {
-	const { userAppointments, fetchUserAppointments } = useAppointments();
+	const { userAppointments } = useAppointments();
 
 	return (
 		<main>
@@ -45,7 +46,7 @@ export default function UserAppointmentsPage() {
 			</section>
 
 			<section className="p-6 md:p-8 space-y-6">
-				<div>Mis citas</div>
+				<DataTable columns={columns} data={userAppointments} />
 			</section>
 		</main>
 	);

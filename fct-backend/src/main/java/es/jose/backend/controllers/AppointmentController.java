@@ -6,7 +6,7 @@ import jakarta.validation.Valid;
 
 import lombok.RequiredArgsConstructor;
 
-import org.openapitools.api.AppointmentApi;
+import org.openapitools.api.AppointmentsApi;
 import org.openapitools.model.AddAppointmentRequest;
 import org.openapitools.model.Appointment;
 import org.openapitools.model.AppointmentStatusEnum;
@@ -22,7 +22,7 @@ import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
-public class AppointmentController implements AppointmentApi {
+public class AppointmentController implements AppointmentsApi {
 
     private final AppointmentService appointmentService;
 

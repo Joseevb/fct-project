@@ -1,7 +1,9 @@
 import {
 	AddLineItemRequest,
+	ErrorMessage,
 	Invoice,
 	InvoicesApi,
+	InvoiceStatusEnum,
 	LineItem,
 	LineItemsApi,
 } from "@/api";
@@ -11,21 +13,27 @@ import { useEffect, useState } from "react";
 import { TemporaryLineItem } from "@/types/lineItem";
 import { useNavigate } from "react-router-dom";
 import { PaymentFormData } from "@/schemas/paymentSchema";
+import { AxiosResponse, AxiosError } from "axios";
 
 interface UseInvoiceResult {
+	error: string | null;
 	invoice: Invoice | null;
+	invoices: Invoice[];
 	lineItems: LineItem[];
-	initInvoice: () => Promise<Invoice>;
-	addLineItem: (item: TemporaryLineItem, invoiceId?: number) => Promise<void>;
+	initInvoice: () => Promise<Invoice | undefined>;
 	payInvoice: (
 		invoiceId: number,
 		paymentData?: PaymentFormData,
 	) => Promise<void>;
+	addLineItem: (item: TemporaryLineItem, invoiceId?: number) => Promise<void>;
+	fetchInvoices: (status?: InvoiceStatusEnum) => Promise<void>;
 }
 
 export default function useInvoice(): UseInvoiceResult {
+	const [error, setError] = useState<string | null>(null);
 	const [lineItems, setLineItems] = useState<LineItem[]>([]);
 	const [invoice, setInvoice] = useState<Invoice | null>(null);
+	const [invoices, setInvoices] = useState<Invoice[]>([]);
 
 	const { user } = useAuth();
 
@@ -37,7 +45,7 @@ export default function useInvoice(): UseInvoiceResult {
 		}
 	}, [user, navigate]);
 
-	const initInvoice = async () => {
+	async function initInvoice() {
 		if (!user) {
 			navigate("/login");
 			throw new Error("User not authenticated");
@@ -45,19 +53,23 @@ export default function useInvoice(): UseInvoiceResult {
 
 		const api = new InvoicesApi();
 
-		const { data, error } = await tryCatch(
-			api.addInvoice({ userId: user.id, paymentMethod: "" }),
-		);
+		const { data, error } = await tryCatch<
+			AxiosResponse<Invoice>,
+			AxiosError<ErrorMessage>
+		>(api.addInvoice({ userId: user.id, paymentMethod: "" }));
 
 		if (error) console.error("error", error);
-		if (error) throw error;
+		if (error) {
+			setError(error.response?.data.message || "Unknown error");
+			return;
+		}
 
 		console.log("data", data);
 		setInvoice(data.data);
 		return data.data;
-	};
+	}
 
-	const addLineItem = async (item: TemporaryLineItem, invoiceId?: number) => {
+	async function addLineItem(item: TemporaryLineItem, invoiceId?: number) {
 		let usedInvoice: Invoice | null = invoice;
 
 		if (invoiceId) {
@@ -86,34 +98,67 @@ export default function useInvoice(): UseInvoiceResult {
 			...item,
 		};
 
-		const { data, error } = await tryCatch(
-			lineItemApi.addLineItem(request),
-		);
+		const { data, error } = await tryCatch<
+			AxiosResponse<LineItem>,
+			AxiosError<ErrorMessage>
+		>(lineItemApi.addLineItem(request));
 
-		if (error) throw error;
+		if (error) {
+			setError(error.response?.data.message || "Unknown error");
+			return;
+		}
 
 		setLineItems((arr) => [...arr, data.data]);
-	};
+	}
 
-	const payInvoice = async (
+	async function payInvoice(
 		invoiceId: number,
 		paymentData?: PaymentFormData,
-	) => {
+	) {
 		const api = new InvoicesApi();
-		const { data, error } = await tryCatch(
+		const { data, error } = await tryCatch<
+			AxiosResponse<Invoice>,
+			AxiosError<ErrorMessage>
+		>(
 			api.updateInvoice(invoiceId, {
 				status: "PAID",
 				paymentMethod: JSON.stringify(paymentData) || "",
 			}),
 		);
-		if (error) throw error;
+		if (error) {
+			setError(error.response?.data.message || "Unknown error");
+			return;
+		}
 		setInvoice(data.data);
-	};
+	}
+
+	async function fetchInvoices(status?: InvoiceStatusEnum) {
+		const api = new InvoicesApi();
+		const { data, error } = await tryCatch(
+			api.getAllInvoices(undefined, status),
+		);
+		if (error) throw error;
+		setInvoices(data.data);
+	}
+
+	useEffect(() => {
+		async function fetchData() {
+			const api = new InvoicesApi();
+			const { data, error } = await tryCatch(api.getAllInvoices());
+			if (error) throw error;
+			setInvoices(data.data);
+		}
+
+		fetchData();
+	}, []);
 
 	return {
+		error,
 		invoice,
+		invoices,
 		lineItems,
 		initInvoice,
+		fetchInvoices,
 		addLineItem,
 		payInvoice,
 	};

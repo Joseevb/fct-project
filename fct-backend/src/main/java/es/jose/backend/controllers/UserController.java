@@ -1,9 +1,12 @@
 package es.jose.backend.controllers;
 
-import java.util.List;
-import java.util.Optional;
+import es.jose.backend.services.UserService;
 
-import org.openapitools.api.UserApi;
+import jakarta.validation.Valid;
+
+import lombok.RequiredArgsConstructor;
+
+import org.openapitools.api.UsersApi;
 import org.openapitools.model.AddUserRequest;
 import org.openapitools.model.UpdateUserRequest;
 import org.openapitools.model.User;
@@ -11,13 +14,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
-import es.jose.backend.services.UserService;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
-public class UserController implements UserApi {
+public class UserController implements UsersApi {
 
     private final UserService userService;
 
@@ -33,8 +35,7 @@ public class UserController implements UserApi {
 
     @Override
     public ResponseEntity<User> addUser(@Valid final AddUserRequest addUserRequest) {
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
+        return ResponseEntity.status(HttpStatus.CREATED)
                 .body(userService.createUser(addUserRequest));
     }
 
@@ -48,5 +49,4 @@ public class UserController implements UserApi {
     public ResponseEntity<User> updateUser(Long id, @Valid UpdateUserRequest updateUserRequest) {
         return ResponseEntity.ok(userService.updateUser(id, updateUserRequest));
     }
-
 }

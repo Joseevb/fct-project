@@ -1,4 +1,7 @@
 import AdminAuthGuard from "@/components/guards/AdminAuthGuard";
+import AppointmentManagementPage from "@/components/pages/admin/AppointmentManagementPage";
+import InvoiceManagementPage from "@/components/pages/admin/InvoiceManagementPage";
+import UserManagementPage from "@/components/pages/admin/UserManagementPage";
 import {
 	Select,
 	SelectContent,
@@ -7,7 +10,6 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { useState } from "react";
-import AppointmentManagementPage from "@/components/pages/admin/AppointmentManagementPage";
 
 const adminPages = [
 	{
@@ -31,33 +33,39 @@ export default function AdminPanel() {
 
 	return (
 		<AdminAuthGuard>
-			<header className="flex items-center p-6 md:p-8 gap-4">
-				<h2 className="text-2xl font-semibold tracking-tight">
-					Panel de Administración
-				</h2>
-				<Select
-					value={selectedPage}
-					onValueChange={(value) =>
-						setSelectedPage(value as AdminPage)
-					}
-				>
-					<SelectTrigger className="w-[130px]">
-						<SelectValue placeholder="Citas" />
-					</SelectTrigger>
-					<SelectContent>
-						{adminPages.map(({ value, label }) => (
-							<SelectItem key={value} value={value}>
-								{label}
-							</SelectItem>
-						))}
-					</SelectContent>
-				</Select>
-			</header>
-			<main className="p-6 md:p-8 space-y-6">
-				{selectedPage === "appointments" && (
-					<AppointmentManagementPage />
-				)}
-			</main>
+			<div className="mx-12 my-9">
+				<header className="flex items-center gap-4 mb-16">
+					<h2 className="text-2xl font-semibold tracking-tight">
+						Panel de Administración
+					</h2>
+					<Select
+						value={selectedPage}
+						onValueChange={(value) =>
+							setSelectedPage(value as AdminPage)
+						}
+					>
+						<SelectTrigger className="w-[130px]">
+							<SelectValue placeholder="Citas" />
+						</SelectTrigger>
+						<SelectContent>
+							{adminPages.map(({ value, label }) => (
+								<SelectItem key={value} value={value}>
+									{label}
+								</SelectItem>
+							))}
+						</SelectContent>
+					</Select>
+				</header>
+				<main>
+					{selectedPage === "appointments" && (
+						<AppointmentManagementPage />
+					)}
+
+					{selectedPage === "invoices" && <InvoiceManagementPage />}
+
+					{selectedPage === "users" && <UserManagementPage />}
+				</main>
+			</div>
 		</AdminAuthGuard>
 	);
 }

@@ -7,8 +7,11 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "../card";
 import { z } from "zod";
-import { Alert, AlertDescription } from "../alert";
-import { DynamicFormField } from "@/components/ui/DynamicFormField";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import {
+	DynamicFormField,
+	FieldConfig,
+} from "@/components/ui/DynamicFormField";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { AppointmentCategoriesApi, AppointmentCategory } from "@/api";
@@ -18,7 +21,7 @@ import { AxiosResponse, AxiosError } from "axios";
 import { applyValidationErrors } from "@/lib/errorHandlers";
 import { toast } from "sonner";
 
-const fieldConfigs = {
+const fieldConfigs: Record<string, FieldConfig> = {
 	name: {
 		label: "Nombre",
 		placeholder: "Introduzca el nombre de la categoría",

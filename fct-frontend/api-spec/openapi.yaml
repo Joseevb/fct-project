@@ -8,7 +8,7 @@ servers:
     - url: http://localhost:8080/api/v1
 
 paths:
-    /user:
+    /users:
         get:
             summary: Get all users
             operationId: getAllUsers
@@ -76,7 +76,7 @@ paths:
                         application/json:
                             schema:
                                 $ref: "#/components/schemas/ErrorMessage"
-    /user/{id}:
+    /users/{id}:
         get:
             summary: Get a user by id
             operationId: getUserById
@@ -414,7 +414,7 @@ paths:
                             schema:
                                 $ref: "#/components/schemas/ErrorMessage"
 
-    /appointment:
+    /appointments:
         get:
             summary: Get all appointments
             operationId: getAllAppointments
@@ -486,7 +486,7 @@ paths:
                         application/json:
                             schema:
                                 $ref: "#/components/schemas/ErrorMessage"
-    /appointment/{id}:
+    /appointments/{id}:
         get:
             summary: Get an appointment by id
             operationId: getAppointmentById
@@ -673,7 +673,7 @@ paths:
                         application/json:
                             schema:
                                 $ref: "#/components/schemas/ErrorMessage"
-    /appointment/days:
+    /appointments/days:
         get:
             summary: Gets all days with appointments from the current date
             operationId: getAllDaysWithAppointments
@@ -690,7 +690,7 @@ paths:
                                     type: string
                                     format: date
 
-    /appointmentCategory:
+    /appointment-categories:
         get:
             summary: Get all appointment categories
             operationId: getAllAppointmentCategories
@@ -746,7 +746,7 @@ paths:
                         application/json:
                             schema:
                                 $ref: "#/components/schemas/ErrorMessage"
-    /appointmentCategory/{id}:
+    /appointment-categories/{id}:
         get:
             summary: Get an appointment category by id
             operationId: getAppointmentCategoryById
@@ -869,7 +869,7 @@ paths:
                             schema:
                                 $ref: "#/components/schemas/ErrorMessage"
 
-    /invoice:
+    /invoices:
         get:
             summary: Get all invoices
             operationId: getAllInvoices
@@ -948,9 +948,9 @@ paths:
                         application/json:
                             schema:
                                 $ref: "#/components/schemas/ErrorMessage"
-    /invoice/{id}:
+    /invoices/{id}:
         get:
-            summary: Get an invoice by id
+            summary: Get an invoice by ID, either in PDF or JSON format
             operationId: getInvoiceById
             tags:
                 - Invoices
@@ -969,6 +969,10 @@ paths:
                         application/json:
                             schema:
                                 $ref: "#/components/schemas/Invoice"
+                        application/pdf:
+                            schema:
+                                type: string
+                                format: binary
                 400:
                     description: Bad request
                     content:
@@ -1118,7 +1122,7 @@ paths:
                             schema:
                                 $ref: "#/components/schemas/ErrorMessage"
 
-    /lineItem:
+    /line-items:
         get:
             summary: Get all line items of an invoice
             operationId: getAllLineItems
@@ -1202,7 +1206,7 @@ paths:
                         application/json:
                             schema:
                                 $ref: "#/components/schemas/ErrorMessage"
-    /lineItem/{id}:
+    /line-items/{id}:
         get:
             summary: Get a line item
             operationId: getLineItemById

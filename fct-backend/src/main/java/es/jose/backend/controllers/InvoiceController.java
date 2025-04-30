@@ -6,15 +6,18 @@ import jakarta.validation.Valid;
 
 import lombok.RequiredArgsConstructor;
 
-import org.openapitools.api.InvoiceApi;
+import org.openapitools.api.InvoicesApi;
 import org.openapitools.model.AddInvoiceRequest;
 import org.openapitools.model.Invoice;
 import org.openapitools.model.InvoiceStatusEnum;
 import org.openapitools.model.UpdateInvoiceRequest;
 import org.openapitools.model.UpdateInvoiceStatusRequest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.NativeWebRequest;
 
 import java.net.URI;
 import java.util.List;
@@ -22,9 +25,15 @@ import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
-public class InvoiceController implements InvoiceApi {
+public class InvoiceController implements InvoicesApi {
 
+    private final NativeWebRequest request;
     private final InvoiceService invoiceService;
+
+    @Override
+    public Optional<NativeWebRequest> getRequest() {
+        return Optional.of(request);
+    }
 
     @Override
     public ResponseEntity<Invoice> addInvoice(@Valid AddInvoiceRequest addInvoiceRequest) {
@@ -51,7 +60,28 @@ public class InvoiceController implements InvoiceApi {
 
     @Override
     public ResponseEntity<Invoice> getInvoiceById(Long id) {
-        return ResponseEntity.ok(invoiceService.getInvoiceById(id));
+        // TODO: add generation of PDF invoice
+        return getRequest()
+                .map(request -> MediaType.parseMediaTypes(request.getHeader(HttpHeaders.ACCEPT)))
+                .orElse(List.of(MediaType.APPLICATION_JSON)) // fallback if no Accept header
+                .stream()
+                .filter(mediaType -> !mediaType.isWildcardType())
+                .filter(
+                        mediaType ->
+                                mediaType.isCompatibleWith(MediaType.APPLICATION_PDF)
+                                        || mediaType.isCompatibleWith(MediaType.APPLICATION_JSON))
+                .findFirst()
+                .map(
+                        mediaType -> {
+                            if (mediaType.isCompatibleWith(MediaType.APPLICATION_PDF)) {
+                                var pdf = invoiceService.getInvoiceById(id);
+                                return ResponseEntity.ok()
+                                        .contentType(MediaType.APPLICATION_PDF)
+                                        .body(pdf);
+                            }
+                            return ResponseEntity.ok(invoiceService.getInvoiceById(id));
+                        })
+                .orElseGet(() -> ResponseEntity.ok(invoiceService.getInvoiceById(id)));
     }
 
     @Override

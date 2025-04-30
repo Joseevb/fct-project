@@ -51,7 +51,7 @@ export const AppointmentsApiAxiosParamCreator = function (configuration?: Config
         addAppointment: async (addAppointmentRequest: AddAppointmentRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'addAppointmentRequest' is not null or undefined
             assertParamExists('addAppointment', 'addAppointmentRequest', addAppointmentRequest)
-            const localVarPath = `/appointment`;
+            const localVarPath = `/appointments`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -87,7 +87,7 @@ export const AppointmentsApiAxiosParamCreator = function (configuration?: Config
         deleteAppointment: async (id: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('deleteAppointment', 'id', id)
-            const localVarPath = `/appointment/{id}`
+            const localVarPath = `/appointments/{id}`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -120,7 +120,7 @@ export const AppointmentsApiAxiosParamCreator = function (configuration?: Config
          * @throws {RequiredError}
          */
         getAllAppointments: async (userId?: number, status?: AppointmentStatusEnum, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/appointment`;
+            const localVarPath = `/appointments`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -158,7 +158,7 @@ export const AppointmentsApiAxiosParamCreator = function (configuration?: Config
          * @throws {RequiredError}
          */
         getAllDaysWithAppointments: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/appointment/days`;
+            const localVarPath = `/appointments/days`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -191,7 +191,7 @@ export const AppointmentsApiAxiosParamCreator = function (configuration?: Config
         getAppointmentById: async (id: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('getAppointmentById', 'id', id)
-            const localVarPath = `/appointment/{id}`
+            const localVarPath = `/appointments/{id}`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -228,7 +228,7 @@ export const AppointmentsApiAxiosParamCreator = function (configuration?: Config
             assertParamExists('updateAppointment', 'id', id)
             // verify required parameter 'updateAppointmentRequest' is not null or undefined
             assertParamExists('updateAppointment', 'updateAppointmentRequest', updateAppointmentRequest)
-            const localVarPath = `/appointment/{id}`
+            const localVarPath = `/appointments/{id}`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -268,7 +268,7 @@ export const AppointmentsApiAxiosParamCreator = function (configuration?: Config
             assertParamExists('updateAppointmentStatus', 'id', id)
             // verify required parameter 'updateAppointmentStatusRequest' is not null or undefined
             assertParamExists('updateAppointmentStatus', 'updateAppointmentStatusRequest', updateAppointmentStatusRequest)
-            const localVarPath = `/appointment/{id}`
+            const localVarPath = `/appointments/{id}`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
