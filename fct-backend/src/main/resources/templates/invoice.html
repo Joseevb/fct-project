@@ -1,0 +1,117 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<meta charset="UTF-8" />
+		<style>
+			body {
+				font-family: Arial, sans-serif;
+				margin: 40px;
+				font-size: 12px;
+			}
+
+			.invoice-box {
+				border: 1px solid #eee;
+				padding: 20px;
+			}
+
+			h1 {
+				font-size: 24px;
+				text-align: center;
+			}
+
+			table {
+				width: 100%;
+				border-collapse: collapse;
+				margin-top: 20px;
+			}
+
+			th,
+			td {
+				border: 1px solid #ccc;
+				padding: 8px;
+				text-align: left;
+			}
+
+			th {
+				background: #f0f0f0;
+			}
+
+			.total {
+				font-weight: bold;
+				text-align: right;
+			}
+
+			.right {
+				text-align: right;
+			}
+
+			.header,
+			.footer {
+				margin-bottom: 20px;
+			}
+
+			.footer {
+				margin-top: 30px;
+				text-align: center;
+				font-size: 10px;
+				color: #999;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="invoice-box">
+			<div class="header">
+				<h1>Invoice</h1>
+				<p>
+					<strong>Date:</strong>
+					<span th:text="${date}">2025-05-02</span>
+				</p>
+				<p>
+					<strong>Invoice #:</strong>
+					<span th:text="${invoiceNumber}">12345</span>
+				</p>
+				<p>
+					<strong>Customer:</strong>
+					<span th:text="${customerName}">John Doe</span>
+				</p>
+			</div>
+
+			<table>
+				<thead>
+					<tr>
+						<th>Description</th>
+						<th class="right">Quantity</th>
+						<th class="right">Unit Price</th>
+						<th class="right">Total</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="item : ${items}">
+						<td th:text="${item.description}">Product A</td>
+						<td class="right" th:text="${item.quantity}">1</td>
+						<td class="right" th:text="${item.unitPrice}">
+							100.00
+						</td>
+						<td class="right" th:text="${item.total}">100.00</td>
+					</tr>
+				</tbody>
+				<tfoot>
+					<tr>
+						<td colspan="3" class="total">Subtotal</td>
+						<td class="right" th:text="${subtotal}">100.00</td>
+					</tr>
+					<tr>
+						<td colspan="3" class="total">Tax</td>
+						<td class="right" th:text="${tax}">10.00</td>
+					</tr>
+					<tr>
+						<td colspan="3" class="total">Total</td>
+						<td class="right" th:text="${total}">110.00</td>
+					</tr>
+				</tfoot>
+			</table>
+
+			<div class="footer">Thank you for your business!</div>
+		</div>
+	</body>
+</html>

@@ -950,7 +950,7 @@ paths:
                                 $ref: "#/components/schemas/ErrorMessage"
     /invoices/{id}:
         get:
-            summary: Get an invoice by ID, either in PDF or JSON format
+            summary: Get an invoice by ID
             operationId: getInvoiceById
             tags:
                 - Invoices
@@ -969,10 +969,6 @@ paths:
                         application/json:
                             schema:
                                 $ref: "#/components/schemas/Invoice"
-                        application/pdf:
-                            schema:
-                                type: string
-                                format: binary
                 400:
                     description: Bad request
                     content:
@@ -1117,6 +1113,53 @@ paths:
                                 $ref: "#/components/schemas/ErrorMessage"
                 403:
                     description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+
+    /invoices/{id}/pdf:
+        get:
+            summary: Get an invoice as PDF
+            operationId: getInvoiceByIdAsPDF
+            tags:
+                - Invoices
+            parameters:
+                - name: id
+                  in: path
+                  description: Invoice id
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            responses:
+                200:
+                    description: Successful operation
+                    content:
+                        application/pdf:
+                            schema:
+                                type: string
+                                format: binary
+                400:
+                    description: Bad request
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                401:
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                403:
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                404:
+                    description: Invoice not found
                     content:
                         application/json:
                             schema:

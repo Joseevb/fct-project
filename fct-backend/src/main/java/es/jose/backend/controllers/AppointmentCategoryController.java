@@ -30,7 +30,7 @@ public class AppointmentCategoryController implements AppointmentCategoriesApi {
     @Override
     public ResponseEntity<Void> deleteAppointmentCategory(final Long id) {
         service.deleteAppointmentCategory(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
     @Override

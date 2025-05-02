@@ -12,9 +12,7 @@ import org.openapitools.model.Invoice;
 import org.openapitools.model.InvoiceStatusEnum;
 import org.openapitools.model.UpdateInvoiceRequest;
 import org.openapitools.model.UpdateInvoiceStatusRequest;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
+import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.NativeWebRequest;
@@ -45,7 +43,7 @@ public class InvoiceController implements InvoicesApi {
     @Override
     public ResponseEntity<Void> deleteInvoice(Long id) {
         invoiceService.deleteInvoice(id);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.noContent().build();
     }
 
     @Override
@@ -60,28 +58,14 @@ public class InvoiceController implements InvoicesApi {
 
     @Override
     public ResponseEntity<Invoice> getInvoiceById(Long id) {
-        // TODO: add generation of PDF invoice
-        return getRequest()
-                .map(request -> MediaType.parseMediaTypes(request.getHeader(HttpHeaders.ACCEPT)))
-                .orElse(List.of(MediaType.APPLICATION_JSON)) // fallback if no Accept header
-                .stream()
-                .filter(mediaType -> !mediaType.isWildcardType())
-                .filter(
-                        mediaType ->
-                                mediaType.isCompatibleWith(MediaType.APPLICATION_PDF)
-                                        || mediaType.isCompatibleWith(MediaType.APPLICATION_JSON))
-                .findFirst()
-                .map(
-                        mediaType -> {
-                            if (mediaType.isCompatibleWith(MediaType.APPLICATION_PDF)) {
-                                var pdf = invoiceService.getInvoiceById(id);
-                                return ResponseEntity.ok()
-                                        .contentType(MediaType.APPLICATION_PDF)
-                                        .body(pdf);
-                            }
-                            return ResponseEntity.ok(invoiceService.getInvoiceById(id));
-                        })
-                .orElseGet(() -> ResponseEntity.ok(invoiceService.getInvoiceById(id)));
+        return ResponseEntity.ok(invoiceService.getInvoiceById(id));
+    }
+
+    @Override
+    public ResponseEntity<Resource> getInvoiceByIdAsPDF(Long id) {
+        return ResponseEntity.ok()
+                .header("Content-Disposition", "attachment; filename=invoice.pdf")
+                .body(invoiceService.getInvoiceByIdAsPDF(id));
     }
 
     @Override

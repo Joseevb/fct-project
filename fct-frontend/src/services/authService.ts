@@ -30,6 +30,11 @@ class AuthService {
 			const loginResponse = await api.login(credentials);
 			const userResponse = await usersApi.getUserById(
 				loginResponse.data.userId,
+				{
+					headers: {
+						Authorization: `Bearer ${loginResponse.data.jwt}`,
+					},
+				},
 			);
 
 			this.#user = userResponse.data;
@@ -46,6 +51,8 @@ class AuthService {
 
 			return loginResponse.data;
 		} catch (err: unknown) {
+			console.error(err);
+			console.log(axios.defaults.headers.common["Authorization"]);
 			if (err instanceof AxiosError) {
 				switch (err.response?.status) {
 					case 400:

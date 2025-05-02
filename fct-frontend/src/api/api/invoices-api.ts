@@ -158,7 +158,7 @@ export const InvoicesApiAxiosParamCreator = function (configuration?: Configurat
         },
         /**
          * 
-         * @summary Get an invoice by ID, either in PDF or JSON format
+         * @summary Get an invoice by ID
          * @param {number} id Invoice id
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -167,6 +167,40 @@ export const InvoicesApiAxiosParamCreator = function (configuration?: Configurat
             // verify required parameter 'id' is not null or undefined
             assertParamExists('getInvoiceById', 'id', id)
             const localVarPath = `/invoices/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Get an invoice as PDF
+         * @param {number} id Invoice id
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getInvoiceByIdAsPDF: async (id: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('getInvoiceByIdAsPDF', 'id', id)
+            const localVarPath = `/invoices/{id}/pdf`
                 .replace(`{${"id"}}`, encodeURIComponent(String(id)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -323,7 +357,7 @@ export const InvoicesApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @summary Get an invoice by ID, either in PDF or JSON format
+         * @summary Get an invoice by ID
          * @param {number} id Invoice id
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -332,6 +366,19 @@ export const InvoicesApiFp = function(configuration?: Configuration) {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getInvoiceById(id, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['InvoicesApi.getInvoiceById']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Get an invoice as PDF
+         * @param {number} id Invoice id
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getInvoiceByIdAsPDF(id: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<File>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getInvoiceByIdAsPDF(id, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['InvoicesApi.getInvoiceByIdAsPDF']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
@@ -406,13 +453,23 @@ export const InvoicesApiFactory = function (configuration?: Configuration, baseP
         },
         /**
          * 
-         * @summary Get an invoice by ID, either in PDF or JSON format
+         * @summary Get an invoice by ID
          * @param {number} id Invoice id
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
         getInvoiceById(id: number, options?: RawAxiosRequestConfig): AxiosPromise<Invoice> {
             return localVarFp.getInvoiceById(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Get an invoice as PDF
+         * @param {number} id Invoice id
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getInvoiceByIdAsPDF(id: number, options?: RawAxiosRequestConfig): AxiosPromise<File> {
+            return localVarFp.getInvoiceByIdAsPDF(id, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -479,13 +536,23 @@ export interface InvoicesApiInterface {
 
     /**
      * 
-     * @summary Get an invoice by ID, either in PDF or JSON format
+     * @summary Get an invoice by ID
      * @param {number} id Invoice id
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof InvoicesApiInterface
      */
     getInvoiceById(id: number, options?: RawAxiosRequestConfig): AxiosPromise<Invoice>;
+
+    /**
+     * 
+     * @summary Get an invoice as PDF
+     * @param {number} id Invoice id
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof InvoicesApiInterface
+     */
+    getInvoiceByIdAsPDF(id: number, options?: RawAxiosRequestConfig): AxiosPromise<File>;
 
     /**
      * 
@@ -558,7 +625,7 @@ export class InvoicesApi extends BaseAPI implements InvoicesApiInterface {
 
     /**
      * 
-     * @summary Get an invoice by ID, either in PDF or JSON format
+     * @summary Get an invoice by ID
      * @param {number} id Invoice id
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -566,6 +633,18 @@ export class InvoicesApi extends BaseAPI implements InvoicesApiInterface {
      */
     public getInvoiceById(id: number, options?: RawAxiosRequestConfig) {
         return InvoicesApiFp(this.configuration).getInvoiceById(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Get an invoice as PDF
+     * @param {number} id Invoice id
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof InvoicesApi
+     */
+    public getInvoiceByIdAsPDF(id: number, options?: RawAxiosRequestConfig) {
+        return InvoicesApiFp(this.configuration).getInvoiceByIdAsPDF(id, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

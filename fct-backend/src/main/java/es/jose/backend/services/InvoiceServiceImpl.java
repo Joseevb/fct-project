@@ -5,6 +5,7 @@ import es.jose.backend.mappers.InvoiceMapper;
 import es.jose.backend.persistence.entities.InvoiceEntity;
 import es.jose.backend.persistence.entities.LineItemEntity;
 import es.jose.backend.persistence.repositories.InvoiceRepository;
+import es.jose.backend.utils.ThymeleafUtils;
 
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
@@ -18,6 +19,8 @@ import org.openapitools.model.Invoice;
 import org.openapitools.model.InvoiceStatusEnum;
 import org.openapitools.model.UpdateInvoiceRequest;
 import org.openapitools.model.UpdateInvoiceStatusRequest;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -93,6 +96,16 @@ public class InvoiceServiceImpl implements InvoiceService {
         return invoiceRepository
                 .findById(id)
                 .map(invoiceMapper::toDto)
+                .orElseThrow(() -> new InvoiceNotFoundException("id", id.toString()));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Resource getInvoiceByIdAsPDF(Long id) {
+        return invoiceRepository
+                .findById(id)
+                .map(ThymeleafUtils::parseThymeleafTemplateAsPDF)
+                .map(ByteArrayResource::new)
                 .orElseThrow(() -> new InvoiceNotFoundException("id", id.toString()));
     }
 
