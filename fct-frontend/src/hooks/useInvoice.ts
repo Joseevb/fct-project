@@ -13,7 +13,7 @@ import { useEffect, useState } from "react";
 import { TemporaryLineItem } from "@/types/lineItem";
 import { useNavigate } from "react-router-dom";
 import { PaymentFormData } from "@/schemas/paymentSchema";
-import { AxiosResponse, AxiosError } from "axios";
+import { AxiosResponse, AxiosError, RawAxiosRequestConfig } from "axios";
 
 interface UseInvoiceResult {
 	error: string | null;
@@ -27,6 +27,7 @@ interface UseInvoiceResult {
 	) => Promise<void>;
 	addLineItem: (item: TemporaryLineItem, invoiceId?: number) => Promise<void>;
 	fetchInvoices: (status?: InvoiceStatusEnum) => Promise<void>;
+	downloadInvoice: (invoiceId: number) => Promise<void>;
 }
 
 export default function useInvoice(): UseInvoiceResult {
@@ -141,6 +142,34 @@ export default function useInvoice(): UseInvoiceResult {
 		setInvoices(data.data);
 	}
 
+	async function downloadInvoice(invoiceId: number) {
+		const api = new InvoicesApi();
+
+		const requestOptions: RawAxiosRequestConfig = {
+			responseType: "blob", // <--- THIS IS THE KEY!
+		};
+
+		const { data, error } = await tryCatch(
+			api.getInvoiceByIdAsPDF(invoiceId, requestOptions),
+		);
+		if (error) throw error;
+
+		const pdfFile: File = data.data;
+		console.log("pdfFile", pdfFile);
+
+		if (pdfFile.size === 0) {
+			console.warn("Received empty PDF file.");
+		}
+
+		const url = window.URL.createObjectURL(pdfFile);
+		const link = document.createElement("a");
+		link.href = url;
+		link.setAttribute("download", `invoice-${invoiceId}.pdf`);
+
+		document.body.appendChild(link);
+		link.click();
+	}
+
 	useEffect(() => {
 		async function fetchData() {
 			const api = new InvoicesApi();
@@ -158,6 +187,7 @@ export default function useInvoice(): UseInvoiceResult {
 		invoices,
 		lineItems,
 		initInvoice,
+		downloadInvoice,
 		fetchInvoices,
 		addLineItem,
 		payInvoice,

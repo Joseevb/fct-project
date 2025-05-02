@@ -4,12 +4,12 @@ import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
 
 import es.jose.backend.persistence.entities.InvoiceEntity;
 
-import lombok.experimental.UtilityClass;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.stereotype.Component;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
-import org.thymeleaf.templatemode.TemplateMode;
-import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 
 import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
@@ -18,23 +18,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@UtilityClass
+@Slf4j
+@Component
+@RequiredArgsConstructor
 public class ThymeleafUtils {
-    public byte[] parseThymeleafTemplateAsPDF(InvoiceEntity invoice) {
-        // 1. Set up Thymeleaf
-        var templateResolver = new ClassLoaderTemplateResolver();
-        templateResolver.setPrefix("templates/"); // Optional if default
-        templateResolver.setSuffix(".html");
-        templateResolver.setTemplateMode(TemplateMode.HTML);
-        templateResolver.setCharacterEncoding("UTF-8");
 
-        var templateEngine = new TemplateEngine();
-        templateEngine.setTemplateResolver(templateResolver);
+    private final TemplateEngine templateEngine;
+
+    public byte[] parseThymeleafTemplateAsPDF(InvoiceEntity invoice) {
 
         var context = new Context();
 
-        // 2. Set context variables
-        context.setVariable("date", invoice.getCreatedAt().toLocalDate()); // or format as string
+        context.setVariable("date", invoice.getCreatedAt().toLocalDate());
         context.setVariable("invoiceNumber", invoice.getId());
         context.setVariable(
                 "customerName", invoice.getUser().getFirstName() + invoice.getUser().getLastName());
@@ -64,19 +59,25 @@ public class ThymeleafUtils {
         context.setVariable("tax", calculateTax(invoice.getTotalPrice()));
         context.setVariable("total", invoice.getTotalPrice());
 
-        // 3. Generate HTML
         final String htmlContent = templateEngine.process("invoice", context);
 
-        // 4. Generate PDF from HTML
+        log.info("--- START HTML Content ---");
+        log.info(htmlContent);
+        log.info("--- END HTML Content ---");
+
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
-            var builder = new PdfRendererBuilder();
-            builder.useFastMode();
-            builder.withHtmlContent(htmlContent, null);
-            builder.toStream(outputStream);
-            builder.run();
+            // It's good practice to specify the base URI for resolving relative paths (CSS, images)
+            // If your CSS/images are also classpath resources, you might need to configure this.
+            // builder.withHtmlContent(htmlContent, "classpath:/templates/"); // Example if base is
+            // templates dir
+            new PdfRendererBuilder()
+                    .useFastMode()
+                    .withHtmlContent(htmlContent, null)
+                    .toStream(outputStream)
+                    .run();
             return outputStream.toByteArray();
         } catch (Exception e) {
-            throw new RuntimeException("Failed to generate PDF", e);
+            throw new RuntimeException("Failed to generate PDF for invoice " + invoice.getId(), e);
         }
     }
 
@@ -87,7 +88,6 @@ public class ThymeleafUtils {
     }
 
     private BigDecimal calculateTax(BigDecimal totalPrice) {
-        // You can change the tax logic here; this example assumes 10% tax
         return totalPrice.multiply(BigDecimal.valueOf(0.10)).setScale(2, RoundingMode.HALF_UP);
     }
 }

@@ -47,7 +47,8 @@ export default function InvoicePage({
 
 	const subtotal = data.reduce((acc, item) => item.subtotal + acc, 0);
 
-	const { initInvoice, addLineItem, payInvoice } = useInvoice();
+	const { initInvoice, addLineItem, payInvoice, downloadInvoice } =
+		useInvoice();
 
 	const navigate = useNavigate();
 
@@ -70,7 +71,7 @@ export default function InvoicePage({
 
 	const initializeInvoiceHelper = async () => {
 		const { data: invoiceRes, error: initErr } = await tryCatch<
-			Invoice,
+			Invoice | undefined,
 			AxiosError<ErrorMessage>
 		>(initInvoice());
 		if (initErr) {
@@ -117,6 +118,7 @@ export default function InvoicePage({
 		if (lineItemErr) return;
 
 		await payInvoice(createdInvoice.id, formData);
+		await downloadInvoice(createdInvoice.id);
 
 		setSuccess("Pago exitoso");
 		setIsLoading(false);

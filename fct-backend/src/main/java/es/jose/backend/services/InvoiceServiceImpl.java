@@ -37,6 +37,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     private final UserService userService;
     private final InvoiceMapper invoiceMapper;
     private final InvoiceRepository invoiceRepository;
+    private final ThymeleafUtils thymeleafUtils;
 
     @Override
     @Transactional(readOnly = true)
@@ -104,7 +105,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     public Resource getInvoiceByIdAsPDF(Long id) {
         return invoiceRepository
                 .findById(id)
-                .map(ThymeleafUtils::parseThymeleafTemplateAsPDF)
+                .map(thymeleafUtils::parseThymeleafTemplateAsPDF)
                 .map(ByteArrayResource::new)
                 .orElseThrow(() -> new InvoiceNotFoundException("id", id.toString()));
     }
