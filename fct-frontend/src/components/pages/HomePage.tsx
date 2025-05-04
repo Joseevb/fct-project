@@ -15,6 +15,8 @@ export default function HomePage({ headerRef }: Readonly<HomePageProps>) {
 	const [searchParams] = useSearchParams();
 
 	const paymentStatus = searchParams.get("paymentSuccess");
+	const headerHeight = headerRef.current?.offsetHeight || 0;
+	const heroMarginTop = headerHeight + 35;
 
 	const heroRef = useRef<HTMLDivElement>(null);
 	const aboutRef = useRef<HTMLDivElement>(null);
@@ -42,12 +44,12 @@ export default function HomePage({ headerRef }: Readonly<HomePageProps>) {
 	const handleScrollAttempt = useCallback(
 		(direction: direction) => {
 			// Get header height
-			const headerHeight = headerRef.current?.offsetHeight || 0;
+			console.log(direction);
 			switch (direction) {
 				case "up":
 					if (heroRef.current) {
 						window.scrollTo({
-							top: heroRef.current.offsetTop - headerHeight,
+							top: heroRef.current.offsetTop - heroMarginTop,
 							behavior: "smooth",
 						});
 
@@ -81,7 +83,7 @@ export default function HomePage({ headerRef }: Readonly<HomePageProps>) {
 					break;
 			}
 		},
-		[areButtonsVisible, headerRef],
+		[areButtonsVisible, headerHeight, heroMarginTop],
 	);
 
 	const autoCallback = useMemo(
@@ -112,14 +114,19 @@ export default function HomePage({ headerRef }: Readonly<HomePageProps>) {
 
 	useScrollHijack({
 		callback: handleScrollAttempt,
-		throttleDelay: 1,
+		throttleDelay: 700,
 		autoCallback,
 	});
 
 	return (
 		<div className="flex flex-col items-center justify-center h-screen w-screen">
-			<main className="h-screen max-w-250">
-				<section ref={heroRef} id="hero" className="relative h-screen">
+			<main className="h-screen w-screen">
+				<section
+					ref={heroRef}
+					id="hero"
+					className={`relative h-screen mx-3`}
+					style={{ marginBlockStart: `${heroMarginTop}px` }}
+				>
 					<Hero areButtonsVisible={areButtonsVisible} />
 				</section>
 

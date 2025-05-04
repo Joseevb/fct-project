@@ -28,7 +28,7 @@ export default function Header({ ref }: Readonly<HeaderProps>) {
 
 	return (
 		<header
-			className="w-dvw flex justify-between items-center p-3 shadow sticky top-0 bg-background z-50"
+			className="w-dvw flex justify-between items-center shadow-xl p-3 fixed top-0 bg-background z-50"
 			id="mainHeader"
 			ref={ref}
 		>
