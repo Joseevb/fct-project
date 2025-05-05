@@ -176,4 +176,17 @@
 	body {
 		@apply bg-background text-foreground;
 	}
+
+	@keyframes loading-clip {
+		0% {
+			clip-path: inset(0 3ch 0 0);
+		}
+		100% {
+			clip-path: inset(0);
+		}
+	}
+
+	.animate-loading {
+		animation: loading-clip 1s steps(4, jump-none) infinite;
+	}
 }

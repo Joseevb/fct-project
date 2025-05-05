@@ -28,11 +28,13 @@ import RouterLogger from "@/components/RouterLogger";
 const formSchema = z.object({
 	username: z
 		.string()
-		.min(3)
-		.max(20)
+		.nonempty("El nombre de usuario no puede estar vacío")
 		.trim()
-		.regex(/^[a-zA-Z0-9_]+$/),
-	password: z.string().nonempty().trim(),
+		.regex(
+			/^[a-zA-Z0-9_]+$/,
+			"El nombre de usuario solo puede contener letras, números y guiones",
+		),
+	password: z.string().nonempty("La contraseña no puede estar vacía").trim(),
 });
 
 export default function Login() {

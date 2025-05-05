@@ -1,9 +1,4 @@
-import {
-	InputOTP,
-	InputOTPGroup,
-	InputOTPSeparator,
-	InputOTPSlot,
-} from "@/components/ui/input-otp";
+import { DefaultApi, ErrorMessage } from "@/api";
 import {
 	Form,
 	FormControl,
@@ -13,13 +8,18 @@ import {
 	FormLabel,
 	FormMessage,
 } from "@/components/ui/form";
-import { Button } from "./button";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import {
+	InputOTP,
+	InputOTPGroup,
+	InputOTPSeparator,
+	InputOTPSlot,
+} from "@/components/ui/input-otp";
 import { tryCatch } from "@/lib/tryCatch";
-import { DefaultApi, ErrorMessage } from "@/api";
-import { AxiosError } from "axios";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { AxiosError, AxiosResponse } from "axios";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { Button } from "./button";
 
 const FormSchema = z.object({
 	pin: z.string().min(6).max(6),
@@ -44,18 +44,20 @@ export default function OtpValidation({
 
 		const api = new DefaultApi();
 
-		const { data: res, error } = await tryCatch(api.verifyEmail(data.pin));
+		const { error } = await tryCatch<
+			AxiosResponse<{ [key: string]: string }>,
+			AxiosError<ErrorMessage>
+		>(api.verifyEmail(data.pin));
 
 		if (error) {
 			form.setError("pin", {
-				message:
-					(error as AxiosError<ErrorMessage>).response?.data
-						.message || "Error al verificar",
+				message: error.response?.data.message || "Error al verificar",
 			});
 			console.log(error);
+			return;
 		}
 
-		if (res) setIsOtp(false);
+		setIsOtp(false);
 	};
 
 	return (
@@ -98,11 +100,7 @@ export default function OtpValidation({
 						)}
 					/>
 
-					<Button
-						type="submit"
-						variant={"secondary"}
-						className="block"
-					>
+					<Button type="submit" variant="default">
 						Validar
 					</Button>
 				</form>

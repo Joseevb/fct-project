@@ -1,6 +1,7 @@
 // src/components/ProtectedRoute.tsx
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { Loader2 } from "lucide-react";
 
 export default function ProtectedRoute() {
 	const { isAuthenticated, loading } = useAuth();
@@ -10,7 +11,7 @@ export default function ProtectedRoute() {
 	if (loading) {
 		return (
 			<div className="flex items-center justify-center min-h-screen">
-				Loading...
+				<Loader2 className="mr-2 h-10 w-10 animate-spin" />
 			</div>
 		);
 	}

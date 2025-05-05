@@ -1,20 +1,20 @@
-import { Link } from "react-router-dom";
-import { ModeToggle } from "@/components/ui/mode-toggle";
-import { Button, buttonVariants } from "@/components/ui/button";
-import { useAuth } from "@/hooks/useAuth";
 import { RoleEnum } from "@/api";
-// import LanguageSelector from "@/components/ui/LanguageSelector";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { ModeToggle } from "@/components/ui/mode-toggle";
 import {
 	NavigationMenu,
 	NavigationMenuItem,
 	NavigationMenuLink,
 	NavigationMenuList,
 } from "@/components/ui/navigation-menu";
-import { useScreenSize } from "@/hooks/useScreenSize";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu } from "lucide-react";
-import { cn } from "@/lib/utils";
 import UserMenu from "@/components/ui/UserMenu";
+import { heroItems } from "@/data/heroData";
+import { useAuth } from "@/hooks/useAuth";
+import { useScreenSize } from "@/hooks/useScreenSize";
+import { cn } from "@/lib/utils";
+import { Menu } from "lucide-react";
+import { Link } from "react-router-dom";
 
 interface HeaderProps {
 	ref: React.RefObject<HTMLDivElement | null>;
@@ -32,7 +32,10 @@ export default function Header({ ref }: Readonly<HeaderProps>) {
 			id="mainHeader"
 			ref={ref}
 		>
-			<Link to="/" className="text-2xl font-bold">
+			<Link
+				to={{ pathname: "/", hash: "hero" }}
+				className="text-2xl font-bold"
+			>
 				LOGO
 			</Link>
 
@@ -57,6 +60,24 @@ export default function Header({ ref }: Readonly<HeaderProps>) {
 									</NavigationMenuLink>
 								</NavigationMenuItem>
 							)}
+
+							{heroItems.map((item, idx) => (
+								<NavigationMenuItem key={idx}>
+									<NavigationMenuLink asChild>
+										<Link
+											to={item.buttonUrl || "#"}
+											className={cn(
+												buttonVariants({
+													variant: "link",
+												}),
+												headerLinkStyle,
+											)}
+										>
+											{item.buttonLabel}
+										</Link>
+									</NavigationMenuLink>
+								</NavigationMenuItem>
+							))}
 
 							<NavigationMenuItem>
 								<NavigationMenuLink asChild>

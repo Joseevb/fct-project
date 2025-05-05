@@ -19,14 +19,14 @@ export default function AuthPage() {
 	}, [user, navigate]);
 
 	return (
-		<section className="flex items-baseline justify-center min-h-dvh">
+		<section className="flex items-baseline justify-center min-h-dvh mt-15">
 			{isOtp ? (
 				<OtpValidation setIsOtp={setIsOtp} />
 			) : (
 				<Tabs defaultValue="login" className="w-[400px] mt-9">
 					<TabsList className="grid w-full grid-cols-2 bg-card">
-						<TabsTrigger value="login">Login</TabsTrigger>
-						<TabsTrigger value="register">Register</TabsTrigger>
+						<TabsTrigger value="login">Iniciar Sesión</TabsTrigger>
+						<TabsTrigger value="register">Registrarse</TabsTrigger>
 					</TabsList>
 					<TabsContent value="login">
 						<Login />

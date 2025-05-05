@@ -2,8 +2,8 @@ import { ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { RoleEnum } from "@/api";
-import { Skeleton } from "@/components/ui/skeleton";
 import ErrorAlert from "@/components/ui/ErrorAlert";
+import { Loader2 } from "lucide-react";
 
 interface AdminAuthGuardProps {
 	children: ReactNode;
@@ -19,7 +19,7 @@ export default function AdminAuthGuard({
 	if (authLoading) {
 		return (
 			<div className="flex items-center justify-center h-screen">
-				<Skeleton className="w-48 h-8" /> {/* Example Loading */}
+				<Loader2 className="mr-2 h-4 w-4 animate-spin" />
 			</div>
 		);
 	}

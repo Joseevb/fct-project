@@ -34,55 +34,62 @@ export default function App() {
 		<ThemeProvider defaultTheme="dark" storageKey="theme">
 			<ScrollToHashElement behavior="smooth" />
 			<Header ref={headerRef} />
-			<Routes>
-				{["/", "/home", "/index"].map((path, idx) => (
+			<div className="pt-15">
+				<Routes>
+					{["/", "/home", "/index"].map((path, idx) => (
+						<Route
+							key={idx}
+							path={path}
+							element={<HomePage headerRef={headerRef} />}
+						/>
+					))}
+					<Route path="/login" element={<AuthPage />} />
+
+					<Route path="/admin" element={<ProtectedRoute />}>
+						<Route index element={<AdminPanel />} />
+					</Route>
+
+					<Route path="/appointments" element={<ProtectedRoute />}>
+						<Route
+							index
+							element={
+								<AppointmentBookingPage
+									setInvoiceObjs={setInvoiceObjs}
+									setLineItemType={setInvoiceType}
+									setTemporaryLineItems={
+										setTemporaryLineItems
+									}
+								/>
+							}
+						/>
+					</Route>
+
+					<Route path="/invoice" element={<ProtectedRoute />}>
+						<Route
+							index
+							element={
+								<InvoicePage
+									objs={invoiceObjs}
+									data={temporaryLineItems}
+									itemType={invoiceType}
+									clearLineItems={clearLineItems}
+								/>
+							}
+						/>
+					</Route>
+
+					<Route path="/profile" element={<ProtectedRoute />}>
+						<Route index element={<ProfilePage />} />
+					</Route>
+
 					<Route
-						key={idx}
-						path={path}
-						element={<HomePage headerRef={headerRef} />}
-					/>
-				))}
-				<Route path="/login" element={<AuthPage />} />
-
-				<Route path="/admin" element={<ProtectedRoute />}>
-					<Route index element={<AdminPanel />} />
-				</Route>
-
-				<Route path="/appointments" element={<ProtectedRoute />}>
-					<Route
-						index
-						element={
-							<AppointmentBookingPage
-								setInvoiceObjs={setInvoiceObjs}
-								setLineItemType={setInvoiceType}
-								setTemporaryLineItems={setTemporaryLineItems}
-							/>
-						}
-					/>
-				</Route>
-
-				<Route path="/invoice" element={<ProtectedRoute />}>
-					<Route
-						index
-						element={
-							<InvoicePage
-								objs={invoiceObjs}
-								data={temporaryLineItems}
-								itemType={invoiceType}
-								clearLineItems={clearLineItems}
-							/>
-						}
-					/>
-				</Route>
-
-				<Route path="/profile" element={<ProtectedRoute />}>
-					<Route index element={<ProfilePage />} />
-				</Route>
-
-				<Route path="/user/appointments" element={<ProtectedRoute />}>
-					<Route index element={<UserAppointmentsPage />} />
-				</Route>
-			</Routes>
+						path="/user/appointments"
+						element={<ProtectedRoute />}
+					>
+						<Route index element={<UserAppointmentsPage />} />
+					</Route>
+				</Routes>
+			</div>
 			<Toaster />
 		</ThemeProvider>
 	);

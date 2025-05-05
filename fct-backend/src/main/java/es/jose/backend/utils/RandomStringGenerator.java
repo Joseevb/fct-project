@@ -1,11 +1,9 @@
 package es.jose.backend.utils;
 
-import org.springframework.stereotype.Component;
-
-import lombok.experimental.UtilityClass;
-
 import java.security.SecureRandom;
 import java.util.Random;
+
+import org.springframework.stereotype.Component;
 
 @Component
 public class RandomStringGenerator {

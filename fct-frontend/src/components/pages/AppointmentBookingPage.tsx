@@ -29,7 +29,13 @@ import { ResponseError } from "@/types/errors";
 import { LineItemable, TemporaryLineItem } from "@/types/lineItem";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AxiosError, AxiosResponse } from "axios";
-import { AlertCircle, CheckCircle, Loader2 } from "lucide-react";
+import { es } from "date-fns/locale";
+import {
+	AlertCircle,
+	Calendar as CalendarIcon,
+	CheckCircle,
+	Loader2,
+} from "lucide-react";
 import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
 import { FieldPath, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
@@ -113,9 +119,28 @@ export default function AppointmentBookingPage({
 		return dateSet;
 	}, [appointments]);
 
-	const isDateDisabled = (date: Date): boolean => {
+	// Check if a date is a weekend day
+	const isWeekend = (date: Date): boolean => {
+		const day = date.getDay();
+		return day === 0 || day === 6; // 0 is Sunday, 6 is Saturday
+	};
+
+	// Check if a date already has appointments
+	const hasAppointment = (date: Date): boolean => {
 		const dateString = formatDate(date);
 		return availableDateStrings.has(dateString);
+	};
+
+	// Check if a date is in the past
+	const isPastDay = (date: Date) => {
+		const today = new Date();
+		today.setHours(0, 0, 0, 0);
+		return date.getTime() < today.getTime();
+	};
+
+	// Used to disable dates in the calendar
+	const isDateDisabled = (date: Date): boolean => {
+		return hasAppointment(date) || isWeekend(date) || isPastDay(date);
 	};
 
 	useEffect(() => {
@@ -222,66 +247,138 @@ export default function AppointmentBookingPage({
 
 	// --- Render ---
 	return (
-		<main className="p-6 md:p-8 space-y-6">
-			<h2 className="text-2xl font-semibold tracking-tight">
-				Agendar una Cita
-			</h2>
+		<main className="container mx-auto p-6 md:p-8 space-y-8">
+			<div className="flex flex-col space-y-2 md:space-y-0 md:flex-row md:items-center md:justify-between border-b pb-4 mb-6">
+				<h2 className="text-3xl font-bold tracking-tight text-primary-foreground">
+					Agendar una Cita
+				</h2>
+				<div className="flex items-center text-muted-foreground text-sm">
+					<CalendarIcon className="mr-2 h-4 w-4" />
+					<span>Seleccione una fecha disponible</span>
+				</div>
+			</div>
 
-			<section className="space-y-4">
+			<section className="space-y-6">
 				{/* Loading State for Initial Fetch */}
 				{isLoading && (
-					<div className="p-4 border rounded-md w-full max-w-sm mx-auto">
-						<Skeleton className="h-8 w-3/4 mb-4" />
-						<Skeleton className="h-64 w-full" />
+					<div className="p-6 border rounded-lg shadow-sm w-full max-w-md mx-auto bg-card">
+						<Skeleton className="h-10 w-3/4 mb-6" />
+						<Skeleton className="h-80 w-full" />
 					</div>
 				)}
 
 				{/* Error State for Initial Fetch */}
 				{!isLoading && error && (
-					<div className="flex items-center space-x-2 text-destructive border border-destructive/50 bg-destructive/10 p-3 rounded-md max-w-md mx-auto">
-						<AlertCircle className="h-5 w-5" />
-						<p className="text-sm">Error: {error}</p>
+					<div className="flex items-center space-x-3 text-destructive border border-destructive/50 bg-destructive/10 p-4 rounded-md max-w-md mx-auto shadow-sm">
+						<AlertCircle className="h-6 w-6 flex-shrink-0" />
+						<p>Error: {error}</p>
 					</div>
 				)}
 
 				{/* Calendar and Details View  */}
 				{!isLoading && !error && (
-					<div className="flex flex-col md:flex-row items-start gap-6 md:gap-10">
+					<div className="flex flex-col md:flex-row items-center gap-8 lg:gap-12">
 						{/* Calendar */}
-						<Calendar
-							mode="single"
-							disabled={isDateDisabled}
-							selected={selectedDate}
-							onSelect={handleDateSelect}
-							className="rounded-md border shadow-sm w-full max-w-fit self-center md:self-start"
-						/>
+						<div>
+							<Card className="shadow-md border-primary/10 overflow-hidden w-fit transition-all duration-300 ease-out">
+								<CardHeader className="bg-primary/5 border-b">
+									<CardTitle className="flex items-center text-primary-foreground">
+										<CalendarIcon className="mr-2 h-5 w-5" />
+										Calendario
+									</CardTitle>
+								</CardHeader>
+								<CardContent>
+									<Calendar
+										showOutsideDays={false}
+										mode="single"
+										locale={es}
+										disabled={isDateDisabled}
+										selected={selectedDate}
+										onSelect={handleDateSelect}
+										className="rounded-md w-full max-w-none"
+										modifiers={{
+											weekend: (date) => isWeekend(date),
+											booked: (date) =>
+												hasAppointment(date),
+										}}
+										modifiersClassNames={{
+											weekend: "bg-none",
+											booked: "bg-accent/30 hover:bg-accent/10 cursor-not-allowed",
+										}}
+										classNames={{
+											month: "space-y-4",
+											caption:
+												"flex justify-center pt-1 relative items-center",
+											caption_label:
+												"text-lg font-semibold text-primary-foreground",
+											nav: "space-x-1 flex items-center",
+											nav_button:
+												"h-9 w-9 bg-primary/10 hover:bg-primary/20 rounded-md flex items-center justify-center",
+											nav_button_previous:
+												"absolute left-1",
+											nav_button_next: "absolute right-1",
+											table: "w-full border-collapse space-y-1",
+											head_row: "flex",
+											head_cell:
+												"text-muted-foreground rounded-md w-10 md:w-14 font-medium text-sm md:text-base flex-1",
+											row: "flex w-full mt-2",
+											cell: "text-center text-sm md:text-base p-0 relative first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-primary/10",
+											day: "h-10 w-10 md:h-14 md:w-14 p-0 font-normal aria-selected:opacity-100 rounded-md flex items-center justify-center hover:bg-primary/15 aria-selected:bg-primary aria-selected:text-primary-foreground",
+											day_selected:
+												"bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
+											day_today:
+												"bg-accent/50 text-accent-foreground",
+											day_disabled:
+												"text-muted-foreground opacity-50 cursor-not-allowed", // Removed bg color as we handle it with modifiers
+											day_outside:
+												"text-muted-foreground opacity-90",
+											day_range_middle:
+												"aria-selected:bg-accent aria-selected:text-accent-foreground",
+											day_hidden: "invisible",
+										}}
+									/>
+									<div
+										className={cn(
+											"mt-4 text-center p-2 rounded-md bg-primary/5 text-sm text-muted-foreground",
+											selectedDate
+												? "opacity-100 translate-x-0"
+												: "opacity-0 translate-x-4 pointer-events-none",
+										)}
+									>
+										Fecha seleccionada:{" "}
+										<span className="font-semibold">
+											{selectedDate &&
+												formatDate(selectedDate)}
+										</span>
+									</div>
+								</CardContent>
+							</Card>
+						</div>
 
 						{/* Appointment Details Card */}
 						<Card
 							className={cn(
-								"w-full md:max-w-md rounded-md", // Base styles
+								"w-full md:w-1/2 lg:w-2/5 rounded-lg shadow-md border-primary/10", // Base styles
 								"transition-all duration-300 ease-out", // Animation
 								selectedDate
 									? "opacity-100 translate-x-0"
 									: "opacity-0 -translate-x-4 pointer-events-none", // Appear/disappear
 							)}
 						>
-							<CardHeader>
-								<CardTitle>Detalles de la Cita</CardTitle>
+							<CardHeader className="bg-primary/5 border-b">
+								<CardTitle className="text-primary-foreground">
+									Detalles de la Cita
+								</CardTitle>
 							</CardHeader>
 							<CardContent>
 								<Form {...form}>
 									<form
 										method="post"
-										className="space-y-4"
+										className="space-y-5"
 										onSubmit={form.handleSubmit(onSubmit)}
 									>
-										{Object.keys(fieldConfigs)
-											// .filter(
-											// 	(fieldName) =>
-											// 		fieldName !== "categoryId",
-											// )
-											.map((fieldName) => (
+										{Object.keys(fieldConfigs).map(
+											(fieldName) => (
 												<DynamicFormField<BookAppointmentFormData>
 													key={fieldName}
 													name={
@@ -290,22 +387,24 @@ export default function AppointmentBookingPage({
 													fieldConfigs={fieldConfigs}
 													control={form.control}
 												/>
-											))}
+											),
+										)}
 
-										<Button
-											type="submit"
-											variant="outline"
-											size="lg"
-											disabled={isUploading}
-											className="bg-green-50 hover:bg-green-100 border-green-300 text-green-700 disabled:opacity-50"
-										>
-											{isUploading ? (
-												<Loader2 className="mr-2 h-4 w-4 animate-spin" />
-											) : (
-												<CheckCircle className="mr-2 h-4 w-4" />
-											)}
-											Aceptar
-										</Button>
+										<div className="pt-2">
+											<Button
+												type="submit"
+												size="lg"
+												disabled={isUploading}
+												className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-6 transition-all duration-200"
+											>
+												{isUploading ? (
+													<Loader2 className="mr-2 h-5 w-5 animate-spin" />
+												) : (
+													<CheckCircle className="mr-2 h-5 w-5" />
+												)}
+												Confirmar Cita
+											</Button>
+										</div>
 									</form>
 								</Form>
 							</CardContent>
@@ -316,54 +415,3 @@ export default function AppointmentBookingPage({
 		</main>
 	);
 }
-
-// <FormField
-// 	control={form.control}
-// 	name="categoryId"
-// 	render={({ field }) => (
-// 		<FormItem>
-// 			<FormLabel>
-// 				Categoría
-// 			</FormLabel>
-// 			<Select
-// 				onValueChange={(
-// 					value: string,
-// 				) =>
-// 					field.onChange(
-// 						parseInt(
-// 							value,
-// 							10,
-// 						),
-// 					)
-// 				}
-// 				value={
-// 					field.value?.toString() ||
-// 					""
-// 				}
-// 			>
-// 				<FormControl>
-// 					<SelectTrigger>
-// 						<SelectValue placeholder="Seleccione una categoría" />
-// 					</SelectTrigger>
-// 				</FormControl>
-// 				<SelectContent>
-// 					{appointmentCategories.map(
-// 						(category) => (
-// 							<SelectItem
-// 								key={
-// 									category.id
-// 								}
-// 								value={category.id.toString()}
-// 							>
-// 								{
-// 									category.name
-// 								}
-// 							</SelectItem>
-// 						),
-// 					)}
-// 				</SelectContent>
-// 			</Select>
-// 			<FormMessage />
-// 		</FormItem>
-// 	)}
-// />

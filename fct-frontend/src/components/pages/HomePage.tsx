@@ -2,16 +2,16 @@ import AboutPage from "@/components/pages/AboutPage";
 import Hero from "@/components/ui/Hero";
 import useScrollHijack from "@/hooks/useScrollHijack";
 import direction from "@/types/direction";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
+import InfoSection from "@/components/ui/InfoSection";
 
 interface HomePageProps {
 	headerRef: React.RefObject<HTMLElement | null>;
 }
 
 export default function HomePage({ headerRef }: Readonly<HomePageProps>) {
-	const [areButtonsVisible, setAreButtonsVisible] = useState(false);
 	const [searchParams] = useSearchParams();
 
 	const paymentStatus = searchParams.get("paymentSuccess");
@@ -58,41 +58,25 @@ export default function HomePage({ headerRef }: Readonly<HomePageProps>) {
 							"",
 							"/#main",
 						);
-
-						if (areButtonsVisible) setAreButtonsVisible(false);
 					}
 					break;
 				case "down":
-					if (areButtonsVisible) {
-						if (aboutRef.current) {
-							window.scrollTo({
-								top: aboutRef.current.offsetTop - headerHeight,
-								behavior: "smooth",
-							});
+					if (aboutRef.current) {
+						window.scrollTo({
+							top: aboutRef.current.offsetTop - headerHeight,
+							behavior: "smooth",
+						});
 
-							window.history.pushState(
-								{ fromProgrammaticScroll: true },
-								"",
-								"/#about",
-							);
-						}
-						setAreButtonsVisible(false);
-					} else {
-						setAreButtonsVisible(true);
+						window.history.pushState(
+							{ fromProgrammaticScroll: true },
+							"",
+							"/#about",
+						);
 					}
 					break;
 			}
 		},
-		[areButtonsVisible, headerHeight, heroMarginTop],
-	);
-
-	const autoCallback = useMemo(
-		() => ({
-			callback: () => handleScrollAttempt("down"),
-			delay: 1000,
-			repeat: false,
-		}),
-		[handleScrollAttempt],
+		[headerHeight, heroMarginTop],
 	);
 
 	useEffect(() => {
@@ -115,7 +99,6 @@ export default function HomePage({ headerRef }: Readonly<HomePageProps>) {
 	useScrollHijack({
 		callback: handleScrollAttempt,
 		throttleDelay: 700,
-		autoCallback,
 	});
 
 	return (
@@ -124,10 +107,11 @@ export default function HomePage({ headerRef }: Readonly<HomePageProps>) {
 				<section
 					ref={heroRef}
 					id="hero"
-					className={`relative h-screen mx-3`}
-					style={{ marginBlockStart: `${heroMarginTop}px` }}
+					className="relative h-screen mx-3"
+					// style={{ marginBlockStart: `${heroMarginTop}px` }}
 				>
-					<Hero areButtonsVisible={areButtonsVisible} />
+					<Hero />
+					<InfoSection />
 				</section>
 
 				{/* About section */}
