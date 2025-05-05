@@ -1,2 +1,10 @@
 rm -rf ./src/api
-openapi-generator-cli generate -i ./api-spec/openapi.yaml -g typescript-axios -o ./src/api -c ./openapi-generator-config.json
+
+SPEC_URL="${OPENAPI_URL:-../fct-backend/src/main/resources/openapi/openapi.yaml}"
+echo "Generating API client from $SPEC_URL"
+
+openapi-generator-cli generate \
+  -i "$SPEC_URL" \
+  -g typescript-axios \
+  -o ./src/api \
+  -c ./openapi-generator-config.json

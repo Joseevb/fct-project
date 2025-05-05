@@ -55,11 +55,6 @@ const fieldConfigs: Record<string, FieldConfig> = {
 		type: "date",
 		disabled: true,
 	},
-	name: {
-		label: "Titulo",
-		placeholder: "Introduzca el titulo de la cita",
-		type: "text",
-	},
 	description: {
 		label: "Descripción",
 		placeholder: "Introduzca una descripción de la cita",
@@ -101,7 +96,6 @@ export default function AppointmentBookingPage({
 
 	const form = useForm<BookAppointmentFormData>({
 		defaultValues: {
-			name: "",
 			description: "",
 			duration: 0,
 			date: "",
@@ -125,12 +119,6 @@ export default function AppointmentBookingPage({
 		return dateSet;
 	}, [appointments]);
 
-	// Check if a date is a weekend day
-	const isWeekend = (date: Date): boolean => {
-		const day = date.getDay();
-		return day === 0 || day === 6; // 0 is Sunday, 6 is Saturday
-	};
-
 	// Check if a date already has appointments
 	const hasAppointment = (date: Date): boolean => {
 		const dateString = formatDate(date);
@@ -146,7 +134,7 @@ export default function AppointmentBookingPage({
 
 	// Used to disable dates in the calendar
 	const isDateDisabled = (date: Date): boolean => {
-		return hasAppointment(date) || isWeekend(date) || isPastDay(date);
+		return hasAppointment(date) || isPastDay(date);
 	};
 
 	useEffect(() => {
@@ -283,7 +271,7 @@ export default function AppointmentBookingPage({
 					<div className="flex flex-col md:flex-row items-center justify-center gap-8 lg:gap-12">
 						{/* Calendar */}
 						<div>
-							<Card className="shadow-md border-primary/10 overflow-hidden w-fit transition-all duration-300 ease-out py-5">
+							<Card className="shadow-md border-primary/10 overflow-hidden w-fit transition-all duration-300 ease-out py-5 gap-0">
 								<CardHeader className="border-b">
 									<CardTitle className="flex items-center text-foreground">
 										<CalendarIcon className="mr-2 h-5 w-5" />
@@ -297,15 +285,13 @@ export default function AppointmentBookingPage({
 										disabled={isDateDisabled}
 										selected={selectedDate}
 										onSelect={handleDateSelect}
-										className="rounded-md w-full max-w-none"
+										className="rounded-md w-full max-w-none py-0"
 										modifiers={{
-											weekend: (date) => isWeekend(date),
 											booked: (date) =>
 												hasAppointment(date),
 										}}
 										modifiersClassNames={{
-											weekend: "bg-none",
-											booked: "bg-accent/30 hover:bg-accent/10 cursor-not-allowed",
+											booked: "bg-accent/30 hover:bg-accent/10",
 										}}
 										classNames={{
 											month: "space-y-4 text-foreground",
@@ -331,7 +317,7 @@ export default function AppointmentBookingPage({
 											day_today:
 												"bg-accent/50 text-accent-foreground",
 											day_disabled:
-												"text-muted-foreground opacity-50 cursor-not-allowed",
+												"text-muted-foreground opacity-50 cursor-not-allowed ",
 											day_outside:
 												"text-muted-foreground opacity-90",
 											day_range_middle:
@@ -352,8 +338,11 @@ export default function AppointmentBookingPage({
 									>
 										Fecha seleccionada:{" "}
 										<span className="font-semibold">
-											{selectedDate &&
-												formatDate(selectedDate)}
+											{new Intl.DateTimeFormat("es-ES", {
+												day: "numeric",
+												month: "long",
+												year: "numeric",
+											}).format(selectedDate)}
 										</span>
 									</div>
 								</CardFooter>

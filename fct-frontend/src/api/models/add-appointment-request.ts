@@ -25,12 +25,6 @@ export interface AddAppointmentRequest {
      * @type {string}
      * @memberof AddAppointmentRequest
      */
-    'name': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof AddAppointmentRequest
-     */
     'description': string;
     /**
      * 
