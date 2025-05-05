@@ -103,7 +103,7 @@ public class FctBackendApplication {
                                     .status(AppointmentStatusEnum.WAITING)
                                     .description("Cita de maquillaje de novia")
                                     .price(BigDecimal.valueOf(90))
-                                    .user(users.getFirst())
+                                    .user(users.get(1))
                                     .category(appointmentCategories.getFirst())
                                     .build());
 
