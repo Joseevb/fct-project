@@ -4,7 +4,13 @@ import { DataTable } from "@/components/ui/data-table";
 import { tryCatch } from "@/lib/tryCatch";
 import { ColumnDef } from "@tanstack/react-table";
 import { AxiosError, AxiosResponse } from "axios";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import {
+	Dispatch,
+	SetStateAction,
+	useCallback,
+	useEffect,
+	useState,
+} from "react";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { AddUserSchema, addUserSchema } from "@/schemas/admin/addUserSchema";
@@ -20,6 +26,7 @@ import { z } from "zod";
 import { applyValidationErrors } from "@/lib/errorHandlers";
 import { ResponseError } from "@/types/errors";
 import { toast } from "sonner";
+import { useSearchParams } from "react-router-dom";
 
 const columns: ColumnDef<Exclude<User, "password">>[] = [
 	{
@@ -99,6 +106,10 @@ export default function AdminUserTable() {
 	const [isAddUser, setIsAddUser] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
 
+	const [searchParams] = useSearchParams();
+
+	const userId = searchParams.get("id");
+
 	const form = useForm<AddUserSchema>({
 		defaultValues: {
 			username: "",
@@ -110,21 +121,32 @@ export default function AdminUserTable() {
 		resolver: zodResolver(addUserSchema),
 	});
 
-	async function fetchData() {
-		const api = new UsersApi();
-		const { data, error } = await tryCatch<
-			AxiosResponse<User[]>,
-			AxiosError<ErrorMessage>
-		>(api.getAllUsers());
-		if (error) {
-			setError(
-				error.response?.data.message || "Error al obtener usuarios",
-			);
-			return;
-		}
+	const fetchData = useCallback(async () => {
+		if (userId) {
+			const api = new UsersApi();
+			const { data, error } = await tryCatch<
+				AxiosResponse<User[]>,
+				AxiosError<ErrorMessage>
+			>(api.getAllUsers());
+			if (error) {
+				setError(
+					error.response?.data.message || "Error al obtener usuarios",
+				);
+				return;
+			}
 
-		setUsers(data.data);
-	}
+			if (userId) {
+				const user = data.data.find(
+					(user) => user.id === Number(userId),
+				);
+				if (user) {
+					setUsers([user]);
+				}
+			} else {
+				setUsers(data.data);
+			}
+		}
+	}, [userId]);
 
 	async function onSubmit(data: z.infer<typeof addUserSchema>) {
 		setIsLoading(true);
@@ -180,7 +202,7 @@ export default function AdminUserTable() {
 
 	useEffect(() => {
 		fetchData();
-	}, []);
+	}, [fetchData]);
 
 	if (error)
 		return (

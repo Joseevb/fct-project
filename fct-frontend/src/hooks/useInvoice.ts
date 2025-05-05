@@ -116,6 +116,7 @@ export default function useInvoice(): UseInvoiceResult {
 		invoiceId: number,
 		paymentData?: PaymentFormData,
 	) {
+		console.log("paying invoice");
 		const api = new InvoicesApi();
 		const { data, error } = await tryCatch<
 			AxiosResponse<Invoice>,
@@ -130,6 +131,8 @@ export default function useInvoice(): UseInvoiceResult {
 			setError(error.response?.data.message || "Unknown error");
 			return;
 		}
+
+		console.log("invoice updated", data);
 		setInvoice(data.data);
 	}
 

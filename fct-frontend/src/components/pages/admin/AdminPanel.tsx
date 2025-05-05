@@ -9,7 +9,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
-import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const adminPages = [
 	{
@@ -26,10 +26,17 @@ const adminPages = [
 	},
 ] as const;
 
-type AdminPage = (typeof adminPages)[number]["value"];
+// type AdminPage = (typeof adminPages)[number]["value"];
 
 export default function AdminPanel() {
-	const [selectedPage, setSelectedPage] = useState<AdminPage>("appointments");
+	// const [selectedPage, setSelectedPage] = useState<AdminPage>("appointments");
+
+	const navigate = useNavigate();
+
+	const selectedPage =
+		adminPages.find(({ value }) =>
+			location.pathname.includes(`/admin/${value}`),
+		)?.value || "appointments";
 
 	return (
 		<AdminAuthGuard>
@@ -40,9 +47,7 @@ export default function AdminPanel() {
 					</h2>
 					<Select
 						value={selectedPage}
-						onValueChange={(value) =>
-							setSelectedPage(value as AdminPage)
-						}
+						onValueChange={(value) => navigate(`/admin/${value}`)}
 					>
 						<SelectTrigger className="w-[130px]">
 							<SelectValue placeholder="Citas" />

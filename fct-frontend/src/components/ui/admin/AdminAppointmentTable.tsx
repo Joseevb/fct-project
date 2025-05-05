@@ -50,6 +50,10 @@ const columns: ColumnDef<AppointmentTableData>[] = [
 		accessorKey: "invoiceStatus",
 		header: "Estado de la factura",
 	},
+	{
+		accessorKey: "userId",
+		header: "Usuario",
+	},
 ];
 
 export default function AdminAppointmentTable() {

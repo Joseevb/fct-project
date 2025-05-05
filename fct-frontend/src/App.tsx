@@ -45,8 +45,8 @@ export default function App() {
 					))}
 					<Route path="/login" element={<AuthPage />} />
 
-					<Route path="/admin" element={<ProtectedRoute />}>
-						<Route index element={<AdminPanel />} />
+					<Route path="/admin/*" element={<ProtectedRoute />}>
+						<Route path="*" element={<AdminPanel />} />
 					</Route>
 
 					<Route path="/appointments" element={<ProtectedRoute />}>

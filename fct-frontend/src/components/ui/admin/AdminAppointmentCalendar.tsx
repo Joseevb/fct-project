@@ -4,7 +4,6 @@ import { Calendar } from "@/components/ui/calendar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AlertCircle, CheckCircle, XCircle, Loader2 } from "lucide-react";
 import { Appointment, AppointmentStatusEnum } from "@/api";
-import { useLanguage } from "@/hooks/useLanguage";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn, formatDate } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -15,8 +14,6 @@ export default function AdminAppointmentCalendar() {
 	const [selectedAppointment, setSelectedAppointment] =
 		useState<Appointment | null>(null);
 	const [isUpdating, setIsUpdating] = useState(false); // Loading state for Accept/Cancel actions
-
-	const { language } = useLanguage("es");
 
 	const {
 		appointments,
@@ -135,7 +132,7 @@ export default function AdminAppointmentCalendar() {
 											</strong>
 											{new Date(
 												selectedAppointment.date,
-											).toLocaleString(language, {
+											).toLocaleString("es", {
 												dateStyle: "long",
 												timeStyle: "short",
 											})}
@@ -176,8 +173,7 @@ export default function AdminAppointmentCalendar() {
 													// Add other statuses as needed
 												)}
 											>
-												{selectedAppointment.status}{" "}
-												{/* TODO: Map enum to friendly text */}
+												{selectedAppointment.status}
 											</span>
 										</li>
 										{/* Optional: Add user details here */}

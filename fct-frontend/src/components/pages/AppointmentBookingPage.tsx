@@ -9,7 +9,13 @@ import {
 import { InvoiceType } from "@/components/pages/InvoicePage";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+	Card,
+	CardContent,
+	CardFooter,
+	CardHeader,
+	CardTitle,
+} from "@/components/ui/card";
 import {
 	DynamicFormField,
 	FieldConfig,
@@ -189,7 +195,9 @@ export default function AppointmentBookingPage({
 			return;
 		}
 
+		setError("");
 		setIsUploading(true);
+		form.clearErrors();
 
 		const api = new AppointmentsApi();
 
@@ -203,10 +211,9 @@ export default function AppointmentBookingPage({
 			AxiosError<ResponseError>
 		>(api.addAppointment(request));
 
-		const errRes = bookError?.response?.data;
-
-		if (errRes) {
-			if ("messages" in errRes) {
+		if (bookError) {
+			const errRes = bookError?.response?.data;
+			if (errRes && "messages" in errRes) {
 				const validationErrors = Object.entries(errRes.messages).map(
 					([field, message]) => ({
 						field,
@@ -215,7 +222,7 @@ export default function AppointmentBookingPage({
 				);
 
 				applyValidationErrors(validationErrors, form.setError);
-			} else if ("message" in errRes) {
+			} else if (errRes && "message" in errRes) {
 				setError(errRes.message);
 			} else {
 				setError("Ocurrió un error inesperado.");
@@ -224,32 +231,28 @@ export default function AppointmentBookingPage({
 			return;
 		}
 
-		if (res) {
-			toast.success("Cita agregada exitosamente", { richColors: true });
-			fetchAppointments();
+		toast.success("Cita agregada exitosamente", { richColors: true });
+		fetchAppointments();
 
-			const lineItem: TemporaryLineItem = {
-				appointmentId: res.data.id,
-				quantity: 1,
-				subtotal: res.data.price,
-			};
+		const lineItem: TemporaryLineItem = {
+			appointmentId: res.data.id,
+			quantity: 1,
+			subtotal: res.data.price,
+		};
 
-			setInvoiceObjs((arr) => [...arr, res.data]);
-			setLineItemType("APPOINTMENT");
-			setTemporaryLineItems((arr) => [...arr, lineItem]);
-
-			setIsUploading(false);
-			navigate("/invoice");
-		}
+		setInvoiceObjs((arr) => [...arr, res.data]);
+		setLineItemType("APPOINTMENT");
+		setTemporaryLineItems((arr) => [...arr, lineItem]);
 
 		setIsUploading(false);
+		navigate("/invoice");
 	};
 
 	// --- Render ---
 	return (
 		<main className="container mx-auto p-6 md:p-8 space-y-8">
 			<div className="flex flex-col space-y-2 md:space-y-0 md:flex-row md:items-center md:justify-between border-b pb-4 mb-6">
-				<h2 className="text-3xl font-bold tracking-tight text-primary-foreground">
+				<h2 className="text-3xl font-bold tracking-tight text-foreground">
 					Agendar una Cita
 				</h2>
 				<div className="flex items-center text-muted-foreground text-sm">
@@ -277,19 +280,18 @@ export default function AppointmentBookingPage({
 
 				{/* Calendar and Details View  */}
 				{!isLoading && !error && (
-					<div className="flex flex-col md:flex-row items-center gap-8 lg:gap-12">
+					<div className="flex flex-col md:flex-row items-center justify-center gap-8 lg:gap-12">
 						{/* Calendar */}
 						<div>
-							<Card className="shadow-md border-primary/10 overflow-hidden w-fit transition-all duration-300 ease-out">
-								<CardHeader className="bg-primary/5 border-b">
-									<CardTitle className="flex items-center text-primary-foreground">
+							<Card className="shadow-md border-primary/10 overflow-hidden w-fit transition-all duration-300 ease-out py-5">
+								<CardHeader className="border-b">
+									<CardTitle className="flex items-center text-foreground">
 										<CalendarIcon className="mr-2 h-5 w-5" />
 										Calendario
 									</CardTitle>
 								</CardHeader>
-								<CardContent>
+								<CardContent className="px-2">
 									<Calendar
-										showOutsideDays={false}
 										mode="single"
 										locale={es}
 										disabled={isDateDisabled}
@@ -306,11 +308,11 @@ export default function AppointmentBookingPage({
 											booked: "bg-accent/30 hover:bg-accent/10 cursor-not-allowed",
 										}}
 										classNames={{
-											month: "space-y-4",
+											month: "space-y-4 text-foreground",
 											caption:
 												"flex justify-center pt-1 relative items-center",
 											caption_label:
-												"text-lg font-semibold text-primary-foreground",
+												"text-lg font-semibold text-foreground",
 											nav: "space-x-1 flex items-center",
 											nav_button:
 												"h-9 w-9 bg-primary/10 hover:bg-primary/20 rounded-md flex items-center justify-center",
@@ -322,14 +324,14 @@ export default function AppointmentBookingPage({
 											head_cell:
 												"text-muted-foreground rounded-md w-10 md:w-14 font-medium text-sm md:text-base flex-1",
 											row: "flex w-full mt-2",
-											cell: "text-center text-sm md:text-base p-0 relative first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-primary/10",
+											cell: "text-center text-sm ml-2 md:text-base p-0 relative first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-primary/10",
 											day: "h-10 w-10 md:h-14 md:w-14 p-0 font-normal aria-selected:opacity-100 rounded-md flex items-center justify-center hover:bg-primary/15 aria-selected:bg-primary aria-selected:text-primary-foreground",
 											day_selected:
-												"bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
+												"bg-primary text-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
 											day_today:
 												"bg-accent/50 text-accent-foreground",
 											day_disabled:
-												"text-muted-foreground opacity-50 cursor-not-allowed", // Removed bg color as we handle it with modifiers
+												"text-muted-foreground opacity-50 cursor-not-allowed",
 											day_outside:
 												"text-muted-foreground opacity-90",
 											day_range_middle:
@@ -337,9 +339,12 @@ export default function AppointmentBookingPage({
 											day_hidden: "invisible",
 										}}
 									/>
+								</CardContent>
+
+								<CardFooter>
 									<div
 										className={cn(
-											"mt-4 text-center p-2 rounded-md bg-primary/5 text-sm text-muted-foreground",
+											"text-center h-full w-full p-2 rounded-md bg-primary/5 text-sm text-muted-foreground",
 											selectedDate
 												? "opacity-100 translate-x-0"
 												: "opacity-0 translate-x-4 pointer-events-none",
@@ -351,7 +356,7 @@ export default function AppointmentBookingPage({
 												formatDate(selectedDate)}
 										</span>
 									</div>
-								</CardContent>
+								</CardFooter>
 							</Card>
 						</div>
 
@@ -365,8 +370,8 @@ export default function AppointmentBookingPage({
 									: "opacity-0 -translate-x-4 pointer-events-none", // Appear/disappear
 							)}
 						>
-							<CardHeader className="bg-primary/5 border-b">
-								<CardTitle className="text-primary-foreground">
+							<CardHeader className="border-b">
+								<CardTitle className="text-foreground">
 									Detalles de la Cita
 								</CardTitle>
 							</CardHeader>

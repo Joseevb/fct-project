@@ -15,7 +15,7 @@ export default function Hero() {
 	const autoplay = Autoplay({
 		delay: 4000,
 		stopOnInteraction: false,
-		active: false,
+		active: true,
 	});
 
 	return (
