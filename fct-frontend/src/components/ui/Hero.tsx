@@ -31,14 +31,20 @@ export default function Hero() {
 							key={item.id}
 							className="relative h-full flex justify-center items-end"
 						>
-							<img
-								src={item.imgSrc}
-								alt={item.imgAlt}
-								className={cn(
-									"block max-h-[50vh] w-full object-cover", // Fill item, cover area
-									item.imgObjectPosition || "object-center", // Apply specific positioning
-								)}
-							/>
+							<div className="relative w-full h-full">
+								<img
+									src={item.imgSrc}
+									alt={item.imgAlt}
+									className={cn(
+										"block max-h-[50vh] w-full object-cover", // Fill item, cover area
+										item.imgObjectPosition ||
+											"object-center", // Apply specific positioning
+									)}
+								/>
+
+								<div className="absolute inset-0 bg-background/5 backdrop-blur-sm"></div>
+							</div>
+
 							<div className="absolute bottom-10 z-10 flex items-center justify-center">
 								<Link
 									to={item.buttonUrl || "#"}

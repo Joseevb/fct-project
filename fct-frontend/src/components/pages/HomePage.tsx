@@ -6,6 +6,7 @@ import { useCallback, useEffect, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import InfoSection from "@/components/ui/InfoSection";
+import { useScreenSize } from "@/hooks/useScreenSize";
 
 interface HomePageProps {
 	headerRef: React.RefObject<HTMLElement | null>;
@@ -17,6 +18,8 @@ export default function HomePage({ headerRef }: Readonly<HomePageProps>) {
 	const paymentStatus = searchParams.get("paymentSuccess");
 	const headerHeight = headerRef.current?.offsetHeight || 0;
 	const heroMarginTop = headerHeight + 35;
+
+	const screenSize = useScreenSize();
 
 	const heroRef = useRef<HTMLDivElement>(null);
 	const aboutRef = useRef<HTMLDivElement>(null);
@@ -99,26 +102,21 @@ export default function HomePage({ headerRef }: Readonly<HomePageProps>) {
 	useScrollHijack({
 		callback: handleScrollAttempt,
 		throttleDelay: 700,
+		enabled: screenSize !== "xs",
 	});
 
 	return (
-		<div className="flex flex-col items-center justify-center h-screen w-screen">
-			<main className="h-screen w-screen">
-				<section
-					ref={heroRef}
-					id="hero"
-					className="relative h-screen mx-3"
-					// style={{ marginBlockStart: `${heroMarginTop}px` }}
-				>
+		<div className="w-full">
+			<main>
+				<section ref={heroRef} id="hero" className="relative mx-3">
 					<Hero />
 					<InfoSection />
 				</section>
 
-				{/* About section */}
 				<section
 					ref={aboutRef}
 					id="about"
-					className="relative h-screen"
+					className="relative mt-10 h-screen"
 				>
 					<AboutPage />
 				</section>

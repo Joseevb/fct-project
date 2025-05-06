@@ -49,12 +49,6 @@ import { toast } from "sonner";
 import { z } from "zod";
 
 const fieldConfigs: Record<string, FieldConfig> = {
-	date: {
-		label: "Fecha",
-		placeholder: "Introduzca la fecha de la cita",
-		type: "date",
-		disabled: true,
-	},
 	description: {
 		label: "Descripción",
 		placeholder: "Introduzca una descripción de la cita",
@@ -98,7 +92,6 @@ export default function AppointmentBookingPage({
 		defaultValues: {
 			description: "",
 			duration: 0,
-			date: "",
 			categoryId: undefined,
 		},
 		resolver: zodResolver(bookAppointmentSchema),
@@ -167,17 +160,16 @@ export default function AppointmentBookingPage({
 		getAppointmentCategories();
 	}, [error]);
 
-	useEffect(() => {
-		if (selectedDate) {
-			form.setValue("date", formatDate(selectedDate));
-		}
-	}, [selectedDate, form]);
-
 	const handleDateSelect = (date: Date | undefined) => {
 		setSelectedDate(date);
 	};
 
 	const onSubmit = async (data: z.infer<typeof bookAppointmentSchema>) => {
+		if (selectedDate === undefined) {
+			setError("Seleccione una fecha");
+			return;
+		}
+		console.log(data);
 		if (!user) {
 			navigate("/login");
 			return;
@@ -189,9 +181,11 @@ export default function AppointmentBookingPage({
 
 		const api = new AppointmentsApi();
 
+		console.log(selectedDate);
 		const request: AddAppointmentRequest = {
 			...data,
 			userId: user.id,
+			date: selectedDate?.toISOString(),
 		};
 
 		const { data: res, error: bookError } = await tryCatch<
@@ -268,7 +262,7 @@ export default function AppointmentBookingPage({
 
 				{/* Calendar and Details View  */}
 				{!isLoading && !error && (
-					<div className="flex flex-col md:flex-row items-center justify-center gap-8 lg:gap-12">
+					<div className="flex flex-col md:flex-row items-start justify-center gap-8 lg:gap-12">
 						{/* Calendar */}
 						<div>
 							<Card className="shadow-md border-primary/10 overflow-hidden w-fit transition-all duration-300 ease-out py-5 gap-0">

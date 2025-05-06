@@ -39,6 +39,12 @@ export default function UserMenu({ logout }: Readonly<UserMenuProps>) {
 					Mis citas
 				</DropdownMenuItem>
 				<DropdownMenuItem
+					onClick={() => navigate("/cart")}
+					className={cn(menuItemStyle)}
+				>
+					Mi Carrito
+				</DropdownMenuItem>
+				<DropdownMenuItem
 					onClick={() => logout()}
 					className={cn(menuItemStyle)}
 				>

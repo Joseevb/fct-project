@@ -128,28 +128,3 @@ export function DynamicFormField<T extends FieldValues>({
 		/>
 	);
 }
-
-// {config.type === "textarea" ? (
-// 	<Textarea
-// 		placeholder={config.placeholder}
-// 		{...field}
-// 		disabled={disabled || config.disabled}
-// 	/>
-// ) : (
-// 	<Input
-// 		placeholder={config.placeholder}
-// 		type={config.type}
-// 		{...field}
-// 		onChange={(e) => {
-// 			let value: unknown = e.target.value;
-// 			if (config.type === "number") {
-// 				value =
-// 					e.target.value === ""
-// 						? 0
-// 						: Number(e.target.value);
-// 			}
-// 			field.onChange(value);
-// 		}}
-// 		disabled={disabled || config.disabled}
-// 	/>
-// )}
