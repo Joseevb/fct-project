@@ -15,10 +15,19 @@ export interface AuthContextType {
 	updateLoggedUser: (user: User) => void;
 }
 
-// Create the context with a default undefined value initially
-export const AuthContext = createContext<AuthContextType | undefined>(
-	undefined,
-);
+// Create the context with a default value that's enough to prevent crashes
+export const AuthContext = createContext<AuthContextType>({
+	isAuthenticated: false,
+	user: null,
+	loading: false,
+	error: null,
+	login: async () => ({
+		success: false,
+		error: "AUTH_CONTEXT_NOT_INITIALIZED",
+	}),
+	logout: () => {},
+	updateLoggedUser: () => {},
+});
 
 // Custom hook to consume the context safely
 export const useAuth = (): AuthContextType => {

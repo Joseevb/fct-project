@@ -19,7 +19,7 @@ export default function AuthPage() {
 	}, [user, navigate]);
 
 	return (
-		<section className="flex items-baseline justify-center min-h-dvh mt-15">
+		<section className="flex items-baseline justify-center min-h-dvh">
 			{isOtp ? (
 				<OtpValidation setIsOtp={setIsOtp} />
 			) : (

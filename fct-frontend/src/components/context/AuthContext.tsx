@@ -1,4 +1,5 @@
-import { LoginRequest, LoginResponse, User, UsersApi } from "@/api";
+// src/components/context/AuthContext.tsx
+import { LoginRequest, LoginResponse, User } from "@/api";
 import { AuthContext, AuthContextType } from "@/hooks/useAuth";
 import { tryCatch } from "@/lib/tryCatch";
 import { authService } from "@/services/authService";
@@ -12,19 +13,23 @@ export interface AuthContextProps {
 
 export default function AuthProvider({ children }: AuthContextProps) {
 	const [user, setUser] = useState<User | null>(null);
-	const [loading, setLoading] = useState(false);
+	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<LoginError | null>(null);
 
 	useEffect(() => {
 		setUser(authService.user);
 
 		const restore = async () => {
-			setLoading(true);
-			const restoredUser = await authService.restoreSession();
-			if (restoredUser) {
-				setUser(restoredUser);
+			try {
+				const restoredUser = await authService.restoreSession();
+				if (restoredUser) {
+					setUser(restoredUser);
+				}
+			} catch (err) {
+				console.error("Session restore failed", err);
+			} finally {
+				setLoading(false);
 			}
-			setLoading(false);
 		};
 
 		restore();
@@ -35,8 +40,6 @@ export default function AuthProvider({ children }: AuthContextProps) {
 			setError(null);
 			setLoading(true);
 
-			let success: boolean = false;
-
 			const { data, error } = await tryCatch<LoginResponse, LoginError>(
 				authService.login(credentials),
 			);
@@ -45,16 +48,13 @@ export default function AuthProvider({ children }: AuthContextProps) {
 				setError(error);
 				setLoading(false);
 				console.log(error);
+				return { success: false, data: null, error };
 			}
 
-			if (data) {
-				const user = await new UsersApi().getUserById(data.userId);
-				success = true;
-				setUser(user.data);
-			}
+			setUser(authService.user);
 
 			setLoading(false);
-			return { success, data, error };
+			return { success: true, data, error: null };
 		},
 		[],
 	);

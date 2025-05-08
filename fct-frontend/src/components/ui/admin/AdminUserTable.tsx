@@ -122,30 +122,27 @@ export default function AdminUserTable() {
 	});
 
 	const fetchData = useCallback(async () => {
+		const api = new UsersApi();
+		const { data, error } = await tryCatch<
+			AxiosResponse<User[]>,
+			AxiosError<ErrorMessage>
+		>(api.getAllUsers());
+
+		if (error) {
+			setError(
+				error.response?.data.message || "Error al obtener usuarios",
+			);
+			return;
+		}
 		if (userId) {
-			const api = new UsersApi();
-			const { data, error } = await tryCatch<
-				AxiosResponse<User[]>,
-				AxiosError<ErrorMessage>
-			>(api.getAllUsers());
-			if (error) {
-				setError(
-					error.response?.data.message || "Error al obtener usuarios",
-				);
+			const user = data.data.find((user) => user.id === Number(userId));
+			if (user) {
+				setUsers([user]);
 				return;
 			}
-
-			if (userId) {
-				const user = data.data.find(
-					(user) => user.id === Number(userId),
-				);
-				if (user) {
-					setUsers([user]);
-				}
-			} else {
-				setUsers(data.data);
-			}
 		}
+
+		setUsers(data.data);
 	}, [userId]);
 
 	async function onSubmit(data: z.infer<typeof addUserSchema>) {

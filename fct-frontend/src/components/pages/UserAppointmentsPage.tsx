@@ -17,10 +17,6 @@ const columns: ColumnDef<Appointment>[] = [
 		header: "Duración",
 	},
 	{
-		accessorKey: "name",
-		header: "Título",
-	},
-	{
 		accessorKey: "description",
 		header: "Descripción",
 	},
@@ -39,7 +35,7 @@ export default function UserAppointmentsPage() {
 
 	return (
 		<main>
-			<section className="flex items-center p-6 md:p-8 gap-4">
+			<section className="flex items-center justify-center p-6 md:p-8 gap-4 w-full">
 				<h2 className="text-2xl font-semibold tracking-tight">
 					Mis citas
 				</h2>

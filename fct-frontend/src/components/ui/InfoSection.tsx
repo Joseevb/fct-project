@@ -21,7 +21,7 @@ export default function InfoSection() {
 					{heroItems.map((item) => (
 						<div
 							key={item.id}
-							className="flex-1 bg-card/70 rounded-lg shadow-md p-6 flex flex-col items-center transition-all hover:shadow-lg"
+							className="flex-1 bg-card/70 rounded-lg shadow-md dark:shadow-accent/10 hover:shadow-lg p-6 flex flex-col items-center transition-all duration-300"
 						>
 							<div className="mb-4">
 								{getIcon(item.buttonUrl)}

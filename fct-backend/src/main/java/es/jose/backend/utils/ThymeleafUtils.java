@@ -50,6 +50,7 @@ public class ThymeleafUtils {
                                     map.put("quantity", item.getQuantity());
                                     map.put("unitPrice", item.getPriceAtPurchase());
                                     map.put("total", item.getSubtotal());
+                                    log.info("Item: {}", map);
                                     return map;
                                 })
                         .toList();
@@ -88,6 +89,6 @@ public class ThymeleafUtils {
     }
 
     private BigDecimal calculateTax(BigDecimal totalPrice) {
-        return totalPrice.multiply(BigDecimal.valueOf(0.10)).setScale(2, RoundingMode.HALF_UP);
+        return totalPrice.multiply(BigDecimal.valueOf(0.21)).setScale(2, RoundingMode.HALF_UP);
     }
 }

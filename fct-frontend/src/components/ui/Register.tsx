@@ -115,7 +115,7 @@ export default function Register({ setIsOtp }: Readonly<RegisterProps>) {
 	return (
 		<Card className="w-full max-w-md">
 			<CardHeader>
-				<CardTitle>Sign In</CardTitle>
+				<CardTitle>Registrarse</CardTitle>
 				<CardDescription>Registro de un nuevo usuario</CardDescription>
 			</CardHeader>
 			<Form {...form}>

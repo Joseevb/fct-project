@@ -45,10 +45,11 @@ export default function useScrollHijack(options: UseScrollHijackOptions): void {
 	const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 	const touchStartY = useRef<number | null>(null);
 	const minTouchDistance = 50; // Minimum distance in pixels to trigger a swipe
+	const lastScrollTime = useRef<number>(0);
+	const scrollThreshold = 100; // Minimum time between scroll events in ms
 
-	// Track if user has “touched” the page
+	// Track if user has "touched" the page
 	const userInteractedRef = useRef(false);
-
 	const hasFiredRef = useRef(false);
 
 	// Ref to store the auto timer id
@@ -80,8 +81,10 @@ export default function useScrollHijack(options: UseScrollHijackOptions): void {
 	// Trigger callback with direction and lock scrolling
 	const triggerScroll = useCallback(
 		(direction: Direction) => {
-			if (isLocked.current) return;
+			const now = Date.now();
+			if (isLocked.current || now - lastScrollTime.current < scrollThreshold) return;
 
+			lastScrollTime.current = now;
 			callback(direction);
 			lockScroll();
 			userInteractedRef.current = true;
@@ -93,6 +96,8 @@ export default function useScrollHijack(options: UseScrollHijackOptions): void {
 	// Handle wheel events (mouse wheel, trackpad)
 	const handleWheel = useCallback(
 		(event: WheelEvent) => {
+			if (!enabled) return;
+
 			// Prevent default scroll action
 			event.preventDefault();
 
@@ -105,12 +110,14 @@ export default function useScrollHijack(options: UseScrollHijackOptions): void {
 			// Execute callback and lock
 			triggerScroll(direction);
 		},
-		[triggerScroll],
+		[triggerScroll, enabled],
 	);
 
 	// Handle keyboard navigation
 	const handleKeyDown = useCallback(
 		(event: KeyboardEvent) => {
+			if (!enabled || !enableKeyboard) return;
+
 			// Only handle navigation keys
 			const keyNavigationMap: Record<string, Direction> = {
 				ArrowDown: "down",
@@ -133,18 +140,20 @@ export default function useScrollHijack(options: UseScrollHijackOptions): void {
 			// Execute callback and lock
 			triggerScroll(direction);
 		},
-		[triggerScroll],
+		[triggerScroll, enabled, enableKeyboard],
 	);
 
 	// Handle touch start
 	const handleTouchStart = useCallback((event: TouchEvent) => {
+		if (!enabled || !enableTouch) return;
 		// Store the starting Y position
 		touchStartY.current = event.touches[0].clientY;
-	}, []);
+	}, [enabled, enableTouch]);
 
 	// Handle touch end
 	const handleTouchEnd = useCallback(
 		(event: TouchEvent) => {
+			if (!enabled || !enableTouch) return;
 			// If no start position or locked, do nothing
 			if (touchStartY.current === null || isLocked.current) return;
 
@@ -160,20 +169,19 @@ export default function useScrollHijack(options: UseScrollHijackOptions): void {
 			// Reset the touch start position
 			touchStartY.current = null;
 		},
-		[triggerScroll],
+		[triggerScroll, enabled, enableTouch],
 	);
 
 	// Handle touch move (prevent default to stop browser's native scrolling)
 	const handleTouchMove = useCallback(
 		(event: TouchEvent) => {
-			if (enabled) {
-				// Only prevent default if we're actively tracking a touch
-				if (touchStartY.current !== null) {
-					event.preventDefault();
-				}
+			if (!enabled || !enableTouch) return;
+			// Only prevent default if we're actively tracking a touch
+			if (touchStartY.current !== null) {
+				event.preventDefault();
 			}
 		},
-		[enabled],
+		[enabled, enableTouch],
 	);
 
 	useEffect(() => {

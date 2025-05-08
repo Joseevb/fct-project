@@ -46,6 +46,7 @@ export default function Login() {
 
 	// Get the path the user was trying to access
 	const from = location.state?.from?.pathname || "/";
+	console.log("from: ", from);
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		defaultValues: {
@@ -63,7 +64,6 @@ export default function Login() {
 			username: data.username,
 			password: data.password,
 		});
-		console.log("Login error: ", loginError);
 
 		if (loginError) {
 			switch (loginError) {

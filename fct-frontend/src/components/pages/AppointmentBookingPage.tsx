@@ -24,6 +24,7 @@ import { Form } from "@/components/ui/form";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAppointments } from "@/hooks/useAppointments";
 import { useAuth } from "@/hooks/useAuth";
+import { useScreenSize } from "@/hooks/useScreenSize";
 import { applyValidationErrors } from "@/lib/errorHandlers";
 import { tryCatch } from "@/lib/tryCatch";
 import { cn, formatDate } from "@/lib/utils";
@@ -42,6 +43,7 @@ import {
 	CheckCircle,
 	Loader2,
 } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
 import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
 import { FieldPath, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
@@ -84,6 +86,8 @@ export default function AppointmentBookingPage({
 
 	const { user } = useAuth();
 
+	const size = useScreenSize();
+
 	const navigate = useNavigate();
 
 	const { appointments, isLoading, fetchAppointments } = useAppointments();
@@ -91,7 +95,7 @@ export default function AppointmentBookingPage({
 	const form = useForm<BookAppointmentFormData>({
 		defaultValues: {
 			description: "",
-			duration: 0,
+			duration: undefined,
 			categoryId: undefined,
 		},
 		resolver: zodResolver(bookAppointmentSchema),
@@ -262,142 +266,189 @@ export default function AppointmentBookingPage({
 
 				{/* Calendar and Details View  */}
 				{!isLoading && !error && (
-					<div className="flex flex-col md:flex-row items-start justify-center gap-8 lg:gap-12">
-						{/* Calendar */}
-						<div>
-							<Card className="shadow-md border-primary/10 overflow-hidden w-fit transition-all duration-300 ease-out py-5 gap-0">
-								<CardHeader className="border-b">
-									<CardTitle className="flex items-center text-foreground">
-										<CalendarIcon className="mr-2 h-5 w-5" />
-										Calendario
-									</CardTitle>
-								</CardHeader>
-								<CardContent className="px-2">
-									<Calendar
-										mode="single"
-										locale={es}
-										disabled={isDateDisabled}
-										selected={selectedDate}
-										onSelect={handleDateSelect}
-										className="rounded-md w-full max-w-none py-0"
-										modifiers={{
-											booked: (date) =>
-												hasAppointment(date),
-										}}
-										modifiersClassNames={{
-											booked: "bg-accent/30 hover:bg-accent/10",
-										}}
-										classNames={{
-											month: "space-y-4 text-foreground",
-											caption:
-												"flex justify-center pt-1 relative items-center",
-											caption_label:
-												"text-lg font-semibold text-foreground",
-											nav: "space-x-1 flex items-center",
-											nav_button:
-												"h-9 w-9 bg-primary/10 hover:bg-primary/20 rounded-md flex items-center justify-center",
-											nav_button_previous:
-												"absolute left-1",
-											nav_button_next: "absolute right-1",
-											table: "w-full border-collapse space-y-1",
-											head_row: "flex",
-											head_cell:
-												"text-muted-foreground rounded-md w-10 md:w-14 font-medium text-sm md:text-base flex-1",
-											row: "flex w-full mt-2",
-											cell: "text-center text-sm ml-2 md:text-base p-0 relative first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-primary/10",
-											day: "h-10 w-10 md:h-14 md:w-14 p-0 font-normal aria-selected:opacity-100 rounded-md flex items-center justify-center hover:bg-primary/15 aria-selected:bg-primary aria-selected:text-primary-foreground",
-											day_selected:
-												"bg-primary text-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
-											day_today:
-												"bg-accent/50 text-accent-foreground",
-											day_disabled:
-												"text-muted-foreground opacity-50 cursor-not-allowed ",
-											day_outside:
-												"text-muted-foreground opacity-90",
-											day_range_middle:
-												"aria-selected:bg-accent aria-selected:text-accent-foreground",
-											day_hidden: "invisible",
-										}}
-									/>
-								</CardContent>
+					<motion.div layout>
+						<div className="flex flex-col md:flex-row items-start justify-center gap-8 lg:gap-12">
+							{/* Calendar */}
+							<AnimatePresence mode="popLayout">
+								<motion.div
+									key="calendar"
+									layout
+									transition={{
+										layout: {
+											duration: 0.3,
+											ease: "easeInOut",
+										},
+										default: { duration: 0.3 },
+									}}
+									className="w-fit"
+								>
+									<Card className="</AnimatePresence>shadow-md border-primary/10 overflow-hidden w-fit ease-out py-5 gap-0">
+										<CardHeader className="border-b mb-5">
+											<CardTitle className="flex items-center text-foreground">
+												<CalendarIcon className="mr-2 h-5 w-5" />
+												Calendario
+											</CardTitle>
+										</CardHeader>
+										<CardContent className="px-2">
+											<Calendar
+												mode="single"
+												locale={es}
+												disabled={isDateDisabled}
+												selected={selectedDate}
+												onSelect={handleDateSelect}
+												className="rounded-md w-full max-w-none py-0"
+												modifiers={{
+													booked: (date) =>
+														hasAppointment(date),
+												}}
+												modifiersClassNames={{
+													booked: "bg-accent/30 hover:bg-accent/10",
+												}}
+												classNames={{
+													month: "space-y-4 text-foreground",
+													caption:
+														"flex justify-center pt-1 relative items-center",
+													caption_label:
+														"text-lg font-semibold text-foreground",
+													nav: "space-x-1 flex items-center",
+													nav_button:
+														"h-9 w-9 bg-primary/10 hover:bg-primary/20 rounded-md flex items-center justify-center",
+													nav_button_previous:
+														"absolute left-1",
+													nav_button_next:
+														"absolute right-1",
+													table: "w-full border-collapse space-y-1",
+													head_row: "flex",
+													head_cell:
+														"text-muted-foreground rounded-md w-10 md:w-14 font-medium text-sm md:text-base flex-1",
+													row: "flex w-full mt-2",
+													cell: "text-center text-sm ml-2 md:text-base p-0 relative first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-primary/10",
+													day: "h-10 w-10 md:h-14 md:w-14 p-0 font-normal aria-selected:opacity-100 rounded-md flex items-center justify-center hover:bg-primary/15 aria-selected:bg-primary aria-selected:text-primary-foreground",
+													day_selected:
+														"bg-primary text-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
+													day_today:
+														"bg-accent/50 text-accent-foreground",
+													day_disabled:
+														"text-muted-foreground opacity-50 cursor-not-allowed ",
+													day_outside:
+														"text-muted-foreground opacity-90",
+													day_range_middle:
+														"aria-selected:bg-accent aria-selected:text-accent-foreground",
+													day_hidden: "invisible",
+												}}
+											/>
+										</CardContent>
 
-								<CardFooter>
-									<div
-										className={cn(
-											"text-center h-full w-full p-2 rounded-md bg-primary/5 text-sm text-muted-foreground",
-											selectedDate
-												? "opacity-100 translate-x-0"
-												: "opacity-0 translate-x-4 pointer-events-none",
-										)}
-									>
-										Fecha seleccionada:{" "}
-										<span className="font-semibold">
-											{new Intl.DateTimeFormat("es-ES", {
-												day: "numeric",
-												month: "long",
-												year: "numeric",
-											}).format(selectedDate)}
-										</span>
-									</div>
-								</CardFooter>
-							</Card>
-						</div>
-
-						{/* Appointment Details Card */}
-						<Card
-							className={cn(
-								"w-full md:w-1/2 lg:w-2/5 rounded-lg shadow-md border-primary/10", // Base styles
-								"transition-all duration-300 ease-out", // Animation
-								selectedDate
-									? "opacity-100 translate-x-0"
-									: "opacity-0 -translate-x-4 pointer-events-none", // Appear/disappear
-							)}
-						>
-							<CardHeader className="border-b">
-								<CardTitle className="text-foreground">
-									Detalles de la Cita
-								</CardTitle>
-							</CardHeader>
-							<CardContent>
-								<Form {...form}>
-									<form
-										method="post"
-										className="space-y-5"
-										onSubmit={form.handleSubmit(onSubmit)}
-									>
-										{Object.keys(fieldConfigs).map(
-											(fieldName) => (
-												<DynamicFormField<BookAppointmentFormData>
-													key={fieldName}
-													name={
-														fieldName as FieldPath<BookAppointmentFormData>
-													}
-													fieldConfigs={fieldConfigs}
-													control={form.control}
-												/>
-											),
-										)}
-
-										<div className="pt-2">
-											<Button
-												type="submit"
-												size="lg"
-												disabled={isUploading}
-												className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-6 transition-all duration-200"
-											>
-												{isUploading ? (
-													<Loader2 className="mr-2 h-5 w-5 animate-spin" />
-												) : (
-													<CheckCircle className="mr-2 h-5 w-5" />
+										<CardFooter>
+											<div
+												className={cn(
+													"text-center h-full w-full p-2 rounded-md bg-primary/5 text-sm text-muted-foreground",
+													selectedDate
+														? "opacity-100 translate-x-0"
+														: "opacity-0 translate-x-4 pointer-events-none",
 												)}
-												Confirmar Cita
-											</Button>
-										</div>
-									</form>
-								</Form>
-							</CardContent>
-						</Card>
-					</div>
+											>
+												Fecha seleccionada:{" "}
+												<span className="font-semibold">
+													{new Intl.DateTimeFormat(
+														"es-ES",
+														{
+															day: "numeric",
+															month: "long",
+															year: "numeric",
+														},
+													).format(selectedDate)}
+												</span>
+											</div>
+										</CardFooter>
+									</Card>
+								</motion.div>
+
+								{/* Appointment Details Card */}
+								{selectedDate && (
+									<motion.div
+										key="form"
+										initial={
+											size === "xs"
+												? { opacity: 0, y: -100 }
+												: { opacity: 0, x: -100 }
+										}
+										animate={
+											size === "xs"
+												? { opacity: 1, y: 0 }
+												: { opacity: 1, x: 0 }
+										}
+										exit={
+											size === "xs"
+												? { opacity: 0, y: -100 }
+												: { opacity: 0, x: -100 }
+										}
+										transition={{ duration: 0.3 }}
+										className="w-full md:w-1/3 lg:w-2/5"
+									>
+										<Card
+											className={cn(
+												"w-full rounded-lg shadow-md border-primary/10", // Base styles
+												// "animate-in fade-in slide-in-from-right-4 duration-500 ease-in-out", // Animation
+											)}
+										>
+											<CardHeader className="border-b">
+												<CardTitle className="text-foreground">
+													Detalles de la Cita
+												</CardTitle>
+											</CardHeader>
+											<CardContent>
+												<Form {...form}>
+													<form
+														method="post"
+														className="space-y-5"
+														onSubmit={form.handleSubmit(
+															onSubmit,
+														)}
+													>
+														{Object.keys(
+															fieldConfigs,
+														).map((fieldName) => (
+															<DynamicFormField<BookAppointmentFormData>
+																key={fieldName}
+																name={
+																	fieldName as FieldPath<BookAppointmentFormData>
+																}
+																fieldConfigs={
+																	fieldConfigs
+																}
+																control={
+																	form.control
+																}
+															/>
+														))}
+
+														<div className="pt-2">
+															<Button
+																type="submit"
+																size="lg"
+																disabled={
+																	isUploading
+																}
+																className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-6 transition-all duration-200"
+															>
+																{isUploading ? (
+																	<Loader2 className="mr-2 h-5 w-5 animate-spin" />
+																) : (
+																	<CheckCircle className="mr-2 h-5 w-5" />
+																)}
+																Confirmar Cita
+															</Button>
+														</div>
+													</form>
+												</Form>
+											</CardContent>
+										</Card>
+									</motion.div>
+								)}
+							</AnimatePresence>
+						</div>
+					</motion.div>
 				)}
 			</section>
 		</main>

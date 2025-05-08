@@ -20,6 +20,8 @@ class AuthService {
 	constructor(basePath: string, configuration?: Configuration) {
 		this.#basePath = basePath;
 		this.#cofiguration = configuration;
+
+		this.#setupAxiosInterceptors();
 	}
 
 	async login(credentials: LoginRequest): Promise<LoginResponse> {
@@ -87,12 +89,59 @@ class AuthService {
 		}
 	}
 
-	async logout() {
+	async logout(): Promise<void> {
 		this.#user = undefined;
 		storage.clearAuthTokens();
 
 		// Removes the Authorization header from every request
 		delete axios.defaults.headers.common["Authorization"];
+	}
+
+	// Add to authService.ts
+	async refreshToken(): Promise<boolean> {
+		const refreshToken = storage.getRefreshToken();
+		if (!refreshToken) return false;
+
+		try {
+			const api = new DefaultApi(this.#cofiguration, this.#basePath);
+			const response = await api.refreshSession({ refreshToken });
+
+			storage.setAuthData(
+				response.data.jwt,
+				response.data.refreshToken,
+				storage.getUserId() || "",
+			);
+
+			axios.defaults.headers.common["Authorization"] =
+				`Bearer ${response.data.jwt}`;
+			return true;
+		} catch (err) {
+			console.warn(err);
+			this.logout();
+			return false;
+		}
+	}
+
+	// Add to authService.ts constructor
+	#setupAxiosInterceptors(): void {
+		axios.interceptors.response.use(
+			(response) => response,
+			async (error) => {
+				const originalRequest = error.config;
+
+				// If error is 401 and we haven't tried to refresh token yet
+				if (error.response?.status === 401 && !originalRequest._retry) {
+					originalRequest._retry = true;
+
+					if (await this.refreshToken()) {
+						// Retry the original request with new token
+						return axios(originalRequest);
+					}
+				}
+
+				return Promise.reject(error);
+			},
+		);
 	}
 
 	get user(): User | null {
@@ -105,5 +154,4 @@ class AuthService {
 }
 
 // --- Singleton Instance ---
-// Ensure BASE_PATH is correctly imported/defined
 export const authService = new AuthService(BASE_PATH);
