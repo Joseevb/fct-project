@@ -2,11 +2,12 @@ import AboutPage from "@/components/pages/AboutPage";
 import Hero from "@/components/ui/Hero";
 import useScrollHijack from "@/hooks/useScrollHijack";
 import direction from "@/types/direction";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import InfoSection from "@/components/ui/InfoSection";
 import { useScreenSize } from "@/hooks/useScreenSize";
+import { useInView } from "motion/react";
 
 interface HomePageProps {
 	headerRef: React.RefObject<HTMLElement | null>;
@@ -14,28 +15,23 @@ interface HomePageProps {
 
 export default function HomePage({ headerRef }: Readonly<HomePageProps>) {
 	const [searchParams] = useSearchParams();
-	const [isInHeroSection, setIsInHeroSection] = useState(true);
 
 	const paymentStatus = searchParams.get("paymentSuccess");
 	const headerHeight = headerRef.current?.offsetHeight || 0;
 	const heroMarginTop = headerHeight + 35;
-	const scrollThreshold = -5; // Increased threshold for earlier trigger
+	const scrollThreshold = 75; // Increased threshold for earlier trigger
 
 	const screenSize = useScreenSize();
 
 	const heroRef = useRef<HTMLDivElement>(null);
 	const aboutRef = useRef<HTMLDivElement>(null);
+	const mainRef = useRef<HTMLDivElement>(null);
 
-	// Add CSS scroll padding when component mounts
-	useEffect(() => {
-		// Apply scroll padding
-		document.documentElement.style.scrollPaddingTop = `${headerRef.current?.offsetHeight || 0}px`;
-
-		// Cleanup when component unmounts
-		return () => {
-			document.documentElement.style.scrollPaddingTop = "";
-		};
-	}, [headerRef]);
+	const isInHeroSection = useInView(heroRef, { once: false, amount: "some" });
+	const isInAboutSection = useInView(aboutRef, {
+		once: false,
+		amount: "some",
+	});
 
 	useEffect(() => {
 		if (paymentStatus) {
@@ -46,31 +42,10 @@ export default function HomePage({ headerRef }: Readonly<HomePageProps>) {
 		}
 	}, [paymentStatus]);
 
-	// Track scroll position to determine if we're in the hero section
-	useEffect(() => {
-		const handleScroll = () => {
-			const currentScroll = window.scrollY;
-			const aboutTop = aboutRef.current?.offsetTop || 0;
-			// Add threshold to make the transition smoother
-			setIsInHeroSection(
-				currentScroll < aboutTop - headerHeight - scrollThreshold,
-			);
-		};
-
-		window.addEventListener("scroll", handleScroll);
-		return () => window.removeEventListener("scroll", handleScroll);
-	}, [headerHeight, scrollThreshold]);
-
 	const handleScrollAttempt = useCallback(
 		(direction: direction) => {
-			const currentScroll = window.scrollY;
 			const aboutTop = aboutRef.current?.offsetTop || 0;
 			const heroTop = heroRef.current?.offsetTop || 0;
-
-			// If we're in the about section, let the native scroll handle it
-			if (currentScroll > aboutTop - headerHeight - scrollThreshold) {
-				return;
-			}
 
 			// Handle section snapping
 			switch (direction) {
@@ -91,7 +66,7 @@ export default function HomePage({ headerRef }: Readonly<HomePageProps>) {
 				case "down":
 					if (aboutRef.current) {
 						window.scrollTo({
-							top: aboutTop - headerHeight - scrollThreshold,
+							top: aboutTop - headerHeight + scrollThreshold,
 							behavior: "smooth",
 						});
 
@@ -103,8 +78,17 @@ export default function HomePage({ headerRef }: Readonly<HomePageProps>) {
 					}
 					break;
 			}
+
+			console.log("is hero visible", isInHeroSection);
+			console.log("is about visible", isInAboutSection);
 		},
-		[headerHeight, heroMarginTop, scrollThreshold],
+		[
+			headerHeight,
+			heroMarginTop,
+			isInAboutSection,
+			isInHeroSection,
+			scrollThreshold,
+		],
 	);
 
 	useEffect(() => {
@@ -127,14 +111,16 @@ export default function HomePage({ headerRef }: Readonly<HomePageProps>) {
 	// Only enable scroll hijack when we're at the hero section
 	useScrollHijack({
 		callback: handleScrollAttempt,
-		throttleDelay: 200,
-		enabled: screenSize !== "xs" && isInHeroSection,
+		enabled:
+			screenSize !== "xs" &&
+			(isInHeroSection || (isInHeroSection && isInAboutSection)),
+		elementRef: mainRef,
 		// enabled: false,
 	});
 
 	return (
 		<div className="w-full">
-			<main>
+			<main ref={mainRef}>
 				<section
 					ref={heroRef}
 					id="hero"

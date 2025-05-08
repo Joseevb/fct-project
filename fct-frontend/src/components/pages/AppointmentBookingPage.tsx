@@ -268,8 +268,8 @@ export default function AppointmentBookingPage({
 				{!isLoading && !error && (
 					<motion.div layout>
 						<div className="flex flex-col md:flex-row items-start justify-center gap-8 lg:gap-12">
-							{/* Calendar */}
 							<AnimatePresence mode="popLayout">
+								{/* Calendar */}
 								<motion.div
 									key="calendar"
 									layout
@@ -280,7 +280,7 @@ export default function AppointmentBookingPage({
 										},
 										default: { duration: 0.3 },
 									}}
-									className="w-fit"
+									className="w-fit z-10"
 								>
 									<Card className="</AnimatePresence>shadow-md border-primary/10 overflow-hidden w-fit ease-out py-5 gap-0">
 										<CardHeader className="border-b mb-5">
