@@ -44,7 +44,7 @@ paths:
                         schema:
                             $ref: "#/components/schemas/AddUserRequest"
             security:
-                - bearerAuth: [admin]
+                - BearerAuth: [admin]
             responses:
                 201:
                     description: Successful operation
@@ -1741,9 +1741,6 @@ components:
         AddAppointmentRequest:
             type: object
             properties:
-                name:
-                    type: string
-                    x-field-extra-annotation: '@NotBlank(message = "Name field cannot be blank")'
                 description:
                     type: string
                     x-field-extra-annotation: '@NotBlank(message = "Description field cannot be blank")'
@@ -1995,7 +1992,7 @@ components:
                     example: "/api/v1/resource/1"
             required: [timestamp, status, error, messages, path]
     securitySchemes:
-        bearerAuth:
+        BearerAuth:
             description: Bearer token using a JWT
             type: http
             scheme: bearer

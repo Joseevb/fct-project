@@ -8,7 +8,7 @@ services:
             MYSQL_USER: user
             MYSQL_PASSWORD: userpassword
         volumes:
-            - ./mariadb_data:/var/lib/mysql
+            - ./mariadb_data:/var/lib/mysql # Ensure this volume is defined or remove if not needed for persistence
         networks:
             - backend_db
         healthcheck:
@@ -26,8 +26,8 @@ services:
 
     backend:
         build:
-            context: .
-            dockerfile: fct-backend/Dockerfile
+            context: . # Correct: Project root is the build context
+            dockerfile: fct-backend/Dockerfile # Correct: Path to Dockerfile relative to context
         container_name: backend
         depends_on:
             mariadb:
@@ -38,6 +38,11 @@ services:
             DB_NAME: mydatabase
             DB_USER: user
             DB_PASSWORD: userpassword
+            # Add any other Spring Boot environment variables here
+            # SPRING_DATASOURCE_URL: jdbc:mariadb://mariadb:3306/mydatabase
+            # SPRING_DATASOURCE_USERNAME: user
+            # SPRING_DATASOURCE_PASSWORD: userpassword
+            # SPRING_JPA_HIBERNATE_DDL_AUTO: update # or validate, none, etc.
         networks:
             - backend_db
             - frontend_backend
@@ -47,15 +52,15 @@ services:
 
     frontend:
         build:
-            context: .
-            dockerfile: fct-frontend/Dockerfile
+            context: . # Correct: Project root is the build context
+            dockerfile: fct-frontend/Dockerfile # Correct: Path to Dockerfile relative to context
         container_name: frontend
         depends_on:
             - backend
         networks:
             - frontend_backend
         ports:
-            - "80:80"
+            - "80:80" # Assumes your frontend serves on port 80 (e.g., via Nginx)
         restart: on-failure
 
 networks:
@@ -65,5 +70,5 @@ networks:
         driver: bridge
 
 volumes:
-    mariadb_data:
+    mariadb_data: # This defines the named volume used by mariadb
         driver: local

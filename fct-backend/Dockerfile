@@ -1,32 +1,34 @@
-# ---- Stage 1: Build ----
-FROM maven:3.9.9-eclipse-temurin-21 AS builder
+# Example for a Spring Boot application
+FROM openjdk:21-jdk-slim AS builder
 
-# Set working directory
 WORKDIR /app
 
-# Copy Maven files first (for caching dependencies)
-COPY ./fct-backend/pom.xml ./
-RUN mvn dependency:go-offline
+# Copy the API spec from the shared location into where your backend build expects it.
+# For example, if openapi-generator-maven-plugin expects it in src/main/resources/api
+COPY api-spec/openapi.yaml /app/src/main/resources/api/openapi.yaml
 
-# Copy the rest of the project
-COPY ./fct-backend/ ./
+# Copy Maven wrapper files (relative to build context)
+COPY fct-backend/mvnw .
+COPY fct-backend/mvnw.cmd .
+COPY fct-backend/pom.xml .
+# If you have a .mvn directory for wrapper configuration
+COPY fct-backend/.mvn ./.mvn
 
-COPY ./api-spec/openapi.yaml ./src/main/resources/openapi/openapi.yaml
+# Copy the backend source code (relative to build context)
+COPY fct-backend/src ./src
 
-# Build the application
-RUN mvn clean package -DskipTests
+# Make the Maven wrapper executable
+RUN chmod +x ./mvnw
 
-# ---- Stage 2: Runtime ----
-FROM eclipse-temurin:21-jre AS runtime
+# Run the build (which might include code generation from the copied spec)
+# Ensure your pom.xml's openapi-generator-maven-plugin <inputSpec> points to
+# src/main/resources/api/openapi.yaml (relative to pom.xml) or /app/src/main/resources/api/openapi.yaml (absolute)
+RUN ./mvnw package -DskipTests
 
-# Set working directory
+# For the final image
+FROM openjdk:21-jdk-slim
 WORKDIR /app
-
-# Copy the built JAR from the builder stage
 COPY --from=builder /app/target/*.jar app.jar
-# COPY ./wait-for-it.sh /wait-for-it.sh
 
 EXPOSE 8080
-
-# Command to run the application
 ENTRYPOINT ["java", "-jar", "app.jar"]
