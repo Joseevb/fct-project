@@ -1,7 +1,6 @@
 import { AboutSectionProps, SkillCategory } from "@/components/pages/AboutPage";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { motion } from "motion/react";
 import {
 	Card,
 	CardContent,
@@ -10,6 +9,7 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
+import { motion } from "motion/react";
 
 export default function SkillsSection({
 	ref,
