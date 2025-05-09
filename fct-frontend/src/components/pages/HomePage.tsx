@@ -1,25 +1,34 @@
 import AboutPage from "@/components/pages/AboutPage";
+import {
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogContent,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import Hero from "@/components/ui/Hero";
-import useScrollHijack from "@/hooks/useScrollHijack";
-import direction from "@/types/direction";
-import { useCallback, useEffect, useRef } from "react";
-import { useSearchParams } from "react-router-dom";
-import { toast } from "sonner";
 import InfoSection from "@/components/ui/InfoSection";
 import { useScreenSize } from "@/hooks/useScreenSize";
-import { useInView } from "motion/react";
+import useScrollHijack from "@/hooks/useScrollHijack";
+import direction from "@/types/direction";
+import { pushState, replaceState } from "history-throttled";
+import { useMotionValueEvent, useScroll } from "motion/react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 
 interface HomePageProps {
 	headerRef: React.RefObject<HTMLElement | null>;
 }
 
 export default function HomePage({ headerRef }: Readonly<HomePageProps>) {
+	const [isAboutAtTop, setIsAboutAtTop] = useState(false);
+
 	const [searchParams] = useSearchParams();
 
-	const paymentStatus = searchParams.get("paymentSuccess");
-	const headerHeight = headerRef.current?.offsetHeight || 0;
-	const heroMarginTop = headerHeight + 35;
-	const scrollThreshold = 75; // Increased threshold for earlier trigger
+	const paymentStatus: "success" | "failure" | null = searchParams.get(
+		"paymentStatus",
+	) as "success" | "failure" | null;
 
 	const screenSize = useScreenSize();
 
@@ -27,69 +36,53 @@ export default function HomePage({ headerRef }: Readonly<HomePageProps>) {
 	const aboutRef = useRef<HTMLDivElement>(null);
 	const mainRef = useRef<HTMLDivElement>(null);
 
-	const isInHeroSection = useInView(heroRef, { once: false, amount: "some" });
-	const isInAboutSection = useInView(aboutRef, {
-		once: false,
-		amount: "some",
+	const { scrollYProgress: aboutScrollYProgress } = useScroll({
+		target: aboutRef,
+		offset: ["start end", "start start"],
 	});
 
-	useEffect(() => {
-		if (paymentStatus) {
-			toast.success("Pago exitoso", {
-				// Show toast on success
-				richColors: true,
-			});
-		}
-	}, [paymentStatus]);
+	useMotionValueEvent(aboutScrollYProgress, "change", () => {
+		if (aboutRef.current && headerRef.current) {
+			const aboutRect = aboutRef.current.getBoundingClientRect();
+			const headerRect = headerRef.current.getBoundingClientRect();
 
-	const handleScrollAttempt = useCallback(
-		(direction: direction) => {
-			const aboutTop = aboutRef.current?.offsetTop || 0;
-			const heroTop = heroRef.current?.offsetTop || 0;
-
-			// Handle section snapping
-			switch (direction) {
-				case "up":
-					if (heroRef.current) {
-						window.scrollTo({
-							top: heroTop - heroMarginTop,
-							behavior: "smooth",
-						});
-
-						window.history.pushState(
-							{ fromProgrammaticScroll: true },
-							"",
-							"/#main",
-						);
-					}
-					break;
-				case "down":
-					if (aboutRef.current) {
-						window.scrollTo({
-							top: aboutTop - headerHeight + scrollThreshold,
-							behavior: "smooth",
-						});
-
-						window.history.pushState(
-							{ fromProgrammaticScroll: true },
-							"",
-							"/#about",
-						);
-					}
-					break;
+			if (aboutRect.top <= headerRect.bottom) {
+				setIsAboutAtTop(true);
+			} else {
+				setIsAboutAtTop(false);
 			}
+		}
+	});
 
-			console.log("is hero visible", isInHeroSection);
-			console.log("is about visible", isInAboutSection);
-		},
-		[
-			headerHeight,
-			heroMarginTop,
-			isInAboutSection,
-			isInHeroSection,
-			scrollThreshold,
-		],
-	);
+	const handleScrollAttempt = useCallback((direction: direction) => {
+		const aboutTop = aboutRef.current?.offsetTop || 0;
+		const heroTop = heroRef.current?.offsetTop || 0;
+
+		switch (direction) {
+			case "up":
+				window.scrollTo({
+					top:
+						heroTop -
+						Number(
+							window.getComputedStyle(heroRef.current as Element)
+								.marginBlockStart,
+						),
+					behavior: "smooth",
+				});
+
+				pushState({ fromProgrammaticScroll: true }, "", "#main");
+				break;
+			case "down":
+				window.scrollTo({
+					top: aboutTop,
+					behavior: "smooth",
+				});
+
+				pushState({ fromProgrammaticScroll: true }, "", "#about");
+
+				break;
+		}
+	}, []);
 
 	useEffect(() => {
 		const hash = window.location.hash;
@@ -108,18 +101,33 @@ export default function HomePage({ headerRef }: Readonly<HomePageProps>) {
 		}
 	}, [handleScrollAttempt]);
 
-	// Only enable scroll hijack when we're at the hero section
 	useScrollHijack({
 		callback: handleScrollAttempt,
-		enabled:
-			screenSize !== "xs" &&
-			(isInHeroSection || (isInHeroSection && isInAboutSection)),
+		enabled: screenSize !== "xs" && !isAboutAtTop,
 		elementRef: mainRef,
-		// enabled: false,
 	});
 
 	return (
 		<div className="w-full">
+			<AlertDialog defaultOpen={paymentStatus != null}>
+				<AlertDialogContent>
+					<AlertDialogHeader>
+						<AlertDialogTitle>
+							{paymentStatus === "success" && "Pago exitoso"}
+							{paymentStatus === "failure" && "Pago fallido"}
+						</AlertDialogTitle>
+					</AlertDialogHeader>
+					<AlertDialogFooter>
+						<AlertDialogAction
+							onClick={() => {
+								replaceState("", "", "/");
+							}}
+						>
+							Cerrar
+						</AlertDialogAction>
+					</AlertDialogFooter>
+				</AlertDialogContent>
+			</AlertDialog>
 			<main ref={mainRef}>
 				<section
 					ref={heroRef}

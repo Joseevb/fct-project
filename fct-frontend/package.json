@@ -13,7 +13,7 @@
 	"dependencies": {
 		"@cascadia-code/scroll-to-hash-element": "^2.0.3",
 		"@hookform/resolvers": "^5.0.1",
-		"@radix-ui/react-alert-dialog": "^1.1.7",
+		"@radix-ui/react-alert-dialog": "^1.1.13",
 		"@radix-ui/react-aspect-ratio": "^1.1.3",
 		"@radix-ui/react-avatar": "^1.1.9",
 		"@radix-ui/react-checkbox": "^1.2.3",
@@ -34,6 +34,7 @@
 		"date-fns": "^3.6.0",
 		"embla-carousel-autoplay": "^8.6.0",
 		"embla-carousel-react": "^8.6.0",
+		"history-throttled": "^1.0.1",
 		"input-otp": "^1.4.2",
 		"lucide-react": "^0.487.0",
 		"motion": "^12.10.1",

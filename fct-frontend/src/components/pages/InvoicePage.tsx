@@ -126,7 +126,7 @@ export default function InvoicePage({
 		navigate({
 			pathname: "/",
 			hash: "#main",
-			search: "?paymentSuccess=true",
+			search: "?paymentStatus=success",
 		});
 	};
 

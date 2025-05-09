@@ -1,4 +1,3 @@
-// src/hooks/useScrollHijack.ts
 import Direction from "@/types/direction";
 import { useMotionValueEvent, useScroll } from "motion/react";
 
@@ -27,15 +26,13 @@ export default function useScrollHijack({
 
 	useMotionValueEvent(scrollY, "change", (current) => {
 		const previous = scrollY.getPrevious();
-
-		if (previous === undefined) return;
-		if (!enabled) return;
+		if (previous === undefined || !enabled) return;
 
 		const diff = current - previous;
-
 		const direction: Direction = diff > 0 ? "down" : "up";
 
 		console.log("Scrolling", direction);
+
 		callback(direction);
 	});
 }
