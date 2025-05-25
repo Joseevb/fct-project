@@ -1,0 +1,132 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title>Invoice</title>
+		<style>
+			body {
+				font-family: Arial, sans-serif;
+				margin: 40px;
+				font-size: 12px;
+			}
+			.invoice-box {
+				border: 1px solid #eee;
+				padding: 20px;
+			}
+			h1 {
+				font-size: 24px;
+				text-align: center;
+			}
+			table {
+				width: 100%;
+				border-collapse: collapse;
+				margin-top: 20px;
+			}
+			th,
+			td {
+				border: 1px solid #ccc;
+				padding: 8px;
+				text-align: left;
+			}
+			th {
+				background: #f0f0f0;
+			}
+			.total {
+				font-weight: bold;
+				text-align: right;
+			}
+			.right {
+				text-align: right;
+			}
+			.header,
+			.footer {
+				margin-bottom: 20px;
+			}
+			.footer {
+				margin-top: 30px;
+				text-align: center;
+				font-size: 10px;
+				color: #999;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="invoice-box">
+			<div class="header">
+				<h1>Factura</h1>
+				<p>
+					<strong>Fecha: </strong>
+					<span th:text="${date}">2025-05-02</span>
+				</p>
+				<p>
+					<strong>Numero de Factura: </strong>
+					<span th:text="${invoiceNumber}">12345</span>
+				</p>
+				<p>
+					<strong>Cliente: </strong>
+					<span th:text="${customerName}">John Doe</span>
+				</p>
+			</div>
+
+			<table>
+				<thead>
+					<tr>
+						<th>Descripcción</th>
+						<th class="right">Cantidad</th>
+						<th class="right">Precio Unitario</th>
+						<th class="right">Total</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="item : ${items}">
+						<td th:text="${item.description}">Product A</td>
+						<td class="right" th:text="${item.quantity}">1</td>
+						<td
+							class="right"
+							th:text="${#numbers.formatDecimal(item.unitPrice, 1, 'COMMA', 2, 'POINT')}"
+						>
+							100.00
+						</td>
+						<td
+							class="right"
+							th:text="${#numbers.formatDecimal(item.total, 1, 'COMMA', 2, 'POINT')}"
+						>
+							100.00
+						</td>
+					</tr>
+				</tbody>
+				<tfoot>
+					<tr>
+						<td colspan="3" class="total">Subtotal</td>
+						<td
+							class="right"
+							th:text="${#numbers.formatDecimal(subtotal, 1, 'COMMA', 2, 'POINT')}"
+						>
+							100.00
+						</td>
+					</tr>
+					<tr>
+						<td colspan="3" class="total">Tax</td>
+						<td
+							class="right"
+							th:text="${#numbers.formatDecimal(tax, 1, 'COMMA', 2, 'POINT')}"
+						>
+							10.00
+						</td>
+					</tr>
+					<tr>
+						<td colspan="3" class="total">Total</td>
+						<td
+							class="right"
+							th:text="${#numbers.formatDecimal(total, 1, 'COMMA', 2, 'POINT')}"
+						>
+							110.00
+						</td>
+					</tr>
+				</tfoot>
+			</table>
+
+			<div class="footer">¡Gracias por su compra!</div>
+		</div>
+	</body>
+</html>

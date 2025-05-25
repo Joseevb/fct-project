@@ -1,0 +1,82 @@
+server:
+    port: ${SERVER_PORT:8080}
+    error:
+        include-stacktrace: never
+        include-message: always
+
+spring:
+    servlet:
+        multipart:
+            max-file-size: 40MB
+            max-request-size: 40MB
+    config:
+        import: optional:file:.env[.properties]
+    application:
+        name: ${SPRING_APPLICATION_NAME:fct-backend}
+    output:
+        ansi:
+            enabled: always
+    # TODO: Change to MariaDB
+    datasource:
+        url: jdbc:mariadb://${DB_HOST:mariadb}:${DB_PORT:3306}/${DB_NAME:mydatabase}
+        driver-class-name: org.mariadb.jdbc.Driver
+        username: ${DB_USER:user}
+        password: ${DB_PASSWORD:userpassword}
+    jpa:
+        hibernate:
+            ddl-auto: create-drop
+        database-platform: org.hibernate.dialect.MariaDBDialect
+    h2:
+        console:
+            enabled: false
+    sql:
+        init:
+            mode: always
+            platform: mariadb
+
+    # TODO: Remove
+    #datasource:
+    #    url: jdbc:h2:mem:testdb
+    #    driverClassName: org.h2.Driver
+    #    username: sa
+    #    password:
+
+    #jpa:
+    #    database-platform: org.hibernate.dialect.H2Dialect
+    #    hibernate:
+    #        ddl-auto: update
+    #    defer-datasource-initialization: true
+
+    #h2:
+    #    console:
+    #        enabled: true
+    #        path: /h2-console
+
+    #sql:
+    #    init:
+    #        mode: always
+    #        platform: h2
+    mail:
+        host: smtp.gmail.com
+        port: 587
+        username: joseevasquezbarboza@gmail.com
+        password: ${MAIL_PASSWORD:jxtn qtiy crkt latz}
+        properties:
+            mail:
+                smtp:
+                    auth: true
+                    starttls:
+                        enable: true
+
+rsa:
+    private-key: ${RSA_PRIVATE_KEY:classpath:certs/private-key.pem}
+    public-key: ${RSA_PUBLIC_KEY:classpath:certs/public-key.pem}
+
+app:
+    jwt:
+        expiration-minutes: ${JWT_EXPIRATION_MINUTES:120}
+    refresh-token:
+        expiration-days: ${REFRESH_TOKEN_EXPIRATION_DAYS:7}
+    verification:
+        expiration: ${VERIFICATION_EXPIRATION:120}
+    file-storage: ${FILE_UPLOAD_DIR:src/main/resources/files}

@@ -1,0 +1,3606 @@
+openapi: 3.1.1
+info:
+    title: REST API for the website of "Academia Fabiana Perez"
+    description: REST API for the website of "Academia Fabiana Perez"
+    version: 1.0.0
+
+servers:
+    - url: http://localhost:8080/api/v1
+
+paths:
+    /users:
+        get:
+            summary: Get all users
+            operationId: getAllUsers
+            tags:
+                - Users
+            parameters:
+                - name: usernameOrEmail
+                  in: query
+                  description: The username or email address to filter by.
+                  required: false
+                  schema:
+                      type: string
+                  example: "testuser@example.com"
+            responses:
+                200:
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: "#/components/schemas/User"
+        post:
+            summary: Add a new user
+            operationId: addUser
+            tags:
+                - Users
+            requestBody:
+                description: User to add
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/AddUserRequest"
+            security:
+                - BearerAuth: [admin]
+            responses:
+                201:
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/User"
+                400:
+                    description: Bad request
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ValidationErrorMessage"
+                401:
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                403:
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                409:
+                    description: User already exists
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+    /users/{id}:
+        get:
+            summary: Get a user by id
+            operationId: getUserById
+            tags:
+                - Users
+            parameters:
+                - name: id
+                  in: path
+                  description: User id
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            responses:
+                200:
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/User"
+                400:
+                    description: Bad request
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                401:
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                403:
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                404:
+                    description: User not found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+        put:
+            summary: Update a user
+            operationId: updateUser
+            tags:
+                - Users
+            parameters:
+                - name: id
+                  in: path
+                  description: User id
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            requestBody:
+                description: User to update
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/UpdateUserRequest"
+            responses:
+                200:
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/User"
+                400:
+                    description: Bad request
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ValidationErrorMessage"
+                401:
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                403:
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                404:
+                    description: User not found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                409:
+                    description: User already exists
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+        delete:
+            summary: Delete a user
+            operationId: deleteUser
+            tags:
+                - Users
+            parameters:
+                - name: id
+                  in: path
+                  description: User id
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            responses:
+                204:
+                    description: Successful operation
+                400:
+                    description: Bad request
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                401:
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                403:
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                404:
+                    description: User not found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+
+    /address:
+        get:
+            summary: Get all addresses
+            operationId: getAllAddresses
+            tags:
+                - Addresses
+            parameters:
+                - name: userId
+                  in: query
+                  description: Filter by user id
+                  required: false
+                  schema:
+                      type: integer
+                      format: int64
+            responses:
+                200:
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: "#/components/schemas/Address"
+        post:
+            summary: Add a new address
+            operationId: addAddress
+            tags:
+                - Addresses
+            requestBody:
+                description: Address to add
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/AddAddressRequest"
+            responses:
+                201:
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Address"
+                400:
+                    description: Bad request
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ValidationErrorMessage"
+                401:
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                403:
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                409:
+                    description: Address already exists
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+    /address/{id}:
+        get:
+            summary: Get an address by id
+            operationId: getAddressById
+            tags:
+                - Addresses
+            parameters:
+                - name: id
+                  in: path
+                  description: Address id
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            responses:
+                200:
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Address"
+                400:
+                    description: Bad request
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                401:
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                403:
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                404:
+                    description: Address not found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+        put:
+            summary: Update an address
+            operationId: updateAddress
+            tags:
+                - Addresses
+            parameters:
+                - name: id
+                  in: path
+                  description: Address id
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            requestBody:
+                description: Address to update
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/UpdateAddressRequest"
+            responses:
+                200:
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Address"
+                400:
+                    description: Bad request
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ValidationErrorMessage"
+                401:
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                403:
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                404:
+                    description: Address not found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+        delete:
+            summary: Delete an address
+            operationId: deleteAddress
+            tags:
+                - Addresses
+            parameters:
+                - name: id
+                  in: path
+                  description: Address id
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            responses:
+                204:
+                    description: Successful operation
+                400:
+                    description: Bad request
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                401:
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                403:
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                404:
+                    description: Address not found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+
+    /appointments:
+        get:
+            summary: Get all appointments
+            operationId: getAllAppointments
+            tags:
+                - Appointments
+            parameters:
+                - name: userId
+                  in: query
+                  description: Filter by user id
+                  required: false
+                  schema:
+                      type: integer
+                      format: int64
+                - name: status
+                  in: query
+                  description: Filter by status
+                  required: false
+                  schema:
+                      $ref: "#/components/schemas/AppointmentStatusEnum"
+            responses:
+                200:
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: "#/components/schemas/Appointment"
+        post:
+            summary: Add a new appointment
+            operationId: addAppointment
+            tags:
+                - Appointments
+            requestBody:
+                description: Appointment to add
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/AddAppointmentRequest"
+            responses:
+                201:
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Appointment"
+                400:
+                    description: Bad request
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ValidationErrorMessage"
+                401:
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                403:
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                409:
+                    description: Appointment already exists
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+    /appointments/{id}:
+        get:
+            summary: Get an appointment by id
+            operationId: getAppointmentById
+            tags:
+                - Appointments
+            parameters:
+                - name: id
+                  in: path
+                  description: Appointment id
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            responses:
+                200:
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Appointment"
+                400:
+                    description: Bad request
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                401:
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                403:
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                404:
+                    description: Appointment not found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+        put:
+            summary: Update an appointment
+            operationId: updateAppointment
+            tags:
+                - Appointments
+            parameters:
+                - name: id
+                  in: path
+                  description: Appointment id
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            requestBody:
+                description: Appointment to update
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/UpdateAppointmentRequest"
+            responses:
+                200:
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Appointment"
+                400:
+                    description: Bad request
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ValidationErrorMessage"
+                401:
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                403:
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                404:
+                    description: Appointment not found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+        delete:
+            summary: Delete an appointment
+            operationId: deleteAppointment
+            tags:
+                - Appointments
+            parameters:
+                - name: id
+                  in: path
+                  description: Appointment id
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            responses:
+                204:
+                    description: Successful operation
+                400:
+                    description: Bad request
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                401:
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                403:
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                404:
+                    description: Appointment not found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+        patch:
+            summary: Update an appointments status
+            operationId: updateAppointmentStatus
+            tags:
+                - Appointments
+            parameters:
+                - name: id
+                  in: path
+                  description: Appointment id
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            requestBody:
+                description: Appointment status
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/UpdateAppointmentStatusRequest"
+            responses:
+                200:
+                    description: Appointment updated
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Appointment"
+                400:
+                    description: Bad request
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                401:
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                403:
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                404:
+                    description: Appointment not found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+    /appointments/days:
+        get:
+            summary: Gets all days with appointments from the current date
+            operationId: getAllDaysWithAppointments
+            tags:
+                - Appointments
+            responses:
+                200:
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    type: string
+                                    format: date
+
+    /appointment-categories:
+        get:
+            summary: Get all appointment categories
+            operationId: getAllAppointmentCategories
+            tags:
+                - Appointment Categories
+            responses:
+                200:
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: "#/components/schemas/AppointmentCategory"
+                400:
+                    description: Invalid status value
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+        post:
+            summary: Create a new appointment category
+            operationId: createAppointmentCategory
+            tags:
+                - Appointment Categories
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/AddAppointmentCategoryRequest"
+            responses:
+                201:
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/AppointmentCategory"
+                401:
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                403:
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                400:
+                    description: Invalid status value
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+    /appointment-categories/{id}:
+        get:
+            summary: Get an appointment category by id
+            operationId: getAppointmentCategoryById
+            tags:
+                - Appointment Categories
+            parameters:
+                - name: id
+                  in: path
+                  description: ID of the appointment category to return
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            responses:
+                200:
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/AppointmentCategory"
+                400:
+                    description: Invalid status value
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                404:
+                    description: Appointment category not found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+        put:
+            summary: Update an appointment category
+            operationId: updateAppointmentCategory
+            tags:
+                - Appointment Categories
+            parameters:
+                - name: id
+                  in: path
+                  description: ID of the appointment category to return
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/UpdateAppointmentCategoryRequest"
+            responses:
+                200:
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/AppointmentCategory"
+                400:
+                    description: Invalid status value
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                401:
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                403:
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                404:
+                    description: Appointment category not found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+        delete:
+            summary: Delete an appointment category
+            operationId: deleteAppointmentCategory
+            tags:
+                - Appointment Categories
+            parameters:
+                - name: id
+                  in: path
+                  description: ID of the appointment category to return
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            responses:
+                204:
+                    description: Successful operation
+                400:
+                    description: Invalid status value
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                401:
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                403:
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                404:
+                    description: Appointment category not found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+
+    /courses:
+        get:
+            summary: Get all courses
+            operationId: getAllCourses
+            tags:
+                - Courses
+            parameters:
+                - name: userId
+                  in: query
+                  description: Filter by user id
+                  required: false
+                  schema:
+                      type: integer
+                      format: int64
+                - name: categoryId
+                  in: query
+                  description: Filter by category id
+                  required: false
+                  schema:
+                      type: integer
+                      format: int64
+            responses:
+                200:
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: "#/components/schemas/Course"
+        post:
+            summary: Add a new course
+            operationId: addCourse
+            tags:
+                - Courses
+            requestBody:
+                description: Course to add
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/AddCourseRequest"
+            responses:
+                201:
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Course"
+                400:
+                    description: Bad request
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ValidationErrorMessage"
+                401:
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                403:
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                409:
+                    description: Course already exists
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+    /courses/{id}:
+        get:
+            summary: Get a course by id
+            operationId: getCourseById
+            tags:
+                - Courses
+            parameters:
+                - name: id
+                  in: path
+                  description: Course id
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            responses:
+                200:
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Course"
+                400:
+                    description: Bad request
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                401:
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                403:
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                404:
+                    description: Course not found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+        put:
+            summary: Update a course
+            operationId: updateCourse
+            tags:
+                - Courses
+            parameters:
+                - name: id
+                  in: path
+                  description: Course id
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            requestBody:
+                description: Course to update
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/UpdateCourseRequest"
+            responses:
+                200:
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Course"
+                400:
+                    description: Bad request
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ValidationErrorMessage"
+                401:
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                403:
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                404:
+                    description: Course not found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+        delete:
+            summary: Delete a course
+            operationId: deleteCourse
+            tags:
+                - Courses
+            parameters:
+                - name: id
+                  in: path
+                  description: Course id
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            responses:
+                204:
+                    description: Successful operation
+                400:
+                    description: Bad request
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                401:
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                403:
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                404:
+                    description: Course not found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+    /courses/img/{id}:
+        put:
+            summary: Update course image
+            operationId: updateCourseImage
+            tags:
+                - Courses
+            parameters:
+                - name: id
+                  in: path
+                  description: Course id
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            requestBody:
+                description: Course image to update
+                required: true
+                content:
+                    multipart/form-data:
+                        schema:
+                            type: object
+                            properties:
+                                img:
+                                    type: string
+                                    format: binary
+                            required: [img]
+            responses:
+                200:
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Course"
+                400:
+                    description: Bad request
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ValidationErrorMessage"
+                401:
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                403:
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                404:
+                    description: Course not found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+        delete:
+            summary: Delete course image
+            operationId: removeCourseImage
+            tags:
+                - Courses
+            parameters:
+                - name: id
+                  in: path
+                  description: Course id
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+                - name: imgName
+                  in: query
+                  description: Image name
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                200:
+                    description: Successful operation
+                400:
+                    description: Bad request
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ValidationErrorMessage"
+                401:
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                403:
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                404:
+                    description: Course not found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+
+    /courses/{courseId}/user/{userId}:
+        post:
+            summary: Add user to course
+            operationId: addUserToCourse
+            tags:
+                - Courses
+            parameters:
+                - name: courseId
+                  in: path
+                  description: The unique identifier of the course to add the user to.
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+                - name: userId
+                  in: path
+                  description: The unique identifier of the user to add to the course.
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            responses:
+                200:
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/CourseUser"
+                400:
+                    description: Invalid input
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                401:
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                403:
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                404:
+                    description: Course or user not found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+        patch:
+            summary: Update user status on course
+            operationId: updateUserStatusOnCourse
+            tags:
+                - Courses
+            parameters:
+                - name: courseId
+                  in: path
+                  description: Course id
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+                - name: userId
+                  in: path
+                  description: User id
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            requestBody:
+                description: User status
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/UpdateUserStatusOnCourseRequest"
+            responses:
+                200:
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/CourseUser"
+                400:
+                    description: Bad request
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                401:
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                404:
+                    description: Course or user not found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+
+    /course-categories:
+        get:
+            summary: Get all course categories
+            operationId: getAllCourseCategories
+            tags:
+                - Course Categories
+            responses:
+                200:
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: "#/components/schemas/CourseCategory"
+                400:
+                    description: Invalid status value
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+        post:
+            summary: Create a new course category
+            operationId: createCourseCategory
+            tags:
+                - Course Categories
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/AddCourseCategoryRequest"
+            responses:
+                201:
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/CourseCategory"
+                401:
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                403:
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                400:
+                    description: Invalid status value
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+    /course-categories/{id}:
+        get:
+            summary: Get an course category by id
+            operationId: getCourseCategoryById
+            tags:
+                - Course Categories
+            parameters:
+                - name: id
+                  in: path
+                  description: ID of the course category to return
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            responses:
+                200:
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/CourseCategory"
+                400:
+                    description: Invalid status value
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                404:
+                    description: Course category not found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+        put:
+            summary: Update an course category
+            operationId: updateCourseCategory
+            tags:
+                - Course Categories
+            parameters:
+                - name: id
+                  in: path
+                  description: ID of the course category to return
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/UpdateCourseCategoryRequest"
+            responses:
+                200:
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/CourseCategory"
+                400:
+                    description: Invalid status value
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                401:
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                403:
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                404:
+                    description: Course category not found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+        delete:
+            summary: Delete an course category
+            operationId: deleteCourseCategory
+            tags:
+                - Course Categories
+            parameters:
+                - name: id
+                  in: path
+                  description: ID of the course category to return
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            responses:
+                204:
+                    description: Successful operation
+                400:
+                    description: Invalid status value
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                401:
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                403:
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                404:
+                    description: Course category not found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+
+    /products:
+        get:
+            summary: Get all products
+            operationId: getAllProducts
+            tags:
+                - Products
+            parameters:
+                - name: productCategoryId
+                  in: query
+                  description: Filter by product category id
+                  required: false
+                  schema:
+                      type: integer
+                      format: int64
+            responses:
+                200:
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: "#/components/schemas/Product"
+                400:
+                    description: Invalid status value
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+        post:
+            summary: Create a new product
+            operationId: createProduct
+            tags:
+                - Products
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/AddProductRequest"
+            responses:
+                201:
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Product"
+                400:
+                    description: Invalid status value
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                401:
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                403:
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                409:
+                    description: Product already exists
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+    /products/{id}:
+        get:
+            summary: Get a product by id
+            operationId: getProductById
+            tags:
+                - Products
+            parameters:
+                - name: id
+                  in: path
+                  description: Product id
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            responses:
+                200:
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Product"
+                400:
+                    description: Invalid status value
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                401:
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                403:
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                404:
+                    description: Product not found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+        put:
+            summary: Update a product
+            operationId: updateProduct
+            tags:
+                - Products
+            parameters:
+                - name: id
+                  in: path
+                  description: Product id
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            requestBody:
+                description: Product to update
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/UpdateProductRequest"
+            responses:
+                200:
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Product"
+                400:
+                    description: Invalid status value
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                401:
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                403:
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                404:
+                    description: Product not found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+        delete:
+            summary: Delete a product
+            operationId: deleteProduct
+            tags:
+                - Products
+            parameters:
+                - name: id
+                  in: path
+                  description: Product id
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            responses:
+                204:
+                    description: Successful operation
+                400:
+                    description: Invalid status value
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                401:
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                403:
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                404:
+                    description: Product not found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+
+    /product-categories:
+        get:
+            summary: Get all product categories
+            operationId: getAllProductCategories
+            tags:
+                - Product Categories
+            responses:
+                200:
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: "#/components/schemas/ProductCategory"
+                400:
+                    description: Invalid status value
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+        post:
+            summary: Create a new product category
+            operationId: createProductCategory
+            tags:
+                - Product Categories
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/AddProductCategoryRequest"
+            responses:
+                201:
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ProductCategory"
+                400:
+                    description: Invalid status value
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                401:
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                403:
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                409:
+                    description: Product category already exists
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+    /products/img/{id}:
+        put:
+            summary: Update product image
+            operationId: updateProductImage
+            tags:
+                - Products
+            parameters:
+                - name: id
+                  in: path
+                  description: Product id
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            requestBody:
+                description: Product image to update
+                required: true
+                content:
+                    multipart/form-data:
+                        schema:
+                            type: object
+                            properties:
+                                img:
+                                    type: string
+                                    format: binary
+                            required: [img]
+            responses:
+                200:
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Product"
+                400:
+                    description: Invalid status value
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                401:
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                403:
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                404:
+                    description: Product not found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+        delete:
+            summary: Delete product image
+            operationId: removeProductImage
+            tags:
+                - Products
+            parameters:
+                - name: id
+                  in: path
+                  description: Product id
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            responses:
+                200:
+                    description: Successful operation
+                400:
+                    description: Invalid status value
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                401:
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                403:
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                404:
+                    description: Product not found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+
+    /product-categories/{id}:
+        get:
+            summary: Get a product category by id
+            operationId: getProductCategoryById
+            tags:
+                - Product Categories
+            parameters:
+                - name: id
+                  in: path
+                  description: Product category id
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            responses:
+                200:
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ProductCategory"
+                400:
+                    description: Invalid status value
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                401:
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                403:
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                404:
+                    description: Product category not found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+        put:
+            summary: Update a product category
+            operationId: update productCategory
+            tags:
+                - Product Categories
+            parameters:
+                - name: id
+                  in: path
+                  description: Product category id
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            requestBody:
+                description: Product category to update
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/UpdateProductCategoryRequest"
+            responses:
+                200:
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ProductCategory"
+                400:
+                    description: Invalid status value
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                401:
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                403:
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                404:
+                    description: Product category not found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+        delete:
+            summary: Delete a product category
+            operationId: deleteProductCategory
+            tags:
+                - Product Categories
+            parameters:
+                - name: id
+                  in: path
+                  description: Product category id
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            responses:
+                204:
+                    description: Successful operation
+                400:
+                    description: Invalid status value
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                401:
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                403:
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                404:
+                    description: Product category not found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+
+    /carts:
+        get:
+            summary: Get all carts
+            operationId: getAllCarts
+            tags:
+                - Carts
+            parameters:
+                - name: userId
+                  in: query
+                  description: Filter by user id
+                  required: false
+                  schema:
+                      type: integer
+                      format: int64
+            responses:
+                200:
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: "#/components/schemas/Cart"
+                400:
+                    description: Invalid status value
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+
+        post:
+            summary: Add Product to Cart
+            operationId: addCart
+            tags:
+                - Carts
+            parameters:
+                - name: userId
+                  in: query
+                  description: User to add the product to the cart
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+                - name: productId
+                  in: query
+                  description: Product to add to the cart
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            responses:
+                201:
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Cart"
+                400:
+                    description: Invalid status value
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                401:
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                403:
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+        put:
+            summary: Update Product's amount in a Cart
+            operationId: updateCart
+            tags:
+                - Carts
+            parameters:
+                - name: userId
+                  in: query
+                  description: User id
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+                - name: productId
+                  in: query
+                  description: Product id
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+                - name: quantity
+                  in: query
+                  description: Product quantity
+                  required: true
+                  schema:
+                      type: integer
+                      format: int32
+                      minimum: 1
+            responses:
+                200:
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Cart"
+                400:
+                    description: Bad request
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                401:
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                403:
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+        delete:
+            summary: Remove Product from Cart
+            operationId: removeProductFromCart
+            tags:
+                - Carts
+            parameters:
+                - name: userId
+                  in: query
+                  description: User id
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+                - name: productId
+                  in: query
+                  description: Product id
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            responses:
+                204:
+                    description: Successful operation
+                400:
+                    description: Bad request
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                401:
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                403:
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+
+    /invoices:
+        get:
+            summary: Get all invoices
+            operationId: getAllInvoices
+            tags:
+                - Invoices
+            parameters:
+                - name: userId
+                  in: query
+                  description: Filter by user id
+                  required: false
+                  schema:
+                      type: integer
+                      format: int64
+                - name: status
+                  in: query
+                  description: Filter by status
+                  required: false
+                  schema:
+                      $ref: "#/components/schemas/InvoiceStatusEnum"
+                - name: lineItemId
+                  in: query
+                  description: Filter by line item
+                  required: false
+                  schema:
+                      type: integer
+                      format: int64
+            responses:
+                200:
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: "#/components/schemas/Invoice"
+        post:
+            summary: Add a new invoice
+            operationId: addInvoice
+            tags:
+                - Invoices
+            requestBody:
+                description: Invoice to add
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/AddInvoiceRequest"
+            responses:
+                201:
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Invoice"
+                400:
+                    description: Bad request
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ValidationErrorMessage"
+                401:
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                403:
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                409:
+                    description: Invoice already exists
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+    /invoices/{id}:
+        get:
+            summary: Get an invoice by ID
+            operationId: getInvoiceById
+            tags:
+                - Invoices
+            parameters:
+                - name: id
+                  in: path
+                  description: Invoice id
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            responses:
+                200:
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Invoice"
+                400:
+                    description: Bad request
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                401:
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                403:
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                404:
+                    description: Invoice not found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+        patch:
+            summary: Update an invoice status
+            operationId: updateInvoiceStatus
+            tags:
+                - Invoices
+            parameters:
+                - name: id
+                  in: path
+                  description: Invoice id
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            requestBody:
+                description: Invoice to update
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/UpdateInvoiceStatusRequest"
+            responses:
+                200:
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Invoice"
+                400:
+                    description: Bad request
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ValidationErrorMessage"
+                401:
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                403:
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+        delete:
+            summary: Delete an invoice
+            operationId: deleteInvoice
+            tags:
+                - Invoices
+            parameters:
+                - name: id
+                  in: path
+                  description: Invoice id
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            responses:
+                204:
+                    description: Successful operation
+                400:
+                    description: Bad request
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                401:
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                403:
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+        put:
+            summary: Update an invoice
+            operationId: updateInvoice
+            tags:
+                - Invoices
+            parameters:
+                - name: id
+                  in: path
+                  description: Invoice id
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            requestBody:
+                description: Invoice to update
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/UpdateInvoiceRequest"
+            responses:
+                200:
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Invoice"
+                400:
+                    description: Bad request
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ValidationErrorMessage"
+                401:
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                403:
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+    /invoices/{id}/pdf:
+        get:
+            summary: Get an invoice as PDF
+            operationId: getInvoiceByIdAsPDF
+            tags:
+                - Invoices
+            parameters:
+                - name: id
+                  in: path
+                  description: Invoice id
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            responses:
+                200:
+                    description: Successful operation
+                    content:
+                        application/pdf:
+                            schema:
+                                type: string
+                                format: binary
+                400:
+                    description: Bad request
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                401:
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                403:
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                404:
+                    description: Invoice not found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+
+    /line-items:
+        get:
+            summary: Get all line items of an invoice
+            operationId: getAllLineItems
+            tags:
+                - Line Items
+            parameters:
+                - name: invoice
+                  in: query
+                  description: Invoice id
+                  required: false
+                  schema:
+                      type: integer
+                      format: int64
+            responses:
+                200:
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                items:
+                                    $ref: "#/components/schemas/LineItem"
+                401:
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                403:
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                404:
+                    description: Invoice not found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+        post:
+            summary: Add new line item
+            operationId: addLineItem
+            tags:
+                - Line Items
+            requestBody:
+                description: Line item to add
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/AddLineItemRequest"
+            responses:
+                201:
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/LineItem"
+                400:
+                    description: Bad request
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ValidationErrorMessage"
+                401:
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                403:
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                404:
+                    description: Invoice not found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+    /line-items/{id}:
+        get:
+            summary: Get a line item
+            operationId: getLineItemById
+            tags:
+                - Line Items
+            parameters:
+                - name: id
+                  in: path
+                  description: Line item id
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            responses:
+                200:
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/LineItem"
+                401:
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                403:
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+        delete:
+            summary: Delete a line item
+            operationId: deleteLineItemById
+            tags:
+                - Line Items
+            parameters:
+                - name: id
+                  in: path
+                  description: Line item id
+                  required: true
+                  schema:
+                      type: integer
+                      format: int64
+            responses:
+                204:
+                    description: Successful operation
+                401:
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                403:
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+
+    /auth/login:
+        post:
+            summary: User login
+            description: Authenticates a user and returns a JWT access token.
+            operationId: login
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/LoginRequest"
+            responses:
+                200:
+                    description: Login successful
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/LoginResponse"
+                400:
+                    description: Invalid login request
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ValidationErrorMessage"
+                401:
+                    description: Invalid username or password
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+    /auth/register:
+        post:
+            summary: User registration
+            description: Registers a new user and returns their details.
+            operationId: register
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/RegisterRequest"
+            responses:
+                201:
+                    description: User successfully registered
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/RegisterResponse"
+                400:
+                    description: Invalid request body
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ValidationErrorMessage"
+                409:
+                    description: User already exists
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+    /auth/refresh:
+        post:
+            summary: Refresh session
+            description: Refreshes the authentication token using a refresh token.
+            operationId: refreshSession
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/RefreshTokenRequest"
+            responses:
+                200:
+                    description: Token refreshed successfully
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/LoginResponse"
+                400:
+                    description: Invalid refresh token
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ValidationErrorMessage"
+                401:
+                    description: Expired or invalid refresh token
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+    /auth/verify:
+        get:
+            summary: Verify email
+            description: Verifies the email of a user.
+            operationId: verifyEmail
+            parameters:
+                - name: token
+                  in: query
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                200:
+                    description: Email verified successfully
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                additionalProperties:
+                                    type: string
+                400:
+                    description: Invalid token
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                401:
+                    description: Invalid token
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+
+    /files/download/{name}:
+        get:
+            summary: Download file
+            operationId: downloadFile
+            tags:
+                - Files
+            parameters:
+                - name: name
+                  in: path
+                  description: File name
+                  required: true
+                  schema:
+                      type: string
+            responses:
+                200:
+                    description: Successful operation - file content in response body. The Content-Type header will indicate the actual file type.
+                    content:
+                        image/jpeg:
+                            schema:
+                                type: string
+                                format: binary
+                        image/png:
+                            schema:
+                                type: string
+                                format: binary
+                        application/pdf:
+                            schema:
+                                type: string
+                                format: binary
+                        application/octet-stream:
+                            schema:
+                                type: string
+                                format: binary
+                400:
+                    description: Bad request
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                401:
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                403:
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+                404:
+                    description: File not found
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ErrorMessage"
+
+components:
+    schemas:
+        # ---- Enums ----
+        RoleEnum:
+            type: string
+            enum: [ADMIN, USER]
+            x-field-extra-annotation: "@ValidEnum(RoleEnum.class)"
+        AddressTypeEnum:
+            type: string
+            enum: [PRIMARY, SECONDARY]
+            x-field-extra-annotation: "@ValidEnum(AddressTypeEnum.class)"
+        AppointmentStatusEnum:
+            type: string
+            enum: [WAITING, ACCEPTED, DECLINED]
+            x-field-extra-annotation: "@ValidEnum(AppointmentStatusEnum.class)"
+        InvoiceStatusEnum:
+            type: string
+            enum: [WAITING, PAID, DECLINED]
+            x-field-extra-annotation: "@ValidEnum(InvoiceStatusEnum.class)"
+        UserCourseEnrollmentStatusEnum:
+            type: string
+            enum: [WAITING, ENROLLED]
+            x-field-extra-annotation: "@ValidEnum(UserCourseEnrollmentStatusEnum.class)"
+
+        # ---- Objects ----
+        User:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: int64
+                username:
+                    type: string
+                firstName:
+                    type: string
+                lastName:
+                    type: string
+                email:
+                    type: string
+                    format: email
+                password:
+                    type: string
+                    format: password
+                    x-field-extra-annotation: >-
+                        @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+                role:
+                    $ref: "#/components/schemas/RoleEnum"
+                createdAt:
+                    type: string
+                    format: date-time
+                updatedAt:
+                    type: string
+                    format: date-time
+            required:
+                [
+                    id,
+                    username,
+                    firstName,
+                    lastName,
+                    email,
+                    password,
+                    createdAt,
+                    updatedAt,
+                    role,
+                ]
+        Address:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: int64
+                street:
+                    type: string
+                city:
+                    type: string
+                state:
+                    type: string
+                zipCode:
+                    type: string
+                country:
+                    type: string
+                addressType:
+                    $ref: "#/components/schemas/AddressTypeEnum"
+                userId:
+                    type: integer
+                    format: int64
+                createdAt:
+                    type: string
+                    format: date-time
+                updatedAt:
+                    type: string
+                    format: date-time
+            required:
+                [
+                    id,
+                    street,
+                    city,
+                    state,
+                    zipCode,
+                    country,
+                    createdAt,
+                    updatedAt,
+                    addressType,
+                    userId,
+                ]
+        Appointment:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: int64
+                date:
+                    type: string
+                    format: date
+                duration:
+                    type: integer
+                    format: int32
+                status:
+                    $ref: "#/components/schemas/AppointmentStatusEnum"
+                description:
+                    type: string
+                price:
+                    type: number
+                    format: double
+                userId:
+                    type: integer
+                    format: int64
+                categoryId:
+                    type: integer
+                    format: int64
+            required:
+                [
+                    id,
+                    date,
+                    duration,
+                    status,
+                    description,
+                    price,
+                    userId,
+                    categoryId,
+                ]
+
+        AppointmentCategory:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: int64
+                name:
+                    type: string
+                quotePerHour:
+                    type: number
+                    format: double
+            required: [id, name, quotePerHour]
+
+        Course:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: int64
+                startDate:
+                    type: string
+                    format: date
+                endDate:
+                    type: string
+                    format: date
+                enrollmentPrice:
+                    type: number
+                    format: double
+                categoryId:
+                    type: integer
+                    format: int64
+                description:
+                    type: string
+                imgNames:
+                    type: array
+                    items:
+                        type: string
+            required:
+                [
+                    id,
+                    startDate,
+                    endDate,
+                    enrollmentPrice,
+                    categoryId,
+                    description,
+                    imgNames,
+                ]
+        CourseCategory:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: int64
+                name:
+                    type: string
+            required: [id, name]
+
+        CourseUser:
+            type: object
+            properties:
+                userId:
+                    type: integer
+                    format: int64
+                courseId:
+                    type: integer
+                    format: int64
+                status:
+                    $ref: "#/components/schemas/UserCourseEnrollmentStatusEnum"
+            required: [userId, courseId, status]
+
+        Product:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: int64
+                name:
+                    type: string
+                description:
+                    type: string
+                price:
+                    type: number
+                    format: double
+                stock:
+                    type: integer
+                    format: int32
+                imageName:
+                    type: string
+                productCategory:
+                    $ref: "#/components/schemas/ProductCategory"
+            required:
+                [
+                    id,
+                    name,
+                    description,
+                    price,
+                    stock,
+                    imageName,
+                    productCategory,
+                ]
+
+        ProductCategory:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: int64
+                name:
+                    type: string
+                vatPercentage:
+                    type: number
+                    format: double
+            required: [id, name, vatPercentage]
+
+        Cart:
+            type: object
+            properties:
+                userId:
+                    type: integer
+                    format: int64
+                productId:
+                    type: integer
+                    format: int64
+                quantity:
+                    type: integer
+                    format: int32
+            required: [id, userId, productId, quantity]
+
+        Invoice:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: int64
+                status:
+                    $ref: "#/components/schemas/InvoiceStatusEnum"
+                paymentMethod:
+                    type: string
+                totalPrice:
+                    type: number
+                    format: double
+                userId:
+                    type: integer
+                    format: int64
+                createdAt:
+                    type: string
+                    format: date-time
+                updatedAt:
+                    type: string
+                    format: date-time
+            required:
+                [
+                    id,
+                    status,
+                    paymentMethod,
+                    totalPrice,
+                    userId,
+                    createdAt,
+                    updatedAt,
+                ]
+        LineItem:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: int64
+                subtotal:
+                    type: number
+                    format: double
+                quantity:
+                    type: integer
+                    format: int32
+                appointmentId:
+                    type: integer
+                    format: int64
+                productId:
+                    type: integer
+                    format: int64
+                courseId:
+                    type: integer
+                    format: int64
+                invoiceId:
+                    type: integer
+                    format: int64
+                createdAt:
+                    type: string
+                    format: date-time
+            required: [id, subtotal, quantity, createdAt, invoiceId]
+
+        # ---- Requests ----
+        ## ----- User ------
+        AddUserRequest:
+            type: object
+            properties:
+                username:
+                    type: string
+                    x-field-extra-annotation: '@NotBlank(message = "Username field cannot be blank")'
+                firstName:
+                    type: string
+                    x-field-extra-annotation: '@NotBlank(message = "First name field cannot be blank")'
+                lastName:
+                    type: string
+                    x-field-extra-annotation: '@NotBlank(message = "Last name field cannot be blank")'
+                email:
+                    type: string
+                    format: email
+                    x-field-extra-annotation: >-
+                        @NotBlank(message = "Email name field cannot be blank")
+                        @Email(message = "Email format is not valid")
+                password:
+                    type: string
+                    format: password
+                    x-field-extra-annotation: >-
+                        @NotBlank(message = "Password field cannot be blank")
+                        @Password
+                role:
+                    $ref: "#/components/schemas/RoleEnum"
+            required: [username, firstName, lastName, email, password, role]
+        UpdateUserRequest:
+            type: object
+            properties:
+                username:
+                    type: string
+                    x-field-extra-annotation: '@NotEmpty(message = "Username field cannot be empty")'
+                firstName:
+                    type: string
+                    x-field-extra-annotation: '@NotEmpty(message = "First name field cannot be empty")'
+                lastName:
+                    type: string
+                    x-field-extra-annotation: '@NotEmpty(message = "Last name field cannot be empty")'
+                email:
+                    type: string
+                    format: email
+                    x-field-extra-annotation: >-
+                        @Email(message = "Email format is not valid")
+                        @NotEmpty(message = "Last name field cannot be empty")
+                role:
+                    $ref: "#/components/schemas/RoleEnum"
+        ## ---- Address ----
+        AddAddressRequest:
+            type: object
+            properties:
+                street:
+                    type: string
+                    x-field-extra-annotation: '@NotBlank(message = "Street field cannot be blank")'
+                city:
+                    type: string
+                    x-field-extra-annotation: '@NotBlank(message = "City field cannot be blank")'
+                state:
+                    type: string
+                    x-field-extra-annotation: '@NotBlank(message = "State field cannot be blank")'
+                zipCode:
+                    type: string
+                    pattern: "^[A-Za-z0-9\\-\\s]{3,12}$"
+                    x-field-extra-annotation: >-
+                        @NotBlank(message = "State field cannot be blank")
+                        @Pattern(regexp = "^[A-Za-z0-9\\-\\s]{3,12}$", message = "Zip code must be valid")
+                country:
+                    type: string
+                    x-field-extra-annotation: '@NotBlank(message = "Country field cannot be blank")'
+                addressType:
+                    $ref: "#/components/schemas/AddressTypeEnum"
+                userId:
+                    type: integer
+                    format: int64
+            required:
+                [street, city, state, zipCode, country, addressType, userId]
+        UpdateAddressRequest:
+            type: object
+            properties:
+                street:
+                    type: string
+                city:
+                    type: string
+                state:
+                    type: string
+                zipCode:
+                    type: string
+                country:
+                    type: string
+                addressType:
+                    $ref: "#/components/schemas/AddressTypeEnum"
+                userId:
+                    type: integer
+                    format: int64
+        ## ---- Appointment ----
+        AddAppointmentRequest:
+            type: object
+            properties:
+                description:
+                    type: string
+                    x-field-extra-annotation: '@NotBlank(message = "Description field cannot be blank")'
+                date:
+                    type: string
+                    format: date
+                    x-field-extra-annotation: >-
+                        @Future(message = "Date must be in the future")
+                        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                duration:
+                    type: integer
+                    format: int32
+                    x-field-extra-annotation: >-
+                        @Min(value = 1, message = "Duration must be greater than 0")
+                userId:
+                    type: integer
+                    format: int64
+                categoryId:
+                    type: integer
+                    format: int64
+            required: [description, duration, categoryId, date, userId]
+        UpdateAppointmentRequest:
+            type: object
+            properties:
+                name:
+                    type: string
+                description:
+                    type: string
+                duration:
+                    type: integer
+                    format: int32
+                    x-field-extra-annotation: >-
+                        @Min(value = 1, message = "Duration must be greater than 0")
+                        @Max(value = 7, message = "Duration must be less than 7")
+                date:
+                    type: string
+                    format: date
+                    x-field-extra-annotation: >-
+                        @Future(message = "Date must be in the future")
+                        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                categoryId:
+                    type: integer
+                    format: int64
+        UpdateAppointmentStatusRequest:
+            type: object
+            properties:
+                status:
+                    $ref: "#/components/schemas/AppointmentStatusEnum"
+            required: [status]
+
+        ## ---- AppointmentCategory ----
+        AddAppointmentCategoryRequest:
+            type: object
+            properties:
+                name:
+                    type: string
+                    x-field-extra-annotation: '@NotBlank(message = "Name field cannot be blank")'
+                quotePerHour:
+                    type: number
+                    format: double
+                    minimum: 1
+            required: [name, quotePerHour]
+        UpdateAppointmentCategoryRequest:
+            type: object
+            properties:
+                name:
+                    type: string
+                    x-field-extra-annotation: '@NotEmpty(message = "Name field cannot be empty")'
+                quotePerHour:
+                    type: number
+                    format: double
+                    minimum: 1
+
+        ## ---- Course ----
+        AddCourseRequest:
+            type: object
+            properties:
+                startDate:
+                    type: string
+                    format: date
+                    x-field-extra-annotation: >-
+                        @Future(message = "Start date must be in the future")
+                        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                endDate:
+                    type: string
+                    format: date
+                    x-field-extra-annotation: >-
+                        @Future(message = "End date must be in the future")
+                        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                enrollmentPrice:
+                    type: number
+                    format: double
+                    minimum: 1
+                categoryId:
+                    type: integer
+                    format: int64
+                description:
+                    x-field-extra-annotation: '@NotBlank(message = "Description field cannot be empty")'
+                    type: string
+            required:
+                [startDate, endDate, enrollmentPrice, categoryId, description]
+        UpdateCourseRequest:
+            type: object
+            properties:
+                startDate:
+                    type: string
+                    format: date
+                    x-field-extra-annotation: >-
+                        @Future(message = "Start date must be in the future")
+                        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                endDate:
+                    type: string
+                    format: date
+                    x-field-extra-annotation: >-
+                        @Future(message = "End date must be in the future")
+                        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                enrollmentPrice:
+                    type: number
+                    format: double
+                    minimum: 1
+                categoryId:
+                    type: integer
+                    format: int64
+                    minimum: 1
+                description:
+                    x-field-extra-annotation: '@NotEmpty(message = "Description field cannot be empty")'
+                    type: string
+        UpdateUserStatusOnCourseRequest:
+            type: object
+            properties:
+                status:
+                    $ref: "#/components/schemas/UserCourseEnrollmentStatusEnum"
+            required: [status]
+
+        ## ---- CourseCategory ----
+        AddCourseCategoryRequest:
+            type: object
+            properties:
+                name:
+                    type: string
+                    x-field-extra-annotation: '@NotBlank(message = "Name field cannot be blank")'
+            required: [name]
+        UpdateCourseCategoryRequest:
+            type: object
+            properties:
+                name:
+                    type: string
+                    x-field-extra-annotation: '@NotEmpty(message = "Name field cannot be empty")'
+
+        ## ---- Product ----
+        AddProductRequest:
+            type: object
+            properties:
+                name:
+                    type: string
+                    x-field-extra-annotation: '@NotBlank(message = "Name field cannot be blank")'
+                description:
+                    type: string
+                    x-field-extra-annotation: '@NotBlank(message = "Description field cannot be blank")'
+                price:
+                    type: number
+                    format: double
+                    minimum: 1
+                stock:
+                    type: integer
+                    format: int32
+                    minimum: 1
+                productCategoryId:
+                    type: integer
+                    format: int64
+            required:
+                [name, description, price, stock, imageName, productCategoryId]
+        UpdateProductRequest:
+            type: object
+            properties:
+                name:
+                    type: string
+                    x-field-extra-annotation: '@NotEmpty(message = "Name field cannot be empty")'
+                description:
+                    type: string
+                    x-field-extra-annotation: '@NotEmpty(message = "Description field cannot be empty")'
+                price:
+                    type: number
+                    format: double
+                    minimum: 1
+                stock:
+                    type: integer
+                    format: int32
+                    minimum: 1
+                productCategoryId:
+                    type: integer
+                    format: int64
+
+        AddProductCategoryRequest:
+            type: object
+            properties:
+                name:
+                    type: string
+                    x-field-extra-annotation: '@NotBlank(message = "Name field cannot be blank")'
+                vatPercentage:
+                    type: number
+                    format: double
+                    minimum: 0
+                    maximum: 1
+            required: [name, vatPercentage]
+        UpdateProductCategoryRequest:
+            type: object
+            properties:
+                name:
+                    type: string
+                    x-field-extra-annotation: '@NotEmpty(message = "Name field cannot be empty")'
+                vatPercentage:
+                    type: number
+                    format: double
+                    minimum: 0
+                    maximum: 1
+            required: [name, vatPercentage]
+
+        ## ---- Invoice ----
+        AddInvoiceRequest:
+            type: object
+            properties:
+                userId:
+                    type: integer
+                    format: int64
+                paymentMethod:
+                    type: string
+            required: [userId, paymentMethod]
+        UpdateInvoiceRequest:
+            type: object
+            properties:
+                status:
+                    $ref: "#/components/schemas/InvoiceStatusEnum"
+                paymentMethod:
+                    type: string
+                totalPrice:
+                    type: number
+                    format: double
+        UpdateInvoiceStatusRequest:
+            type: object
+            properties:
+                status:
+                    $ref: "#/components/schemas/InvoiceStatusEnum"
+            required: [status]
+
+        ## ---- LineItem ----
+        AddLineItemRequest:
+            type: object
+            x-class-extra-annotation: '@ExactlyOneIdPresent(fields = { "appointmentId", "productId", "courseId" })'
+            properties:
+                quantity:
+                    type: integer
+                    format: int32
+                appointmentId:
+                    type: integer
+                    format: int64
+                productId:
+                    type: integer
+                    format: int64
+                courseId:
+                    type: integer
+                    format: int64
+                invoiceId:
+                    type: integer
+                    format: int64
+            required: [quantity, invoiceId]
+
+        ## ---- Security ----
+        RegisterRequest:
+            type: object
+            properties:
+                username:
+                    type: string
+                    x-field-extra-annotation: >-
+                        @NotBlank(message = "Username field cannot be blank")
+                password:
+                    type: string
+                    x-field-extra-annotation: >-
+                        @Password
+                        @NotBlank(message = "Password field cannot be blank")
+                firstName:
+                    type: string
+                    x-field-extra-annotation: >-
+                        @NotBlank(message = "First name field cannot be blank")
+                lastName:
+                    type: string
+                    x-field-extra-annotation: >-
+                        @NotBlank(message = "Last name field cannot be blank")
+                email:
+                    type: string
+                    x-field-extra-annotation: >-
+                        @NotBlank(message = "Email field cannot be blank")
+                        @Email(message = "Email field is not valid")
+            required: [username, password, firstName, lastName, email]
+        RegisterResponse:
+            type: object
+            properties:
+                userId:
+                    type: integer
+                    format: int64
+                response:
+                    type: string
+            required: [userId, response]
+        LoginRequest:
+            type: object
+            properties:
+                username:
+                    type: string
+                    x-field-extra-annotation: >-
+                        @NotBlank(message = "Username field cannot be blank")
+                password:
+                    type: string
+                    x-field-extra-annotation: >-
+                        @NotBlank(message = "Password field cannot be blank")
+            required: [username, password]
+        LoginResponse:
+            type: object
+            properties:
+                jwt:
+                    type: string
+                refreshToken:
+                    type: string
+                userId:
+                    type: integer
+                    format: int64
+                role:
+                    $ref: "#/components/schemas/RoleEnum"
+            required: [jwt, refreshToken, userId, role]
+        RefreshTokenRequest:
+            type: object
+            properties:
+                refreshToken:
+                    type: string
+                    x-field-extra-annotation: >-
+                        @NotBlank(message = "Refresh token is required")
+            required: [refreshToken]
+        ChangePasswordRequest:
+            type: object
+            properties:
+                oldPassword:
+                    type: string
+                    x-field-extra-annotation: >-
+                        @Password
+                        @NotBlank(message = "Password field cannot be blank")
+                newPassword:
+                    type: string
+                    x-field-extra-annotation: >-
+                        @Password
+                        @NotBlank(message = "Password field cannot be blank")
+            required: [oldPassword, newPassword]
+
+        # ---- Error messages ----
+        ErrorMessage:
+            type: object
+            properties:
+                timestamp:
+                    type: string
+                    format: date-time
+                    example: "1970-01-01T00:00+18:00"
+                status:
+                    type: integer
+                    format: int32
+                    example: 404
+                error:
+                    type: string
+                    example: "Not Found"
+                message:
+                    type: string
+                    example: "Resource not found"
+                path:
+                    type: string
+                    example: "/api/v1/resource/1"
+            required: [timestamp, status, error, message, path]
+        ValidationErrorMessage:
+            type: object
+            properties:
+                timestamp:
+                    type: string
+                    format: date-time
+                    example: "1970-01-01T00:00+18:00"
+                status:
+                    type: integer
+                    format: int32
+                    example: 404
+                error:
+                    type: string
+                    example: "Bad Request"
+                messages:
+                    type: object
+                    additionalProperties:
+                        type: string
+                    example:
+                        "name": "Name field cannot be blank"
+                path:
+                    type: string
+                    example: "/api/v1/resource/1"
+            required: [timestamp, status, error, messages, path]
+    securitySchemes:
+        BearerAuth:
+            description: Bearer token using a JWT
+            type: http
+            scheme: bearer
+            bearerFormat: JWT

@@ -1,0 +1,74 @@
+services:
+    mariadb:
+        image: mariadb
+        container_name: mariadb
+        environment:
+            MYSQL_ROOT_PASSWORD: rootpassword
+            MYSQL_DATABASE: mydatabase
+            MYSQL_USER: user
+            MYSQL_PASSWORD: userpassword
+        volumes:
+            - ./mariadb_data:/var/lib/mysql # Ensure this volume is defined or remove if not needed for persistence
+        networks:
+            - backend_db
+        healthcheck:
+            test:
+                [
+                    "CMD",
+                    "/usr/local/bin/healthcheck.sh",
+                    "--connect",
+                    "--innodb_initialized",
+                ]
+            interval: 5s
+            timeout: 10s
+            retries: 10
+        restart: always
+
+    backend:
+        build:
+            context: . # Correct: Project root is the build context
+            dockerfile: fct-backend/Dockerfile # Correct: Path to Dockerfile relative to context
+        container_name: backend
+        depends_on:
+            mariadb:
+                condition: service_healthy
+        environment:
+            DB_HOST: mariadb
+            DB_PORT: 3306
+            DB_NAME: mydatabase
+            DB_USER: user
+            DB_PASSWORD: userpassword
+            # Add any other Spring Boot environment variables here
+            # SPRING_DATASOURCE_URL: jdbc:mariadb://mariadb:3306/mydatabase
+            # SPRING_DATASOURCE_USERNAME: user
+            # SPRING_DATASOURCE_PASSWORD: userpassword
+            # SPRING_JPA_HIBERNATE_DDL_AUTO: update # or validate, none, etc.
+        networks:
+            - backend_db
+            - frontend_backend
+        ports:
+            - "8080:8080"
+        restart: on-failure:10
+
+    frontend:
+        build:
+            context: . # Correct: Project root is the build context
+            dockerfile: fct-frontend/Dockerfile # Correct: Path to Dockerfile relative to context
+        container_name: frontend
+        depends_on:
+            - backend
+        networks:
+            - frontend_backend
+        ports:
+            - "80:80" # Assumes your frontend serves on port 80 (e.g., via Nginx)
+        restart: on-failure
+
+networks:
+    backend_db:
+        driver: bridge
+    frontend_backend:
+        driver: bridge
+
+volumes:
+    mariadb_data: # This defines the named volume used by mariadb
+        driver: local

@@ -1,0 +1,68 @@
+# Export-ignores
+HELP.md export-ignore
+target/ export-ignore
+\!.mvn/wrapper/maven-wrapper.jar export-ignore
+
+### STS ###
+.apt_generated export-ignore
+.classpath export-ignore
+.factorypath export-ignore
+.project export-ignore
+.settings export-ignore
+.springBeans export-ignore
+.sts4-cache export-ignore
+
+### IntelliJ IDEA ###
+.idea export-ignore
+*.iws export-ignore
+*.iml export-ignore
+*.ipr export-ignore
+
+### NetBeans ###
+/nbproject/private/ export-ignore
+/nbbuild/ export-ignore
+/dist/ export-ignore
+/nbdist/ export-ignore
+/.nb-gradle/ export-ignore
+build/ export-ignore
+
+### VS Code ###
+.vscode/ export-ignore
+
+### Other ###
+mariadb_data/ export-ignore
+# Logs export-ignore
+logs export-ignore
+*.log export-ignore
+npm-debug.log* export-ignore
+yarn-debug.log* export-ignore
+yarn-error.log* export-ignore
+pnpm-debug.log* export-ignore
+lerna-debug.log*
+
+node_modules export-ignore
+dist export-ignore
+dist-ssr export-ignore
+*.local export-ignore
+
+# Editor directories and files
+.vscode/* export-ignore
+\!.vscode/extensions.json export-ignore
+.idea export-ignore
+.DS_Store export-ignore
+*.suo export-ignore
+*.ntvs* export-ignore
+*.njsproj export-ignore
+*.sln export-ignore
+*.sw? export-ignore
+stats.html export-ignore
+
+# Database
+mariadb_data/ export-ignore
+
+# Archive
+archive.zip export-ignore
+
+# Config
+/mvnw text eol=lf 
+*.cmd text eol=crlf 
