@@ -164,8 +164,7 @@ Resumen del proyecto disponible en `abstract.pdf`.
 ## Autor
 
 Jose Esteban Vásquez Barboza  
-Estudiante de IU University of Applied Sciences  
-https://github.com/joseevb
+https://github.com/Joseevb04
 
 ## Licencia
 
