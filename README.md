@@ -115,11 +115,22 @@ Este proyecto es una plataforma web integral para una empresa de maquillaje. Ofr
 
 ### Ejecución Local
 
-Clona el proyecto y ejecuta los siguientes comandos:
+1. Clona el proyecto
+    - Se puede realizar desde el terminal:
 
 ```bash
-git clone https://github.com/tu_usuario/tu_repositorio.git
-cd tu_repositorio
+# en windows, presionando Windows + X y seleccionando la opcion de `Terminal`
+git clone https://github.com/Joseevb04/fct-project.git
+```
+
+    - O desde el navegador, descargando el zip y descomprimiendo
+
+2. Ejecutar el proyecto en Docker
+
+    - Abrir el terminal (en windows, presionando Windows + X y seleccionando la opcion de `Terminal`, o abriendo el explorador de archivos en la carpeta del proyecto y escribiendo en la barra de busqueda `cmd`)
+    - Ejecutar los siguientes comandos:
+
+```bash
 docker compose up -d --build
 ```
 
@@ -146,12 +157,6 @@ Ambos proyectos (frontend y backend) la usan para generar clientes y controlador
 - Roles de usuario: `USER` y `ADMIN`
 - Restricción de rutas según permisos
 - Protección de endpoints con Spring Security
-
-## Testing
-
-- Backend: pruebas unitarias con JUnit
-- Entorno de testing usando H2
-- Frontend: pruebas manuales (soporte para Vitest o Cypress opcional)
 
 ## Variables de Entorno
 
