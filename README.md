@@ -120,7 +120,7 @@ Este proyecto es una plataforma web integral para una empresa de maquillaje. Ofr
 
 ```bash
 # en windows, presionando Windows + X y seleccionando la opcion de `Terminal`
-git clone https://github.com/Joseevb04/fct-project.git
+git clone https://github.com/Joseevb/fct-project.git
 ```
 
     - O desde el navegador, descargando el zip y descomprimiendo
