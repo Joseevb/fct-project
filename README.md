@@ -2,7 +2,7 @@
 
 ## Repositorio
 
-https://github.com/Joseevb04/fct-project
+https://github.com/Joseevb/fct-project
 
 ## 📝 Descripción
 
